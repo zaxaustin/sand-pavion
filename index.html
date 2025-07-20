@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Sand Pavilion</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+    
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #2c1810, #8b4513, #daa520);
+                min-height: 100vh;
+                color: #f5f5dc;
+                overflow-x: hidden;
+            }
+    
+            .pavilion-container {
+                position: relative;
+                min-height: 100vh;
+            }
+    
+            .header {
+                text-align: center;
+                padding: 2rem;
+                background: rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(10px);
+            }
+    
+            .logo {
+                font-size: 3rem;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                background: linear-gradient(45deg, #daa520, #ffd700);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+    
+            .tagline {
+                font-size: 1.2rem;
+                opacity: 0.9;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+    
+            .pavilions-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+                padding: 2rem;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+    
+            .pavilion {
+                background: rgba(139, 69, 19, 0.2);
+                border: 2px solid rgba(218, 165, 32, 0.3);
+                border-radius: 15px;
+                padding: 1.5rem;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                backdrop-filter: blur(5px);
+                position: relative;
+                overflow: hidden;
+            }
+    
+            .pavilion::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, transparent, rgba(218, 165, 32, 0.3), transparent);
+                border-radius: 15px;
+                z-index: -1;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+    
+            .pavilion:hover::before {
+                opacity: 1;
+            }
+    
+            .pavilion:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                border-color: rgba(218, 165, 32, 0.6);
+            }
+    
+            .pavilion-icon {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                display: block;
+            }
+    
+            .pavilion-title {
+                font-size: 1.4rem;
+                margin-bottom: 0.5rem;
+                color: #ffd700;
+            }
+    
+            .pavilion-description {
+                font-size: 0.9rem;
+                line-height: 1.5;
+                opacity: 0.8;
+                margin-bottom: 1rem;
+            }
+    
+            .resources-preview {
+                display: none;
+                margin-top: 1rem;
+                border-top: 1px solid rgba(218, 165, 32, 0.3);
+                padding-top: 1rem;
+            }
+    
+            .pavilion.expanded .resources-preview {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+    
+            .resource-item {
+                margin-bottom: 0.8rem;
+                padding: 0.5rem;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                transition: background 0.3s ease;
+            }
+    
+            .resource-item:hover {
+                background: rgba(218, 165, 32, 0.2);
+            }
+    
+            .resource-title {
+                font-weight: bold;
+                color: #daa520;
+                margin-bottom: 0.2rem;
+            }
+    
+            .resource-desc {
+                font-size: 0.8rem;
+                opacity: 0.7;
+            }
+    
+            .resource-link {
+                color: #87ceeb;
+                text-decoration: none;
+                font-size: 0.8rem;
+                opacity: 0.8;
+            }
+    
+            .resource-link:hover {
+                opacity: 1;
+                text-decoration: underline;
+            }
+    
+            .explore-btn {
+                background: linear-gradient(45deg, #daa520, #b8860b);
+                color: #2c1810;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+    
+            .explore-btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
+            }
+    
+            .floating-particles {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: -1;
+            }
+    
+            .particle {
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: rgba(218, 165, 32, 0.3);
+                border-radius: 50%;
+                animation: float 6s ease-in-out infinite;
+            }
+    
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+                50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+            }
+    
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+    
+            .search-bar {
+                max-width: 600px;
+                margin: 1rem auto;
+                position: relative;
+            }
+    
+            .search-input {
+                width: 100%;
+                padding: 1rem 1.5rem;
+                background: rgba(0, 0, 0, 0.3);
+                border: 2px solid rgba(218, 165, 32, 0.3);
+                border-radius: 25px;
+                color: #f5f5dc;
+                font-size: 1rem;
+                backdrop-filter: blur(5px);
+                transition: border-color 0.3s ease;
+            }
+    
+            .search-input:focus {
+                outline: none;
+                border-color: rgba(218, 165, 32, 0.6);
+            }
+    
+            .search-input::placeholder {
+                color: rgba(245, 245, 220, 0.6);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="floating-particles" id="particles"></div>
+        
+        <div class="pavilion-container">
+            <header class="header">
+                <h1 class="logo">The Sand Pavilion</h1>
+                <p class="tagline">Your gateway to the hidden treasures of human knowledge</p>
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search for learning resources, tools, or topics..." id="searchInput">
+                </div>
+            </header>
+    
+            <main class="pavilions-grid" id="pavilionsGrid">
+                <div class="pavilion" data-category="interactive-learning">
+                    <span class="pavilion-icon">🎮</span>
+                    <h3 class="pavilion-title">Interactive Learning</h3>
+                    <p class="pavilion-description">Gamified education platforms that make learning addictive and fun</p>
+                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+                    <div class="resources-preview">
+                        <div class="resource-item">
+                            <div class="resource-title">Brilliant</div>
+                            <div class="resource-desc">Visual, hands-on STEM learning through interactive problem-solving</div>
+                            <a href="https://brilliant.org" class="resource-link" target="_blank">brilliant.org</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Codecademy</div>
+                            <div class="resource-desc">Interactive coding tutorials with instant feedback</div>
+                            <a href="https://codecademy.com" class="resource-link" target="_blank">codecademy.com</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Kerbal Space Program</div>
+                            <div class="resource-desc">Learn orbital mechanics and physics through rocket building</div>
+                            <a href="https://kerbalspaceprogram.com" class="resource-link" target="_blank">kerbalspaceprogram.com</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="pavilion" data-category="open-knowledge">
+                    <span class="pavilion-icon">📚</span>
+                    <h3 class="pavilion-title">Open Knowledge</h3>
+                    <p class="pavilion-description">Free access to humanity's accumulated wisdom and research</p>
+                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+                    <div class="resources-preview">
+                        <div class="resource-item">
+                            <div class="resource-title">Internet Archive</div>
+                            <div class="resource-desc">Millions of books, movies, music, and historical documents</div>
+                            <a href="https://archive.org" class="resource-link" target="_blank">archive.org</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">OpenStax</div>
+                            <div class="resource-desc">Free, peer-reviewed textbooks for college and high school</div>
+                            <a href="https://openstax.org" class="resource-link" target="_blank">openstax.org</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Project Gutenberg</div>
+                            <div class="resource-desc">Over 70,000 free ebooks of public domain works</div>
+                            <a href="https://gutenberg.org" class="resource-link" target="_blank">gutenberg.org</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="pavilion" data-category="creative-tools">
+                    <span class="pavilion-icon">🎨</span>
+                    <h3 class="pavilion-title">Creative Workshop</h3>
+                    <p class="pavilion-description">Free tools and tutorials for digital creation and artistic expression</p>
+                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+                    <div class="resources-preview">
+                        <div class="resource-item">
+                            <div class="resource-title">Blender</div>
+                            <div class="resource-desc">Professional 3D modeling, animation, and rendering - completely free</div>
+                            <a href="https://blender.org" class="resource-link" target="_blank">blender.org</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">GIMP</div>
+                            <div class="resource-desc">Powerful image manipulation and digital art creation</div>
+                            <a href="https://gimp.org" class="resource-link" target="_blank">gimp.org</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Figma</div>
+                            <div class="resource-desc">Collaborative design tool with generous free tier</div>
+                            <a href="https://figma.com" class="resource-link" target="_blank">figma.com</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="pavilion" data-category="science-exploration">
+                    <span class="pavilion-icon">🔬</span>
+                    <h3 class="pavilion-title">Science Exploration</h3>
+                    <p class="pavilion-description">Interactive simulations, visualizations, and scientific discoveries</p>
+                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+                    <div class="resources-preview">
+                        <div class="resource-item">
+                            <div class="resource-title">PhET Simulations</div>
+                            <div class="resource-desc">Interactive physics, chemistry, and math simulations</div>
+                            <a href="https://phet.colorado.edu" class="resource-link" target="_blank">phet.colorado.edu</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">NASA Eyes</div>
+                            <div class="resource-desc">Real-time 3D visualization of NASA missions and space exploration</div>
+                            <a href="https://eyes.nasa.gov" class="resource-link" target="_blank">eyes.nasa.gov</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Wolfram Alpha</div>
+                            <div class="resource-desc">Computational knowledge engine for complex calculations and data</div>
+                            <a href="https://wolframalpha.com" class="resource-link" target="_blank">wolframalpha.com</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="pavilion" data-category="maker-space">
+                    <span class="pavilion-icon">🔧</span>
+                    <h3 class="pavilion-title">Maker Space</h3>
+                    <p class="pavilion-description">DIY projects, electronics, 3D printing, and hands-on learning</p>
+                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+                    <div class="resources-preview">
+                        <div class="resource-item">
+                            <div class="resource-title">Instructables</div>
+                            <div class="resource-desc">Step-by-step guides for making almost anything</div>
+                            <a href="https://instructables.com" class="resource-link" target="_blank">instructables.com</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Thingiverse</div>
+                            <div class="resource-desc">Thousands of free 3D printing designs and models</div>
+                            <a href="https://thingiverse.com" class="resource-link" target="_blank">thingiverse.com</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Ben Eater</div>
+                            <div class="resource-desc">Learn computer engineering by building computers from scratch</div>
+                            <a href="https://eater.net" class="resource-link" target="_blank">eater.net</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="pavilion" data-category="community-learning">
+                    <span class="pavilion-icon">👥</span>
+                    <h3 class="pavilion-title">Learning Communities</h3>
+                    <p class="pavilion-description">Forums, communities, and collaborative spaces for shared knowledge</p>
+                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+                    <div class="resources-preview">
+                        <div class="resource-item">
+                            <div class="resource-title">Stack Overflow</div>
+                            <div class="resource-desc">Programming Q&A community with millions of solved problems</div>
+                            <a href="https://stackoverflow.com" class="resource-link" target="_blank">stackoverflow.com</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">r/AskScience</div>
+                            <div class="resource-desc">Get answers to scientific questions from verified experts</div>
+                            <a href="https://reddit.com/r/askscience" class="resource-link" target="_blank">reddit.com/r/askscience</a>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-title">Discord Study Servers</div>
+                            <div class="resource-desc">Real-time study groups and academic communities</div>
+                            <div class="resource-desc">Search for "study with me" or subject-specific servers</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    
+        <script>
+            // Create floating particles
+            function createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 6 + 's';
+                    particlesContainer.appendChild(particle);
+                }
+            }
+    
+            function togglePavilion(button) {
+                const pavilion = button.closest('.pavilion');
+                const isExpanded = pavilion.classList.contains('expanded');
+                
+                // Close all other pavilions
+                document.querySelectorAll('.pavilion.expanded').forEach(p => {
+                    p.classList.remove('expanded');
+                    p.querySelector('.explore-btn').textContent = 'Explore';
+                });
+                
+                if (!isExpanded) {
+                    pavilion.classList.add('expanded');
+                    button.textContent = 'Collapse';
+                } else {
+                    button.textContent = 'Explore';
+                }
+            }
+    
+            // Search functionality
+            function setupSearch() {
+                const searchInput = document.getElementById('searchInput');
+                const pavilions = document.querySelectorAll('.pavilion');
+    
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    
+                    pavilions.forEach(pavilion => {
+                        const title = pavilion.querySelector('.pavilion-title').textContent.toLowerCase();
+                        const description = pavilion.querySelector('.pavilion-description').textContent.toLowerCase();
+                        const resources = Array.from(pavilion.querySelectorAll('.resource-title, .resource-desc')).map(el => el.textContent.toLowerCase()).join(' ');
+                        
+                        const matches = title.includes(searchTerm) || description.includes(searchTerm) || resources.includes(searchTerm);
+                        
+                        if (matches || searchTerm === '') {
+                            pavilion.style.display = 'block';
+                            pavilion.style.opacity = '1';
+                        } else {
+                            pavilion.style.display = 'none';
+                            pavilion.style.opacity = '0.3';
+                        }
+                    });
+                });
+            }
+    
+            // Initialize everything
+            document.addEventListener('DOMContentLoaded', () => {
+                createParticles();
+                setupSearch();
+            });
+    
+            // Add some interactive hover effects
+            document.querySelectorAll('.pavilion').forEach(pavilion => {
+                pavilion.addEventListener('mouseenter', () => {
+                    pavilion.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                pavilion.addEventListener('mouseleave', () => {
+                    if (!pavilion.classList.contains('expanded')) {
+                        pavilion.style.transform = 'translateY(0) scale(1)';
+                    }
+                });
+            });
+        </script>
+    </body>
+    </html>
+</html>
