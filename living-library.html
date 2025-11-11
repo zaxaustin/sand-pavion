@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Pavilion — Living Library</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Merriweather', serif;
+            background: linear-gradient(160deg, #1b1a24, #402f1d 45%, #c69b58 100%);
+            color: #fef6e4;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+        }
+        header h1 { font-size: 3rem; margin-bottom: 0.6rem; letter-spacing: 0.06em; }
+        header p { max-width: 760px; margin: 0 auto; font-size: 1.05rem; opacity: 0.85; }
+        .shelves {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.6rem;
+        }
+        .shelf {
+            background: rgba(24, 17, 9, 0.75);
+            border-radius: 18px;
+            padding: 1.8rem;
+            border: 1px solid rgba(255, 219, 144, 0.3);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+        }
+        .shelf h2 { color: #ffd787; margin-bottom: 0.8rem; font-size: 1.5rem; }
+        .shelf ul { list-style: none; }
+        .shelf li { margin-bottom: 0.6rem; }
+        .tracks {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+            padding: 2rem;
+            text-align: center;
+        }
+        .tracks h2 { color: #ffe6a7; font-size: 2rem; margin-bottom: 1rem; }
+        .tracks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+        }
+        .track-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 1.4rem;
+            border: 1px solid rgba(255, 219, 144, 0.2);
+        }
+        footer { text-align: center; padding: 2rem 1rem 3rem; font-size: 0.9rem; opacity: 0.75; }
+        a.back { color: #ffd787; text-decoration: none; font-weight: bold; letter-spacing: 0.05em; display: inline-block; margin-top: 1.5rem; }
+        a.back:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Living Library</h1>
+        <p>The Living Library blends sacred texts, comparative studies, and contemporary practice manuals. Everything is freely available, community-annotated, and paired with learning tracks so you never walk alone.</p>
+        <a class="back" href="index.html">← Return to the Pavilion</a>
+    </header>
+
+    <section class="shelves">
+        <article class="shelf">
+            <h2>Hindu Wisdom Room</h2>
+            <ul>
+                <li>Bhagavad Gita — annotated with line-by-line commentary circles.</li>
+                <li>Upanishads — audio recitations from multilingual volunteers.</li>
+                <li>Vedas — curated excerpts focused on ritual, cosmology, and ethics.</li>
+            </ul>
+        </article>
+        <article class="shelf">
+            <h2>Buddhist Insights Room</h2>
+            <ul>
+                <li>Dhammapada — daily verse reflections recorded by community elders.</li>
+                <li>Heart Sutra — interactive diagrams exploring emptiness teachings.</li>
+                <li>Tibetan Book of the Dead — peer study group transcripts.</li>
+            </ul>
+        </article>
+        <article class="shelf">
+            <h2>Comparative Studies Room</h2>
+            <ul>
+                <li>Perennial Philosophy — roundtable discussions and notes.</li>
+                <li>World Religions — shared timelines mapping cross-tradition echoes.</li>
+                <li>Mysticism East &amp; West — gallery of key metaphors and practices.</li>
+            </ul>
+        </article>
+        <article class="shelf">
+            <h2>Meditation &amp; Practice Room</h2>
+            <ul>
+                <li>Mindfulness Guide — printable practice cards for quick sessions.</li>
+                <li>Pranayama Techniques — annotated breath sequences with safety cues.</li>
+                <li>Zen Practice — community podcast with weekly koan reflections.</li>
+            </ul>
+        </article>
+    </section>
+
+    <section class="tracks">
+        <h2>Learning Tracks</h2>
+        <div class="tracks-grid">
+            <div class="track-card">
+                <strong>Beginner</strong>
+                <p>Introduction to Eastern Philosophy — eight gentle lessons with group check-ins.</p>
+            </div>
+            <div class="track-card">
+                <strong>Intermediate</strong>
+                <p>Deep Dive into Sacred Texts — twelve-week seminar alternating study and practice labs.</p>
+            </div>
+            <div class="track-card">
+                <strong>Advanced</strong>
+                <p>Comparative Analysis &amp; Practice — fifteen sessions ending with a community-led symposium.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        Future work: digitize more oral histories, add language accessibility layers, and connect track completion with Steward Board missions.
+    </footer>
+</body>
+</html>

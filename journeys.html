@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Pavilion — Inheritance Paths</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #1f1b2e, #443066, #a87dc2);
+            min-height: 100vh;
+            color: #f5ecff;
+        }
+        header {
+            text-align: center;
+            padding: 3rem 1.5rem 2rem;
+        }
+        header h1 { font-size: 2.8rem; margin-bottom: 0.8rem; }
+        header p { max-width: 760px; margin: 0 auto; font-size: 1.05rem; opacity: 0.85; }
+        .timeline {
+            max-width: 1100px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+            display: grid;
+            gap: 1.5rem;
+        }
+        .path {
+            background: rgba(20, 13, 40, 0.7);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(190, 160, 255, 0.35);
+            box-shadow: 0 20px 45px rgba(10, 5, 25, 0.35);
+        }
+        .path h2 { font-size: 1.8rem; color: #ffe26f; margin-bottom: 0.4rem; }
+        .path .meta { font-size: 0.9rem; opacity: 0.7; margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+        .path p { margin-bottom: 1rem; }
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 1rem;
+            border-radius: 14px;
+        }
+        .step strong { color: #ffec99; display: block; margin-bottom: 0.4rem; }
+        .callout {
+            max-width: 960px;
+            margin: 0 auto 3rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 2rem;
+            text-align: center;
+        }
+        footer { text-align: center; padding: 2rem 1rem 3rem; font-size: 0.9rem; opacity: 0.75; }
+        a.back { color: #ffe26f; text-decoration: none; font-weight: bold; letter-spacing: 0.05em; display: inline-block; margin-top: 1.5rem; }
+        a.back:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Inheritance Paths</h1>
+        <p>Inheritance Paths are cooperative journeys that turn wisdom into lived practice. Each path spans several weeks, blends learning with embodiment, and invites community accountability without any exchange of money—only care.</p>
+        <a class="back" href="index.html">← Return to the Pavilion</a>
+    </header>
+
+    <section class="timeline">
+        <article class="path">
+            <h2>The Way of Mindful Presence</h2>
+            <div class="meta">
+                <span>Creator: ZenMaster</span>
+                <span>Duration: 12 weeks</span>
+                <span>Difficulty: Intermediate</span>
+                <span>Community: 234 walkers</span>
+            </div>
+            <p>A progressive meditation arc that opens with breath awareness, expands into body integration, and culminates in witnessing thoughts without attachment.</p>
+            <div class="steps">
+                <div class="step">
+                    <strong>Week 1 — Foundation of Breath</strong>
+                    <p>Daily 10-minute sits, breath counting, and an evening reflection journal.</p>
+                </div>
+                <div class="step">
+                    <strong>Week 2 — Body Awareness Integration</strong>
+                    <p>Introduce walking meditation, mindful eating, and a 15-minute body scan.</p>
+                </div>
+                <div class="step">
+                    <strong>Week 3 — Working with Thoughts</strong>
+                    <p>Practice thought labeling, open awareness sits, and noting techniques.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="path">
+            <h2>Desert Wisdom: The Path of Stillness</h2>
+            <div class="meta">
+                <span>Creator: SandSage</span>
+                <span>Duration: 8 weeks</span>
+                <span>Difficulty: Advanced</span>
+                <span>Community: 156 walkers</span>
+            </div>
+            <p>Ancient desert contemplative practices for practitioners ready to deepen into long silence, minimalism, and resilience.</p>
+            <div class="steps">
+                <div class="step">
+                    <strong>Week 1 — Entering the Silence</strong>
+                    <p>Extended silence blocks, desert visualization journeys, and emptiness meditation.</p>
+                </div>
+                <div class="step">
+                    <strong>Week 4 — Sand Labyrinth Pilgrimage</strong>
+                    <p>Design a personal labyrinth, walk it mindfully, and share insights with a companion.</p>
+                </div>
+                <div class="step">
+                    <strong>Week 8 — Offering the Stillness</strong>
+                    <p>Host a quiet circle for newcomers, distilling teachings into accessible practices.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="path">
+            <h2>Beginner's Mind: First Steps</h2>
+            <div class="meta">
+                <span>Creator: NewPath</span>
+                <span>Duration: 4 weeks</span>
+                <span>Difficulty: Beginner</span>
+                <span>Community: 512 walkers</span>
+            </div>
+            <p>A warm welcome for those just starting out—setting up sacred space, experimenting with short practices, and building accountability buddies.</p>
+            <div class="steps">
+                <div class="step">
+                    <strong>Week 1 — What is Meditation?</strong>
+                    <p>Learn posture basics, craft a personal altar, and set intentions with your buddy.</p>
+                </div>
+                <div class="step">
+                    <strong>Week 2 — Sensing the Body</strong>
+                    <p>Practice body scans, introduce gentle stretching, and share weekly insights.</p>
+                </div>
+                <div class="step">
+                    <strong>Week 4 — Carrying the Spark</strong>
+                    <p>Commit to daily micro-practices and document how mindfulness shows up in ordinary life.</p>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="callout">
+        <h2>How Paths Evolve</h2>
+        <p>Every path is stewarded by volunteers. Once a cohort finishes, they contribute new prompts, audio guidance, or translations. Proposed future work includes a path builder, check-in reminders, and integrations with the Steward Board for mutual aid requests.</p>
+    </section>
+
+    <footer>
+        Ready to co-create a new path? Post your outline on the Steward Board so others can walk beside you.
+    </footer>
+</body>
+</html>

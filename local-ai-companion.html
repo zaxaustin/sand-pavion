@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Pavilion — Local AI Companions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(140deg, #0f172a, #1e293b 45%, #3b82f6 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        header {
+            padding: 3rem 1.5rem 2rem;
+            text-align: center;
+        }
+        header h1 { font-size: 2.9rem; margin-bottom: 0.8rem; }
+        header p { max-width: 780px; margin: 0 auto; opacity: 0.85; font-size: 1.05rem; }
+        a.back { color: #93c5fd; text-decoration: none; font-weight: 600; letter-spacing: 0.05em; display: inline-block; margin-top: 1.5rem; }
+        a.back:hover { text-decoration: underline; }
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto 3.5rem;
+            padding: 0 1.5rem;
+            display: grid;
+            gap: 1.8rem;
+        }
+        .panel {
+            background: rgba(15, 23, 42, 0.75);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            box-shadow: 0 20px 45px rgba(8, 15, 31, 0.35);
+        }
+        .panel h2 { font-size: 1.7rem; color: #bfdbfe; margin-bottom: 1rem; }
+        .panel p { margin-bottom: 1rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.85);
+            border-radius: 16px;
+            padding: 1.3rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        .card strong { display: block; color: #60a5fa; margin-bottom: 0.4rem; }
+        ul { padding-left: 1.2rem; }
+        li { margin-bottom: 0.5rem; }
+        footer { text-align: center; padding: 2rem 1rem 3rem; font-size: 0.9rem; opacity: 0.75; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Local AI Companions</h1>
+        <p>Our AI companions live inside the pavilion walls. They run on local hardware first, honour community consent, and only reach for cloud knowledge when the collective agrees. Here is the current architecture sketch.</p>
+        <a class="back" href="index.html">← Return to the Pavilion</a>
+    </header>
+
+    <section class="layout">
+        <article class="panel">
+            <h2>Operating Principles</h2>
+            <div class="grid">
+                <div class="card">
+                    <strong>Local First</strong>
+                    <p>Models between 1B and 7B parameters run on community-owned machines for everyday guidance.</p>
+                </div>
+                <div class="card">
+                    <strong>Consent Aware</strong>
+                    <p>Conversations are opt-in for archiving; private reflections stay on the visitor's device.</p>
+                </div>
+                <div class="card">
+                    <strong>Escalation with Accountability</strong>
+                    <p>Complex queries require a quick steward review before using shared cloud credits.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="panel">
+            <h2>Control Panel Snapshot</h2>
+            <ul>
+                <li>Switch between ultra-fast (1B), balanced (3B), and high-quality (7B) local models.</li>
+                <li>Toggle cloud assistance for research-heavy requests with transparent logging.</li>
+                <li>View live stats: tokens per second, memory footprint, and response latency.</li>
+                <li>Deploy new language packs and cultural modules curated by the community.</li>
+            </ul>
+        </article>
+
+        <article class="panel">
+            <h2>Planned Enhancements</h2>
+            <p>These are high-priority tasks for the steward circle:</p>
+            <ul>
+                <li>Offline knowledge packs for the Living Library so companions can quote sources even without connectivity.</li>
+                <li>Shared prompt notebooks, allowing visitors to gift well-crafted prompts to one another.</li>
+                <li>Mutual aid dispatcher that routes requests from the Steward Board into the AI companion workflow.</li>
+                <li>Accessibility tuning with voice-first interactions and captioned audio responses.</li>
+            </ul>
+        </article>
+    </section>
+
+    <footer>
+        Want to help build the stack? Join the open architecture sessions posted on the Steward Board.
+    </footer>
+</body>
+</html>

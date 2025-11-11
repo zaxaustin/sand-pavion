@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Pavilion — Steward Board</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #2d1f12, #51301a, #a46b2d);
+            color: #f7ede2;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            padding: 3rem 1.5rem 2rem;
+        }
+        header h1 { font-size: 3rem; margin-bottom: 0.6rem; letter-spacing: 0.08em; }
+        header p { max-width: 760px; margin: 0 auto; font-size: 1.05rem; opacity: 0.85; }
+        a.back { color: #ffd8a8; text-decoration: none; font-weight: 600; letter-spacing: 0.05em; display: inline-block; margin-top: 1.5rem; }
+        a.back:hover { text-decoration: underline; }
+        .board {
+            max-width: 1100px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+            display: grid;
+            gap: 1.8rem;
+        }
+        .panel {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 216, 168, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+        .panel h2 { font-size: 1.8rem; color: #ffd8a8; margin-bottom: 1rem; }
+        .missions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+        .mission {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.2rem;
+        }
+        .mission strong { display: block; color: #ffe5c1; margin-bottom: 0.4rem; }
+        ul { padding-left: 1.2rem; }
+        li { margin-bottom: 0.5rem; }
+        footer { text-align: center; padding: 2rem 1rem 3rem; font-size: 0.9rem; opacity: 0.75; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Steward Board</h1>
+        <p>The Steward Board is our coordination hearth. Here we post missions, gather questions, and celebrate the work done to keep the pavilion welcoming for everyone.</p>
+        <a class="back" href="index.html">← Return to the Pavilion</a>
+    </header>
+
+    <section class="board">
+        <article class="panel">
+            <h2>Active Missions</h2>
+            <div class="missions">
+                <div class="mission">
+                    <strong>30-Day Sunrise Meditation</strong>
+                    <p>Join daily dawn sittings and log reflections to inspire newcomers. Reward: 500 gratitude sparks.</p>
+                </div>
+                <div class="mission">
+                    <strong>Walk the Labyrinth Path</strong>
+                    <p>Create or locate a labyrinth, walk it mindfully, and document your insights for the Living Library.</p>
+                </div>
+                <div class="mission">
+                    <strong>Silent Retreat Weekend</strong>
+                    <p>Steward a weekend of noble silence and share accessibility tips for future hosts.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="panel">
+            <h2>Community Questions</h2>
+            <ul>
+                <li>How can we make the Sacred Spaces more accessible for mobility devices?</li>
+                <li>Which languages should the next Living Library translation circle prioritise?</li>
+                <li>What rituals help volunteers avoid burnout while holding space for others?</li>
+            </ul>
+        </article>
+
+        <article class="panel">
+            <h2>Recognition Wall</h2>
+            <ul>
+                <li><strong>ZenMaster</strong> — Guided 23 people through the Way of Mindful Presence cohort.</li>
+                <li><strong>SandSage</strong> — Recorded new soundscapes for the Sound Bath Dome.</li>
+                <li><strong>PathWalker</strong> — Built a printable labyrinth toolkit for remote walkers.</li>
+            </ul>
+        </article>
+
+        <article class="panel">
+            <h2>Next Steps</h2>
+            <ul>
+                <li>Implement rotating steward shifts so labour stays sustainable.</li>
+                <li>Integrate mission tracking with the Local AI companion dashboard.</li>
+                <li>Draft a community manifesto capturing the pavilion’s shared values.</li>
+            </ul>
+        </article>
+    </section>
+
+    <footer>
+        Add your mission or question by visiting the communal kiosk or submitting it through the Local AI companion.
+    </footer>
+</body>
+</html>
