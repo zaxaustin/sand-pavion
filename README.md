@@ -22,6 +22,31 @@ The Sand Pavilion is tended as an initiatory sect devoted to moneyless learning 
 2. Follow the guild navigation present on every page to move between realms.
 3. Prototype files in `.tsx` or additional `.html` documents capture more detailed design ideas for future iterations.
 
+## Local Companion Setup
+1. **Install a Local Model Runner**
+   - **Ollama** (macOS, Linux, Windows WSL): install from [ollama.ai](https://ollama.ai) and pull a base model such as `ollama pull mistral`. Configure GPU usage with `OLLAMA_GPU_LAYERS` if available.
+   - **LM Studio** (macOS, Windows): download the desktop app, choose a GGUF model (3B–7B works well for laptops), and enable the local HTTP server in settings.
+   - **Other Runtimes**: any llama.cpp-compatible launcher works; ensure it exposes an API endpoint on `http://localhost` so the Inner Alchemy Guide can connect.
+2. **Register the Model**
+   - Update your companion's runtime config (example forthcoming) with the model name, desired context window, and GPU preference.
+   - Test inference locally before connecting plugins: `ollama run mistral "hello"` or LM Studio's test prompt should respond without network calls.
+3. **Optional Cloud Bridge**
+   - Provide API keys only inside a local secrets vault (`config/secrets.env`) and toggle escalation explicitly in the UI or config.
+   - Every outbound request should log to a steward-visible ledger so shared credits stay accountable.
+
+## Plugin Installation & Configuration
+1. Copy example plugin manifests from `config/plugins/*.json` and adjust the paths to match your storage layout.
+2. Keep each plugin sandboxed:
+   - Set `sharing` to `device-only` unless you intentionally federate with trusted peers.
+   - Use encrypted storage paths (e.g., age, gocryptfs) for any ledger or cache location.
+3. Load plugins through the companion launcher (future CLI) or manually by referencing them in your orchestration script. Disable any manifest you do not actively need by leaving `"enabled": false`.
+4. Document steward approvals by appending signatures or hashes to the manifest before enabling a plugin in shared environments.
+
+## Privacy & Data Sovereignty Practices
+- Store conversation history and ritual notes in encrypted volumes with traveler-owned keys.
+- Rotate caches and logs regularly; offer one-click deletion from the UI and a CLI command for headless setups.
+- Favor LAN or mesh sync over cloud relays. When federation is necessary, require steward countersignature and show a printable audit trail.
+- Never assume consent—surface opt-in prompts when a plugin requests new data access or network scopes.
 ## Maintaining the Living Library
 1. **Select a public-domain text**: Confirm that the edition you wish to mirror is public domain (or explicitly licensed for redistribution). Note the translator and publication year for attribution in the lore notes.
 2. **Add the local file**: Place the text inside `assets/library/` as a UTF-8 `.txt` file. Use a descriptive, kebab-case filename (for example, `dao-de-jing-chapter-1.txt`).
@@ -34,6 +59,13 @@ The Sand Pavilion is tended as an initiatory sect devoted to moneyless learning 
 - Connect the Steward Board to live submission forms and integrate with Local AI companions for mission tracking.
 - Expand multilingual support and accessibility cues across every room.
 - Continue integrating the remaining concept files (education platform, inheritance paths builder, etc.) into the unified flow.
+- Wire plugin manifests directly into the companion shell (`local_ai_architecture.tsx`) once the Node/FS bridge lands, replacing the static demo data.
+
+## Open Questions & Resource Needs
+- **GPU + Hardware Guidance**: Need benchmarks for 7B and 13B models on common hardware (Mac M-series, modest NVIDIA GPUs) to set realistic expectations for travelers.
+- **UI Mockups**: Seeking design mockups for the plugin management console and consent prompts that align with the Pavilion aesthetic.
+- **Security Review**: Require volunteers to audit sandbox profiles and confirm manifests uphold privacy commitments.
+- **Localization**: Contributors fluent in non-English languages can help translate rituals and interface copy while keeping cultural nuance.
 
 ## Contributing
 Share ideas or new rooms by opening an issue or dropping concepts into the Steward Board. Every contribution should honour the pavilion’s ethos: generosity, respect, and collective stewardship.

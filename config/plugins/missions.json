@@ -1,0 +1,33 @@
+{
+  "id": "mission-tracker",
+  "type": "steward-ledger",
+  "enabled": false,
+  "description": "Maintains a local-first ledger of Steward Board missions and guild commitments.",
+  "mission_channels": [
+    {
+      "name": "council_dispatch",
+      "source": "steward-board://missions/current",
+      "sync_interval_minutes": 60,
+      "sharing": "device-only",
+      "requires_signature": true
+    },
+    {
+      "name": "mutual_aid_hotline",
+      "source": "mesh://aid",
+      "sync_interval_minutes": 5,
+      "sharing": "household-mesh",
+      "requires_signature": false
+    }
+  ],
+  "ledger": {
+    "storage_path": "ledgers/missions.sqlite",
+    "encryption": "age",
+    "rotation_days": 30,
+    "manual_export_allowed": true
+  },
+  "privacy_commitments": [
+    "Require steward countersignature before broadcasting mission completions to others.",
+    "Keep progress notes on-device unless the traveler toggles federation per mission.",
+    "Surface audit logs detailing which plugin touched a mission record."
+  ]
+}

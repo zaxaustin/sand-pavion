@@ -1,0 +1,33 @@
+{
+  "id": "living-library-retriever",
+  "type": "knowledge-retrieval",
+  "enabled": false,
+  "description": "Loads offline study packs into the Inner Alchemy Guide for retrieval augmented conversations.",
+  "data_sources": [
+    {
+      "name": "herbalism_compendium",
+      "path": "storage/library/herbalism.jsonl",
+      "embedding_index": "storage/library/herbalism.index",
+      "sharing": "device-only",
+      "consent_tag": "library.herbalism.v1"
+    },
+    {
+      "name": "mutual_aid_playbook",
+      "path": "storage/library/mutual_aid.md",
+      "embedding_index": null,
+      "sharing": "household-mesh",
+      "consent_tag": "library.mutual_aid.v1"
+    }
+  ],
+  "security": {
+    "requires_explicit_opt_in": true,
+    "network_access": "loopback-only",
+    "sandbox_profile": "read-only",
+    "encrypted_cache": true
+  },
+  "privacy_commitments": [
+    "Never transmit source documents without a steward-signed release.",
+    "Encrypt generated embeddings at rest using user-provided keys.",
+    "Purge cached embeddings on session end unless the traveler requests persistence."
+  ]
+}
