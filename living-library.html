@@ -80,12 +80,54 @@
         footer { text-align: center; padding: 2rem 1rem 3rem; font-size: 0.9rem; opacity: 0.75; }
         a.back { color: #ffd787; text-decoration: none; font-weight: bold; letter-spacing: 0.05em; display: inline-block; margin-top: 1.5rem; }
         a.back:hover { text-decoration: underline; }
+        .guild-nav {
+            margin: 3rem auto 0;
+            max-width: 900px;
+            padding: 1.2rem 1.5rem;
+            border-radius: 18px;
+            background: rgba(27, 26, 36, 0.85);
+            border: 1px solid rgba(255, 219, 144, 0.35);
+            display: grid;
+            gap: 0.8rem;
+        }
+        .guild-label {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.75rem;
+            color: #ffe6a7;
+            text-align: center;
+        }
+        .guild-nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.8rem;
+            padding: 0;
+            margin: 0;
+        }
+        .guild-nav a {
+            display: block;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #ffe6a7;
+            padding: 0.6rem 0.8rem;
+            border-radius: 14px;
+            background: rgba(255, 219, 144, 0.18);
+            text-align: center;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .guild-nav a:hover,
+        .guild-nav a:focus {
+            background: rgba(255, 219, 144, 0.35);
+            color: #1b1a24;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Living Library</h1>
-        <p>The Living Library blends sacred texts, comparative studies, and contemporary practice manuals. Everything is freely available, community-annotated, and paired with learning tracks so you never walk alone.</p>
+        <h1>Archivum Vitae — Living Library Guild</h1>
+        <p>The Archivum Vitae keeps our references alive. Guild scribes collect sacred texts, oral histories, and modern manuals, pairing each with notes and discussion circles so every initiate can study with guidance.</p>
         <div class="blessing-banner" aria-label="Library blessings">
             <span>✶ <em>“Peace I leave with you; my peace I give you.” — Jesus (John 14:27)</em></span>
             <span>✶ <em>“May the lamp of knowledge remove the darkness of ignorance.” — Invocation to Saraswati</em></span>
@@ -96,7 +138,7 @@
 
     <section class="shelves">
         <article class="shelf">
-            <h2>Hindu Wisdom Room</h2>
+            <h2>Shelf I · Hindu Wisdom Room</h2>
             <ul>
                 <li>Bhagavad Gita — annotated with line-by-line commentary circles.</li>
                 <li>Upanishads — audio recitations from multilingual volunteers.</li>
@@ -104,7 +146,7 @@
             </ul>
         </article>
         <article class="shelf">
-            <h2>Buddhist Insights Room</h2>
+            <h2>Shelf II · Buddhist Insights Room</h2>
             <ul>
                 <li>Dhammapada — daily verse reflections recorded by community elders.</li>
                 <li>Heart Sutra — interactive diagrams exploring emptiness teachings.</li>
@@ -112,7 +154,7 @@
             </ul>
         </article>
         <article class="shelf">
-            <h2>Comparative Studies Room</h2>
+            <h2>Shelf III · Comparative Studies Room</h2>
             <ul>
                 <li>Perennial Philosophy — roundtable discussions and notes.</li>
                 <li>World Religions — shared timelines mapping cross-tradition echoes.</li>
@@ -120,7 +162,7 @@
             </ul>
         </article>
         <article class="shelf">
-            <h2>Meditation &amp; Practice Room</h2>
+            <h2>Shelf IV · Meditation &amp; Practice Room</h2>
             <ul>
                 <li>Mindfulness Guide — printable practice cards for quick sessions.</li>
                 <li>Pranayama Techniques — annotated breath sequences with safety cues.</li>
@@ -130,7 +172,7 @@
     </section>
 
     <section class="tracks">
-        <h2>Learning Tracks</h2>
+        <h2>Guild Learning Tracks</h2>
         <div class="tracks-grid">
             <div class="track-card">
                 <strong>Beginner</strong>
@@ -170,6 +212,18 @@
         </div>
         <p style="margin-top: 1.6rem; font-size: 0.95rem; opacity: 0.75;">Next action: create ingestion scripts and citation templates, then open a pull request to add the first mirrored editions with proper metadata.</p>
     </section>
+
+    <nav class="guild-nav" aria-label="Guild ranks of the Order">
+        <p class="guild-label">Guild Ranks of the Order</p>
+        <ul>
+            <li><a href="index.html">Outer Court · Visitors</a></li>
+            <li><a href="sacred-spaces.html">Sanctum of Stillness · Sacred Spaces Guild</a></li>
+            <li><a href="journeys.html">Hall of Paths · Continuance Circle</a></li>
+            <li><a href="living-library.html">Archivum Vitae · Living Library Guild</a></li>
+            <li><a href="local-ai-companion.html">Workshop of Whispering Circuits · Companion Artificers</a></li>
+            <li><a href="steward-board.html">Council Hearth · Steward Board</a></li>
+        </ul>
+    </nav>
 
     <footer>
         Future work: digitize more oral histories, add language accessibility layers, and connect track completion with Steward Board missions. “Set your heart upon your work, never on its reward.” — Lord Krishna

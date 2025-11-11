@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Sand Pavilion</title>
+    <title>Order of the Sand Pavilion</title>
     <style>
             * {
                 margin: 0;
@@ -579,6 +579,53 @@
                 margin-bottom: 1.5rem;
             }
 
+            .guild-nav {
+                margin: 3rem auto 0;
+                max-width: 900px;
+                padding: 1.2rem 1.5rem;
+                border-radius: 18px;
+                background: rgba(0, 0, 0, 0.35);
+                border: 1px solid rgba(218, 165, 32, 0.35);
+                display: grid;
+                gap: 0.8rem;
+            }
+
+            .guild-label {
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                font-size: 0.75rem;
+                color: #ffd700;
+                text-align: center;
+            }
+
+            .guild-nav ul {
+                list-style: none;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 0.8rem;
+                padding: 0;
+                margin: 0;
+            }
+
+            .guild-nav a {
+                display: block;
+                background: rgba(218, 165, 32, 0.18);
+                color: #ffe7a9;
+                padding: 0.6rem 0.8rem;
+                border-radius: 14px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.85rem;
+                transition: background 0.3s ease, color 0.3s ease;
+                text-align: center;
+            }
+
+            .guild-nav a:hover,
+            .guild-nav a:focus {
+                background: rgba(218, 165, 32, 0.35);
+                color: #2c1810;
+            }
+
             .cta-button {
                 display: inline-block;
                 background: linear-gradient(45deg, #ffd700, #ffec8b);
@@ -630,8 +677,8 @@
 
     <div class="pavilion-container">
         <header class="header">
-            <h1 class="logo">The Sand Pavilion</h1>
-            <p class="tagline">A commons-built library of open-source knowledge, contemplative practice, and collaborative craft</p>
+            <h1 class="logo">Order of the Sand Pavilion</h1>
+            <p class="tagline">The Outer Court welcomes visitors into a moneyless sect of learning, guiding each initiate through ritual, study, craft, and shared stewardship.</p>
             <div class="blessing-ribbon" aria-label="Blessings from many teachers">
                 <span>✶ <em>“Peace I leave with you; my peace I give you.” — Jesus (John 14:27)</em></span>
                 <span>✶ <em>“Radiate boundless love towards the entire world.” — The Buddha (Metta Sutta)</em></span>
@@ -641,83 +688,92 @@
                 <input type="text" class="search-input" placeholder="Search for learning resources, tools, or topics..." id="searchInput">
             </div>
             <nav>
-                <a class="nav-link" href="#flow">Flow</a>
-                <a class="nav-link" href="#realms">Featured Realms</a>
+                <a class="nav-link" href="#path">Visitor Path</a>
+                <a class="nav-link" href="#realms">Guild Realms</a>
                 <a class="nav-link" href="#rooms">Library Rooms</a>
                 <a class="nav-link" href="#districts">Learning Districts</a>
-                <a class="nav-link" href="#membership">Members</a>
-                <a class="nav-link" href="office-hub.html">Office</a>
-                <a class="nav-link" href="member-portal.html">Login</a>
-                <a class="nav-link" href="office-hub.html">Office</a>
+                <a class="nav-link" href="#membership">Member Work</a>
+                <a class="nav-link" href="office-hub.html">Steward Office</a>
+                <a class="nav-link" href="member-portal.html">Member Portal</a>
             </nav>
         </header>
 
-        <section class="flow-section" id="flow">
+        <section class="flow-section" id="path">
             <div class="section-heading">
-                <h2 class="section-title">A Gentle Flow Through the Pavilion</h2>
-                <p class="section-subtitle">Follow the ember-lit path to explore, restore, and uplift together without the weight of commerce—only curiosity, compassion, and shared stewardship.</p>
+                <h2 class="section-title">Path of the Visitor</h2>
+                <p class="section-subtitle">Every initiate walks this six-part arc. Move at your own pace, leave offerings for the next traveler, and return often—the guilds keep their doors open.</p>
             </div>
             <div class="flow-steps">
                 <div class="flow-step">
-                    <div class="flow-step-number">1</div>
-                    <h4>Arrive &amp; Orient</h4>
-                    <p>Start with the open learning districts below—browse interactive classrooms, maker workshops, and science explorations that ignite your interests.</p>
+                    <div class="flow-step-number">I</div>
+                    <h4>Pledge at the Gate</h4>
+                    <p>Study this Outer Court map, search the commons for what you need, and learn the customs that keep the pavilion moneyless.</p>
                 </div>
                 <div class="flow-step">
-                    <div class="flow-step-number">2</div>
-                    <h4>Restore in Sacred Spaces</h4>
-                    <p>Visit the meditation chambers to breathe, journal, and reconnect with presence before venturing deeper into communal work.</p>
+                    <div class="flow-step-number">II</div>
+                    <h4>Attune in the Sanctum</h4>
+                    <p>Enter the <a href="sacred-spaces.html" class="realm-link">Sanctum of Stillness</a> to steady your breath, receive the guardians’ blessing, and ready your body for service.</p>
                 </div>
                 <div class="flow-step">
-                    <div class="flow-step-number">3</div>
-                    <h4>Walk Inheritance Paths</h4>
-                    <p>Choose multi-week journeys that weave practice, study, and mutual support—each path offers clear steps and shared milestones.</p>
+                    <div class="flow-step-number">III</div>
+                    <h4>Select an Inheritance Path</h4>
+                    <p>Visit the <a href="journeys.html" class="realm-link">Hall of Paths</a> to choose a cohort rhythm, mark your milestones, and invite accountability partners.</p>
                 </div>
                 <div class="flow-step">
-                    <div class="flow-step-number">4</div>
-                    <h4>Co-Create with Companions</h4>
-                    <p>Meet councils, local AI allies, and fellow stewards to exchange skills, host missions, and keep humanity's flame bright together.</p>
+                    <div class="flow-step-number">IV</div>
+                    <h4>Study in the Archivum</h4>
+                    <p>Gather annotated texts and oral histories within the <a href="living-library.html" class="realm-link">Archivum Vitae</a> to deepen the wisdom supporting your path.</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">V</div>
+                    <h4>Consult the Artificers</h4>
+                    <p>Work with the <a href="local-ai-companion.html" class="realm-link">Companion Artificers</a> to ready local AI tools that honour privacy and amplify your study.</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">VI</div>
+                    <h4>Report to the Council</h4>
+                    <p>Share offerings, log missions, and request aid within the <a href="steward-board.html" class="realm-link">Council Hearth</a> so stewardship remains collective.</p>
                 </div>
             </div>
         </section>
 
         <section class="featured-realms" id="realms">
             <div class="section-heading">
-                <h2 class="section-title">Featured Realms to Explore Today</h2>
-                <p class="section-subtitle">These living prototypes sketch new directions for the Sand Pavilion. Wander through them, gather feedback, and help guide the next iteration.</p>
+                <h2 class="section-title">Guild Realms Awaiting</h2>
+                <p class="section-subtitle">Each realm is held by a guild circle. Follow their invitations, listen to the lore, and leave reflections so the next cohort travels safely.</p>
             </div>
             <div class="realms-grid">
                 <article class="realm-card">
                     <div class="realm-icon">🕯️</div>
-                    <h3 class="realm-title">Sacred Spaces</h3>
-                    <p class="realm-description">A sanctuary of breathing rooms, sound bath domes, and reflection alcoves—crafted to replenish the heart before we rejoin the wider commons.</p>
+                    <h3 class="realm-title">Sanctum of Stillness · Sacred Spaces Guild</h3>
+                    <p class="realm-description">Guardians maintain breath chambers, sound domes, and dream archives so every visitor can arrive whole before offering labour.</p>
                     <div class="realm-actions">
-                        <a class="realm-link" href="sacred-spaces.html">Enter the Sanctum</a>
-                        <a class="realm-link" href="sand-pavilion-enhanced-meditationroom.html">Prototype Room</a>
+                        <a class="realm-link" href="sacred-spaces.html">Receive the Guardians' Welcome</a>
+                        <a class="realm-link" href="sand-pavilion-enhanced-meditationroom.html">Walk the Meditation Prototype</a>
                     </div>
                 </article>
                 <article class="realm-card">
                     <div class="realm-icon">📜</div>
-                    <h3 class="realm-title">Inheritance Paths</h3>
-                    <p class="realm-description">Curated journeys like “The Way of Mindful Presence” guide seekers week-by-week with practices, reflections, and communal milestones.</p>
+                    <h3 class="realm-title">Hall of Paths · Continuance Circle</h3>
+                    <p class="realm-description">Story keepers weave weekly itineraries, cohort rituals, and accountability rites that turn teachings into lived rhythm.</p>
                     <div class="realm-actions">
-                        <a class="realm-link" href="journeys.html">Preview the Paths</a>
+                        <a class="realm-link" href="journeys.html">Survey the Inheritance Scrolls</a>
                     </div>
                 </article>
                 <article class="realm-card">
                     <div class="realm-icon">📚</div>
-                    <h3 class="realm-title">Living Library</h3>
-                    <p class="realm-description">A reimagined Library of Alexandria where sacred texts, comparative studies, and learning tracks interlace for seekers at every level.</p>
+                    <h3 class="realm-title">Archivum Vitae · Living Library Guild</h3>
+                    <p class="realm-description">Archivists annotate sacred texts, record oral histories, and design study tracks that accompany every initiate’s questions.</p>
                     <div class="realm-actions">
-                        <a class="realm-link" href="living-library.html">Browse the Stacks</a>
+                        <a class="realm-link" href="living-library.html">Enter the Stacks</a>
                     </div>
                 </article>
                 <article class="realm-card">
                     <div class="realm-icon">🤖</div>
-                    <h3 class="realm-title">Local AI Companions</h3>
-                    <p class="realm-description">Blueprints for community-owned assistants that run locally, respect privacy, and know when to ask the wider network for help.</p>
+                    <h3 class="realm-title">Workshop of Whispering Circuits · Companion Artificers</h3>
+                    <p class="realm-description">Engineers craft privacy-first AI companions, calibrate language packs, and ensure every request honours communal consent.</p>
                     <div class="realm-actions">
-                        <a class="realm-link" href="local-ai-companion.html">Meet the Architecture</a>
+                        <a class="realm-link" href="local-ai-companion.html">Consult the Artificers</a>
                     </div>
                 </article>
             </div>
@@ -948,6 +1004,18 @@
             <p>Every room you visit, reflection you share, and skill you pass forward keeps this pavilion alive. Share feedback, propose a new chamber, spotlight the GitHub projects that inspire you, or steward a path so together we can build a commons free from greed.</p>
             <a class="cta-button" href="steward-board.html">Open the Steward Board</a>
         </section>
+
+        <nav class="guild-nav" aria-label="Guild ranks of the Order">
+            <p class="guild-label">Guild Ranks of the Order</p>
+            <ul>
+                <li><a href="index.html">Outer Court · Visitors</a></li>
+                <li><a href="sacred-spaces.html">Sanctum of Stillness · Sacred Spaces Guild</a></li>
+                <li><a href="journeys.html">Hall of Paths · Continuance Circle</a></li>
+                <li><a href="living-library.html">Archivum Vitae · Living Library Guild</a></li>
+                <li><a href="local-ai-companion.html">Workshop of Whispering Circuits · Companion Artificers</a></li>
+                <li><a href="steward-board.html">Council Hearth · Steward Board</a></li>
+            </ul>
+        </nav>
 
         <footer>
             Crafted with care for all who seek knowledge, healing, and solidarity. “Let your light shine before others.” — Jesus (Matthew 5:16)

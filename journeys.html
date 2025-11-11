@@ -57,18 +57,60 @@
         footer { text-align: center; padding: 2rem 1rem 3rem; font-size: 0.9rem; opacity: 0.75; }
         a.back { color: #ffe26f; text-decoration: none; font-weight: bold; letter-spacing: 0.05em; display: inline-block; margin-top: 1.5rem; }
         a.back:hover { text-decoration: underline; }
+        .guild-nav {
+            margin: 3rem auto 0;
+            max-width: 900px;
+            padding: 1.2rem 1.5rem;
+            border-radius: 18px;
+            background: rgba(31, 27, 46, 0.85);
+            border: 1px solid rgba(190, 160, 255, 0.35);
+            display: grid;
+            gap: 0.8rem;
+        }
+        .guild-label {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.75rem;
+            color: #ffe26f;
+            text-align: center;
+        }
+        .guild-nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.8rem;
+            padding: 0;
+            margin: 0;
+        }
+        .guild-nav a {
+            display: block;
+            background: rgba(190, 160, 255, 0.15);
+            color: #f5ecff;
+            padding: 0.6rem 0.8rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .guild-nav a:hover,
+        .guild-nav a:focus {
+            background: rgba(190, 160, 255, 0.35);
+            color: #1f1b2e;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Inheritance Paths</h1>
-        <p>Inheritance Paths are cooperative journeys that turn wisdom into lived practice. Each path spans several weeks, blends learning with embodiment, and invites community accountability without any exchange of money—only care.</p>
+        <h1>Hall of Paths — Continuance Circle</h1>
+        <p>The Continuance Circle keeps our teachings in motion. Each Inheritance Path is a practical itinerary—weekly prompts, community check-ins, and embodied experiments that turn wisdom into shared rhythm without any exchange of money.</p>
         <a class="back" href="index.html">← Return to the Pavilion</a>
     </header>
 
     <section class="timeline">
         <article class="path">
-            <h2>The Way of Mindful Presence</h2>
+            <h2>Path Scroll · The Way of Mindful Presence</h2>
             <div class="meta">
                 <span>Creator: ZenMaster</span>
                 <span>Duration: 12 weeks</span>
@@ -93,7 +135,7 @@
         </article>
 
         <article class="path">
-            <h2>Desert Wisdom: The Path of Stillness</h2>
+            <h2>Path Scroll · Desert Wisdom</h2>
             <div class="meta">
                 <span>Creator: SandSage</span>
                 <span>Duration: 8 weeks</span>
@@ -118,7 +160,7 @@
         </article>
 
         <article class="path">
-            <h2>Beginner's Mind: First Steps</h2>
+            <h2>Path Scroll · Beginner's Mind</h2>
             <div class="meta">
                 <span>Creator: NewPath</span>
                 <span>Duration: 4 weeks</span>
@@ -144,9 +186,21 @@
     </section>
 
     <section class="callout">
-        <h2>How Paths Evolve</h2>
-        <p>Every path is stewarded by volunteers. Once a cohort finishes, they contribute new prompts, audio guidance, or translations. Proposed future work includes a path builder, check-in reminders, and integrations with the Steward Board for mutual aid requests.</p>
+        <h2>Continuance Workbench</h2>
+        <p>After each cohort, stewards log refinements, add translations, and prototype new check-ins. Upcoming work includes a collaborative path builder, reminder system, and Steward Board integration for mutual aid requests.</p>
     </section>
+
+    <nav class="guild-nav" aria-label="Guild ranks of the Order">
+        <p class="guild-label">Guild Ranks of the Order</p>
+        <ul>
+            <li><a href="index.html">Outer Court · Visitors</a></li>
+            <li><a href="sacred-spaces.html">Sanctum of Stillness · Sacred Spaces Guild</a></li>
+            <li><a href="journeys.html">Hall of Paths · Continuance Circle</a></li>
+            <li><a href="living-library.html">Archivum Vitae · Living Library Guild</a></li>
+            <li><a href="local-ai-companion.html">Workshop of Whispering Circuits · Companion Artificers</a></li>
+            <li><a href="steward-board.html">Council Hearth · Steward Board</a></li>
+        </ul>
+    </nav>
 
     <footer>
         Ready to co-create a new path? Post your outline on the Steward Board so others can walk beside you.
