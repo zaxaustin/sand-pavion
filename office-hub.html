@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Pavilion Office</title>
+    <style>
+        :root { color-scheme: dark; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Manrope', system-ui, sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(255, 220, 150, 0.18), transparent 55%),
+                        radial-gradient(circle at 80% 0%, rgba(146, 210, 255, 0.15), transparent 50%),
+                        #0b0f1a;
+            color: #f1f6ff;
+            min-height: 100vh;
+            padding-bottom: 4rem;
+        }
+        header {
+            text-align: center;
+            padding: 3rem 1rem 1.5rem;
+        }
+        header h1 {
+            font-size: 3rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.8rem;
+        }
+        header p {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+            opacity: 0.85;
+        }
+        a.back {
+            display: inline-block;
+            margin-top: 1.6rem;
+            color: #87c2ff;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        a.back:hover { text-decoration: underline; }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .office-grid {
+            margin-top: 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+        .room {
+            background: rgba(10, 17, 32, 0.84);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid rgba(135, 194, 255, 0.25);
+            box-shadow: 0 22px 44px rgba(0, 0, 0, 0.45);
+            position: relative;
+            overflow: hidden;
+        }
+        .room::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(135, 194, 255, 0.15), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .room:hover::before { opacity: 1; }
+        .room h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #cce6ff;
+        }
+        .room p {
+            line-height: 1.6;
+            opacity: 0.85;
+            margin-bottom: 1rem;
+        }
+        .room a {
+            display: inline-block;
+            margin-right: 0.8rem;
+            margin-top: 0.4rem;
+            padding: 0.45rem 1.1rem;
+            border-radius: 999px;
+            background: rgba(135, 194, 255, 0.2);
+            color: #d8ecff;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .room a:hover {
+            background: rgba(135, 194, 255, 0.35);
+            color: #041933;
+        }
+        .roadmap {
+            margin-top: 3rem;
+            background: rgba(12, 22, 40, 0.85);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 215, 141, 0.25);
+            padding: 2.2rem;
+            box-shadow: 0 22px 40px rgba(0, 0, 0, 0.4);
+        }
+        .roadmap h2 {
+            font-size: 1.8rem;
+            color: #ffd995;
+            margin-bottom: 1rem;
+        }
+        .roadmap ul {
+            list-style: none;
+            line-height: 1.7;
+        }
+        .roadmap li + li { margin-top: 0.75rem; }
+        .roadmap strong { color: #ffe5b7; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sand Pavilion Office</h1>
+        <p>This office suite keeps track of every room we are nurturing—both the spaces we host on this site and the open collaborations blooming across the wider commons.</p>
+        <a class="back" href="index.html">← Return to the Pavilion</a>
+    </header>
+    <main>
+        <section class="office-grid">
+            <article class="room">
+                <h2>Library Wing</h2>
+                <p>Monitor ingestion work, review open-source book notes, and coordinate pull requests for mirrored editions.</p>
+                <a href="living-library.html">Living Library</a>
+                <a href="library-reading-room.html">Reading Atrium</a>
+            </article>
+            <article class="room">
+                <h2>Meditation &amp; Renewal</h2>
+                <p>Balance research with rest. Bring updates from the Meditation Hall and schedule cross-room practice sessions.</p>
+                <a href="sand-pavilion-enhanced-meditationroom.html">Meditation Hall</a>
+                <a href="sacred-spaces.html">Sacred Spaces Map</a>
+            </article>
+            <article class="room">
+                <h2>Creative Studios</h2>
+                <p>Keep drafts, scripts, and design experiments flowing between the Writing Studio and our local AI prototypes.</p>
+                <a href="writing-studio.html">Writing Studio</a>
+                <a href="local-ai-companion.html">Local AI Companion</a>
+            </article>
+            <article class="room">
+                <h2>Community Governance</h2>
+                <p>Track steward missions, office hours, and upcoming proposals that support the Pavilion’s expansion.</p>
+                <a href="steward-board.html">Steward Board</a>
+                <a href="sand-pavilion-board.tsx">Board Prototype</a>
+            </article>
+        </section>
+        <section class="roadmap">
+            <h2>Shared Roadmap</h2>
+            <ul>
+                <li><strong>Library Upload Pipeline:</strong> draft scripts that pull CC0/PD books from Standard Ebooks and Project Gutenberg, then prep a GitHub pull request to add mirrored files.</li>
+                <li><strong>Annotation Sync:</strong> coordinate the Reading Atrium with external Hypothes.is groups and log highlights for future in-house viewers.</li>
+                <li><strong>Meditation Broadcasts:</strong> schedule cross-posts between the Meditation Hall and Writing Studio audio archive.</li>
+                <li><strong>Open Source Watch:</strong> maintain a registry of external contributors supporting Sand Pavilion-inspired tools across GitHub.</li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>
