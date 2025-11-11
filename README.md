@@ -22,37 +22,13 @@ The Sand Pavilion is tended as an initiatory sect devoted to moneyless learning 
 2. Follow the guild navigation present on every page to move between realms.
 3. Prototype files in `.tsx` or additional `.html` documents capture more detailed design ideas for future iterations.
 
-## Local Companion Setup
-1. **Install a Local Model Runner**
-   - **Ollama** (macOS, Linux, Windows WSL): install from [ollama.ai](https://ollama.ai) and pull a base model such as `ollama pull mistral`. Configure GPU usage with `OLLAMA_GPU_LAYERS` if available.
-   - **LM Studio** (macOS, Windows): download the desktop app, choose a GGUF model (3B–7B works well for laptops), and enable the local HTTP server in settings.
-   - **Other Runtimes**: any llama.cpp-compatible launcher works; ensure it exposes an API endpoint on `http://localhost` so the Inner Alchemy Guide can connect.
-2. **Register the Model**
-   - Update your companion's runtime config (example forthcoming) with the model name, desired context window, and GPU preference.
-   - Test inference locally before connecting plugins: `ollama run mistral "hello"` or LM Studio's test prompt should respond without network calls.
-3. **Optional Cloud Bridge**
-   - Provide API keys only inside a local secrets vault (`config/secrets.env`) and toggle escalation explicitly in the UI or config.
-   - Every outbound request should log to a steward-visible ledger so shared credits stay accountable.
-
-## Plugin Installation & Configuration
-1. Copy example plugin manifests from `config/plugins/*.json` and adjust the paths to match your storage layout.
-2. Keep each plugin sandboxed:
-   - Set `sharing` to `device-only` unless you intentionally federate with trusted peers.
-   - Use encrypted storage paths (e.g., age, gocryptfs) for any ledger or cache location.
-3. Load plugins through the companion launcher (future CLI) or manually by referencing them in your orchestration script. Disable any manifest you do not actively need by leaving `"enabled": false`.
-4. Document steward approvals by appending signatures or hashes to the manifest before enabling a plugin in shared environments.
-
-## Privacy & Data Sovereignty Practices
-- Store conversation history and ritual notes in encrypted volumes with traveler-owned keys.
-- Rotate caches and logs regularly; offer one-click deletion from the UI and a CLI command for headless setups.
-- Favor LAN or mesh sync over cloud relays. When federation is necessary, require steward countersignature and show a printable audit trail.
-- Never assume consent—surface opt-in prompts when a plugin requests new data access or network scopes.
 ## Maintaining the Living Library
-1. **Select a public-domain text**: Confirm that the edition you wish to mirror is public domain (or explicitly licensed for redistribution). Note the translator and publication year for attribution in the lore notes.
-2. **Add the local file**: Place the text inside `assets/library/` as a UTF-8 `.txt` file. Use a descriptive, kebab-case filename (for example, `dao-de-jing-chapter-1.txt`).
-3. **Register the holding**: In `living-library.html`, duplicate an existing `.book-card` within the “Mirrored Public-Domain Holdings” section. Update the title, author, sect lesson, lore description, download/read links, and `blockquote` excerpt. Set the `data-tts-target` attribute on the control wrapper to match the excerpt’s `id`, and choose an appropriate `data-tts-lang` code for pronunciation.
-4. **Verify text-to-speech**: Open `living-library.html` in a modern browser, trigger the play/pause controls, and confirm the Web Speech API narration toggles correctly. Browsers without speech synthesis will show “Speech unavailable,” ensuring graceful fallback.
-5. **Document new rituals**: If the holding introduces a novel study practice, add a short note in the README so fellow stewards understand how to use the text in ceremony.
+1. **Install the steward server**: From the repository root run `npm install` once, then start the upload service with `npm run start:library-server`. The Express server listens on `http://localhost:4545` and manages `assets/library/catalog.json` plus the `assets/library/uploads/` directory.
+2. **Mirror a manuscript**: Visit `library-steward.html` in your browser, fill in the upload form (title, provenance, license notes, and manuscript file), and submit. The server blocks files that fail copyright checks (missing source URL, suspicious publication year, or absent licensing details). Successful uploads are stored in `assets/library/uploads/` and added to the catalog with a `pending_review` status so they stay hidden until approval.
+3. **Approve new holdings**: After verifying rights and lore notes, activate the title with a POST request to `http://localhost:4545/library/review/<book-id>/activate` (use the ID returned by the upload response). You can trigger the request through the Resolve Complaint panel in `library-steward.html` by selecting “Activate immediately.” Activated entries appear automatically inside `living-library.html` because the page now renders cards from `catalog.json`.
+4. **Update lore and metadata**: If you need to adjust the sect lesson, lore copy, or format notes, include the revised text when calling the activate endpoint or edit the entry directly inside `assets/library/catalog.json`. Keep excerpts concise—roughly 300–400 characters—to maintain accessibility for the built-in TTS controls.
+5. **Handle complaints quickly**: Use the complaint panel in `library-steward.html` (or POST to `/library/complaint`) when a rights issue is reported. The server appends the complaint to `assets/library/complaints.log`, flips the catalog status to `suspended`, and the entry disappears from the public grid. Once resolved, reinstate the book via `/library/complaint/<book-id>/resolve` with `nextStatus` set to `pending_review` or `active` depending on the outcome.
+6. **Document new rituals**: When a holding introduces a fresh study practice, add the ceremony note in the README so fellow stewards understand how to guide visitors through the text.
 
 ## Future Work
 - Build interactive versions of the realm pages (e.g., transform `journeys.html` into a fully editable path builder).
