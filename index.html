@@ -3,14 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>The Sand Pavilion</title>
-        <style>
+    <title>The Sand Pavilion</title>
+    <style>
             * {
                 margin: 0;
                 padding: 0;
@@ -237,26 +231,26 @@
             .search-input::placeholder {
                 color: rgba(245, 245, 220, 0.6);
             }
-        </style>
-    </head>
-    <body>
-        <div class="floating-particles" id="particles"></div>
-        
-        <div class="pavilion-container">
-            <header class="header">
-                <h1 class="logo">The Sand Pavilion</h1>
-                <p class="tagline">Your gateway to the hidden treasures of human knowledge</p>
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Search for learning resources, tools, or topics..." id="searchInput">
-                </div>
-            </header>
-    
-            <main class="pavilions-grid" id="pavilionsGrid">
-                <div class="pavilion" data-category="interactive-learning">
-                    <span class="pavilion-icon">🎮</span>
-                    <h3 class="pavilion-title">Interactive Learning</h3>
-                    <p class="pavilion-description">Gamified education platforms that make learning addictive and fun</p>
-                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+
+    <div class="pavilion-container">
+        <header class="header">
+            <h1 class="logo">The Sand Pavilion</h1>
+            <p class="tagline">Your gateway to the hidden treasures of human knowledge</p>
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search for learning resources, tools, or topics..." id="searchInput">
+            </div>
+        </header>
+
+        <main class="pavilions-grid" id="pavilionsGrid">
+            <div class="pavilion" data-category="interactive-learning">
+                <span class="pavilion-icon">🎮</span>
+                <h3 class="pavilion-title">Interactive Learning</h3>
+                <p class="pavilion-description">Gamified education platforms that make learning addictive and fun</p>
+                <button class="explore-btn">Explore</button>
                     <div class="resources-preview">
                         <div class="resource-item">
                             <div class="resource-title">Brilliant</div>
@@ -276,11 +270,11 @@
                     </div>
                 </div>
     
-                <div class="pavilion" data-category="open-knowledge">
-                    <span class="pavilion-icon">📚</span>
-                    <h3 class="pavilion-title">Open Knowledge</h3>
-                    <p class="pavilion-description">Free access to humanity's accumulated wisdom and research</p>
-                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+            <div class="pavilion" data-category="open-knowledge">
+                <span class="pavilion-icon">📚</span>
+                <h3 class="pavilion-title">Open Knowledge</h3>
+                <p class="pavilion-description">Free access to humanity's accumulated wisdom and research</p>
+                <button class="explore-btn">Explore</button>
                     <div class="resources-preview">
                         <div class="resource-item">
                             <div class="resource-title">Internet Archive</div>
@@ -300,11 +294,11 @@
                     </div>
                 </div>
     
-                <div class="pavilion" data-category="creative-tools">
-                    <span class="pavilion-icon">🎨</span>
-                    <h3 class="pavilion-title">Creative Workshop</h3>
-                    <p class="pavilion-description">Free tools and tutorials for digital creation and artistic expression</p>
-                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+            <div class="pavilion" data-category="creative-tools">
+                <span class="pavilion-icon">🎨</span>
+                <h3 class="pavilion-title">Creative Workshop</h3>
+                <p class="pavilion-description">Free tools and tutorials for digital creation and artistic expression</p>
+                <button class="explore-btn">Explore</button>
                     <div class="resources-preview">
                         <div class="resource-item">
                             <div class="resource-title">Blender</div>
@@ -324,11 +318,11 @@
                     </div>
                 </div>
     
-                <div class="pavilion" data-category="science-exploration">
-                    <span class="pavilion-icon">🔬</span>
-                    <h3 class="pavilion-title">Science Exploration</h3>
-                    <p class="pavilion-description">Interactive simulations, visualizations, and scientific discoveries</p>
-                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+            <div class="pavilion" data-category="science-exploration">
+                <span class="pavilion-icon">🔬</span>
+                <h3 class="pavilion-title">Science Exploration</h3>
+                <p class="pavilion-description">Interactive simulations, visualizations, and scientific discoveries</p>
+                <button class="explore-btn">Explore</button>
                     <div class="resources-preview">
                         <div class="resource-item">
                             <div class="resource-title">PhET Simulations</div>
@@ -348,11 +342,11 @@
                     </div>
                 </div>
     
-                <div class="pavilion" data-category="maker-space">
-                    <span class="pavilion-icon">🔧</span>
-                    <h3 class="pavilion-title">Maker Space</h3>
-                    <p class="pavilion-description">DIY projects, electronics, 3D printing, and hands-on learning</p>
-                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+            <div class="pavilion" data-category="maker-space">
+                <span class="pavilion-icon">🔧</span>
+                <h3 class="pavilion-title">Maker Space</h3>
+                <p class="pavilion-description">DIY projects, electronics, 3D printing, and hands-on learning</p>
+                <button class="explore-btn">Explore</button>
                     <div class="resources-preview">
                         <div class="resource-item">
                             <div class="resource-title">Instructables</div>
@@ -372,11 +366,11 @@
                     </div>
                 </div>
     
-                <div class="pavilion" data-category="community-learning">
-                    <span class="pavilion-icon">👥</span>
-                    <h3 class="pavilion-title">Learning Communities</h3>
-                    <p class="pavilion-description">Forums, communities, and collaborative spaces for shared knowledge</p>
-                    <button class="explore-btn" onclick="togglePavilion(this)">Explore</button>
+            <div class="pavilion" data-category="community-learning">
+                <span class="pavilion-icon">👥</span>
+                <h3 class="pavilion-title">Learning Communities</h3>
+                <p class="pavilion-description">Forums, communities, and collaborative spaces for shared knowledge</p>
+                <button class="explore-btn">Explore</button>
                     <div class="resources-preview">
                         <div class="resource-item">
                             <div class="resource-title">Stack Overflow</div>
@@ -395,86 +389,88 @@
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
-    
-        <script>
-            // Create floating particles
-            function createParticles() {
-                const particlesContainer = document.getElementById('particles');
-                for (let i = 0; i < 20; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.top = Math.random() * 100 + '%';
-                    particle.style.animationDelay = Math.random() * 6 + 's';
-                    particlesContainer.appendChild(particle);
-                }
+        </main>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particlesContainer.appendChild(particle);
             }
-    
-            function togglePavilion(button) {
-                const pavilion = button.closest('.pavilion');
-                const isExpanded = pavilion.classList.contains('expanded');
-                
-                // Close all other pavilions
-                document.querySelectorAll('.pavilion.expanded').forEach(p => {
-                    p.classList.remove('expanded');
-                    p.querySelector('.explore-btn').textContent = 'Explore';
-                });
-                
-                if (!isExpanded) {
-                    pavilion.classList.add('expanded');
-                    button.textContent = 'Collapse';
-                } else {
-                    button.textContent = 'Explore';
-                }
-            }
-    
-            // Search functionality
-            function setupSearch() {
-                const searchInput = document.getElementById('searchInput');
-                const pavilions = document.querySelectorAll('.pavilion');
-    
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    
-                    pavilions.forEach(pavilion => {
-                        const title = pavilion.querySelector('.pavilion-title').textContent.toLowerCase();
-                        const description = pavilion.querySelector('.pavilion-description').textContent.toLowerCase();
-                        const resources = Array.from(pavilion.querySelectorAll('.resource-title, .resource-desc')).map(el => el.textContent.toLowerCase()).join(' ');
-                        
-                        const matches = title.includes(searchTerm) || description.includes(searchTerm) || resources.includes(searchTerm);
-                        
-                        if (matches || searchTerm === '') {
-                            pavilion.style.display = 'block';
-                            pavilion.style.opacity = '1';
-                        } else {
-                            pavilion.style.display = 'none';
-                            pavilion.style.opacity = '0.3';
-                        }
-                    });
-                });
-            }
-    
-            // Initialize everything
-            document.addEventListener('DOMContentLoaded', () => {
-                createParticles();
-                setupSearch();
+        }
+
+        function togglePavilion(button) {
+            const pavilion = button.closest('.pavilion');
+            const isExpanded = pavilion.classList.contains('expanded');
+
+            // Close all other pavilions
+            document.querySelectorAll('.pavilion.expanded').forEach(p => {
+                p.classList.remove('expanded');
+                p.querySelector('.explore-btn').textContent = 'Explore';
             });
-    
-            // Add some interactive hover effects
+
+            if (!isExpanded) {
+                pavilion.classList.add('expanded');
+                button.textContent = 'Collapse';
+            } else {
+                button.textContent = 'Explore';
+            }
+        }
+
+        // Search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const pavilions = document.querySelectorAll('.pavilion');
+
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+
+                pavilions.forEach(pavilion => {
+                    const title = pavilion.querySelector('.pavilion-title').textContent.toLowerCase();
+                    const description = pavilion.querySelector('.pavilion-description').textContent.toLowerCase();
+                    const resources = Array.from(pavilion.querySelectorAll('.resource-title, .resource-desc')).map(el => el.textContent.toLowerCase()).join(' ');
+
+                    const matches = title.includes(searchTerm) || description.includes(searchTerm) || resources.includes(searchTerm);
+
+                    if (matches || searchTerm === '') {
+                        pavilion.style.display = 'block';
+                        pavilion.style.opacity = '1';
+                    } else {
+                        pavilion.style.display = 'none';
+                        pavilion.style.opacity = '0.3';
+                    }
+                });
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            setupSearch();
+
             document.querySelectorAll('.pavilion').forEach(pavilion => {
                 pavilion.addEventListener('mouseenter', () => {
                     pavilion.style.transform = 'translateY(-5px) scale(1.02)';
                 });
-                
+
                 pavilion.addEventListener('mouseleave', () => {
                     if (!pavilion.classList.contains('expanded')) {
                         pavilion.style.transform = 'translateY(0) scale(1)';
                     }
                 });
             });
-        </script>
-    </body>
-    </html>
+
+            document.querySelectorAll('.explore-btn').forEach(button => {
+                button.addEventListener('click', () => togglePavilion(button));
+            });
+        });
+    </script>
+</body>
 </html>
