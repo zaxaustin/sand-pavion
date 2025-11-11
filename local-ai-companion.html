@@ -98,11 +98,34 @@
 <body>
     <header>
         <h1>Workshop of Whispering Circuits — Companion Artificers</h1>
-        <p>The Companion Artificers steward privacy-first assistants that serve every guild. Systems start local, escalate only with consent, and document their workings so stewards can verify each safeguard.</p>
+        <p>The Companion Artificers tend the Inner Alchemy Guide—an advisor voice that whispers from a device you fully own. Every session begins with a local ritual, keeps counsel on your hardware, and only seeks outside help when the steward beside you grants consent.</p>
+        <p style="margin-top: 1rem; max-width: 760px; margin-left: auto; margin-right: auto; opacity: 0.85;">
+            Think of the Guide as a constellation of instruments you conduct yourself: a local model humming beside your breathing, plugins that unlock the guild’s libraries, and optional bridges to the Steward Cloud that stay dark unless you flip the switch.
+        </p>
         <a class="back" href="index.html">← Return to the Pavilion</a>
     </header>
 
     <section class="layout">
+        <!-- NOTE: When the React companion shell is production-ready, replace this static narration with live snippets from the running app. -->
+        <article class="panel">
+            <h2>How the Inner Alchemy Guide Stays Local-First</h2>
+            <p>Imagine the advisor as a circle of nested wards. The innermost ring is your device: encrypted notebooks, local language models, and rituals that never leave your care. The second ring is your household or guild—optional peers who trade updates over mesh or LAN when you invite them. The outermost ring is the Steward Cloud, contacted only for tasks you explicitly mark as safe to share.</p>
+            <div class="grid">
+                <div class="card">
+                    <strong>Daily Practice</strong>
+                    <p>The Guide wakes a small model (3B by default) through Ollama or LM Studio, reads only from local knowledge packs, and logs reflections to an encrypted journal that you can delete at any time.</p>
+                </div>
+                <div class="card">
+                    <strong>When Help Is Needed</strong>
+                    <p>If a question requires broader research, a consent prompt surfaces. Accepting it queues the request for a steward-reviewed relay or your own cloud key; declining keeps the exchange offline.</p>
+                </div>
+                <div class="card">
+                    <strong>Practical Safeguards</strong>
+                    <p>Network traffic defaults to loopback, sandboxed plugins must declare their data use, and every session ships a printable ledger so companions remain accountable to their human caretakers.</p>
+                </div>
+            </div>
+        </article>
+
         <article class="panel">
             <h2>Guild Operating Vows</h2>
             <div class="grid">
@@ -119,6 +142,17 @@
                     <p>Complex queries require a quick steward review before using shared cloud credits.</p>
                 </div>
             </div>
+        </article>
+
+        <article class="panel">
+            <h2>Local-First Architecture in Practice</h2>
+            <p>These are the practical pathways for keeping sovereignty intact while still inviting collaboration.</p>
+            <ul>
+                <li><strong>Local model orchestration:</strong> The React shell in <code>local_ai_architecture.tsx</code> will eventually load manifests from <code>config/plugins</code> so the UI mirrors what is running on disk.</li>
+                <li><strong>Runtime manifests:</strong> Sample files such as <code>config/plugins/library.json</code> and <code>config/plugins/rituals.json</code> show how every plugin declares storage paths, consent tags, and sandbox expectations before activation.</li>
+                <li><strong>Consent ledger:</strong> Outbound calls move through a steward-reviewed queue. Until the CLI lands, keep a written ledger with timestamps and signatures for every network escalation.</li>
+                <li><strong>Mesh-ready sync:</strong> When guild mates connect over LAN, only anonymized status beacons leave the device—mission specifics remain encrypted unless all parties unlock them.</li>
+            </ul>
         </article>
 
         <article class="panel">

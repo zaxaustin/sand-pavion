@@ -1,0 +1,37 @@
+{
+  "id": "voice-sync",
+  "type": "tts",
+  "enabled": false,
+  "description": "Coordinates local text-to-speech playback and captioning for the Inner Alchemy Guide.",
+  "voices": [
+    {
+      "name": "ember",
+      "engine": "piper",
+      "model_path": "voices/piper/en_EMBER-medium.onnx",
+      "sampling_rate": 22050,
+      "sharing": "device-only"
+    },
+    {
+      "name": "stream",
+      "engine": "coqui",
+      "model_path": "voices/coqui/stream-vits",
+      "sampling_rate": 44100,
+      "sharing": "device-only"
+    }
+  ],
+  "playback": {
+    "caption_output_path": "voices/captions/",
+    "default_voice": "ember",
+    "fallback_mode": "text-only"
+  },
+  "security": {
+    "network_access": "none",
+    "requires_microphone": false,
+    "cache_recordings": false
+  },
+  "privacy_commitments": [
+    "Never upload recordings or transcripts unless the traveler performs a manual export.",
+    "Regenerate audio on demand instead of storing completed rituals by default.",
+    "Display visual indicators whenever audio playback is active."
+  ]
+}

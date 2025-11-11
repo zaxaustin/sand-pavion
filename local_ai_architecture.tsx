@@ -1,5 +1,59 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Brain, Cloud, Cpu, Settings, Download, Play, Code, Users } from 'lucide-react';
+import { Send, Brain, Cloud, Cpu, Settings, Code, Users } from 'lucide-react';
+
+type PluginSlot = {
+  id: string;
+  title: string;
+  borderClass: string;
+  titleClass: string;
+  description: string;
+  configPath: string;
+  futureHook: string;
+};
+
+// NOTE: Keep slot metadata in sync with config/plugins manifests. This array will be replaced by runtime loading logic.
+const pluginSlots: PluginSlot[] = [
+  {
+    id: 'knowledge-retrieval',
+    title: 'Knowledge Retrieval',
+    borderClass: 'border-purple-300',
+    titleClass: 'text-purple-700',
+    description:
+      'Mount library packs, wire into retrieval-augmented prompts, and respect consent flags before querying.',
+    configPath: 'config/plugins/library.json',
+    futureHook: 'TODO: replace mock data with manifest-driven slot wiring via filesystem bridge.'
+  },
+  {
+    id: 'ritual-guidance',
+    title: 'Ritual Guidance',
+    borderClass: 'border-blue-300',
+    titleClass: 'text-blue-700',
+    description:
+      'Load breathwork or meditation scripts, stream them to the assistant UI, and log completions locally only.',
+    configPath: 'config/plugins/rituals.json',
+    futureHook: 'TODO: integrate with scheduler + encrypted journal once storage adapters are defined.'
+  },
+  {
+    id: 'mission-tracking',
+    title: 'Mission Tracking',
+    borderClass: 'border-green-300',
+    titleClass: 'text-green-700',
+    description:
+      'Sync Steward Board dispatches, append updates to a local ledger, and expose opt-in federation hooks.',
+    configPath: 'config/plugins/missions.json',
+    futureHook: 'NOTE: requires ledger signer service—keep API purely local until multi-user auth lands.'
+  },
+  {
+    id: 'voice-sync',
+    title: 'Voice / TTS Sync',
+    borderClass: 'border-orange-300',
+    titleClass: 'text-orange-700',
+    description:
+      'Read speaker settings, trigger local TTS, and surface captions plus playback controls for accessibility.',
+    configPath: 'config/plugins/voice.json',
+    futureHook: 'NOTE: Piper/Coqui bridge goes here—ensure offline voice packs are declared in manifest.'
+  }
+];
 
 const LocalAIArchitecture = () => {
   const [messages, setMessages] = useState([
@@ -14,6 +68,14 @@ const LocalAIArchitecture = () => {
     memoryUsage: '2.1 GB',
     responseTime: '120ms'
   });
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    // NOTE: keep auto-scroll for demo parity with the HTML mock; swap for virtualized list once logs grow.
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -61,8 +123,8 @@ const LocalAIArchitecture = () => {
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                  msg.role === 'user' 
-                    ? 'bg-purple-600 text-white' 
+                  msg.role === 'user'
+                    ? 'bg-purple-600 text-white'
                     : msg.role === 'system'
                     ? 'bg-blue-100 text-blue-800 text-center w-full'
                     : 'bg-white shadow-md'
@@ -71,6 +133,7 @@ const LocalAIArchitecture = () => {
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
@@ -174,13 +237,13 @@ const LocalAIArchitecture = () => {
           {/* Architecture Overview */}
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <h3 className="font-bold text-lg mb-4">Architecture</h3>
-            
+
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-2 p-2 bg-purple-50 rounded">
                 <Cpu className="w-4 h-4 text-purple-600" />
                 <span>Local Model ({modelSize})</span>
               </div>
-              
+
               {useCloud && (
                 <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
                   <Cloud className="w-4 h-4 text-blue-600" />
@@ -197,6 +260,26 @@ const LocalAIArchitecture = () => {
                 <Users className="w-4 h-4 text-orange-600" />
                 <span>Community Contributions</span>
               </div>
+            </div>
+          </div>
+
+          {/* Plugin Slots: placeholder cards showing future integration points */}
+          <div className="bg-white rounded-2xl shadow-xl p-6">
+            <h3 className="font-bold text-lg mb-4">Plugin Orbit</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Each plugin is sandboxed, declares its data needs, and only activates after explicit steward approval.
+            </p>
+            <div className="space-y-4">
+              {pluginSlots.map((slot) => (
+                <div key={slot.id} className={`border border-dashed rounded-xl p-4 ${slot.borderClass}`}>
+                  <h4 className={`font-semibold ${slot.titleClass}`}>{slot.title}</h4>
+                  <p className="text-sm text-gray-600">{slot.description}</p>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Manifest: <code>{slot.configPath}</code>
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">{slot.futureHook}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
