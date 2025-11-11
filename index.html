@@ -350,6 +350,69 @@
                 padding: 1rem;
             }
 
+            .rooms-section {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 3rem 1rem 1rem;
+            }
+
+            .rooms-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .room-card {
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px solid rgba(218, 165, 32, 0.35);
+                border-radius: 18px;
+                padding: 1.6rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.9rem;
+                transition: transform 0.3s ease, border-color 0.3s ease;
+            }
+
+            .room-card:hover {
+                transform: translateY(-6px);
+                border-color: rgba(218, 165, 32, 0.6);
+            }
+
+            .room-card h3 {
+                font-size: 1.3rem;
+                color: #ffd700;
+            }
+
+            .room-card p {
+                font-size: 0.95rem;
+                opacity: 0.78;
+                line-height: 1.6;
+            }
+
+            .room-links {
+                margin-top: auto;
+                display: flex;
+                gap: 0.8rem;
+                flex-wrap: wrap;
+            }
+
+            .room-link {
+                display: inline-block;
+                background: rgba(218, 165, 32, 0.22);
+                color: #ffd700;
+                padding: 0.45rem 1rem;
+                border-radius: 18px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.85rem;
+                transition: background 0.3s ease, color 0.3s ease;
+            }
+
+            .room-link:hover {
+                background: rgba(218, 165, 32, 0.45);
+                color: #2c1810;
+            }
+
             .realms-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -478,14 +541,16 @@
     <div class="pavilion-container">
         <header class="header">
             <h1 class="logo">The Sand Pavilion</h1>
-            <p class="tagline">Your gateway to the hidden treasures of human knowledge</p>
+            <p class="tagline">A commons-built library of open-source knowledge, contemplative practice, and collaborative craft</p>
             <div class="search-bar">
                 <input type="text" class="search-input" placeholder="Search for learning resources, tools, or topics..." id="searchInput">
             </div>
             <nav>
                 <a class="nav-link" href="#flow">Flow</a>
                 <a class="nav-link" href="#realms">Featured Realms</a>
+                <a class="nav-link" href="#rooms">Library Rooms</a>
                 <a class="nav-link" href="#districts">Learning Districts</a>
+                <a class="nav-link" href="office-hub.html">Office</a>
             </nav>
         </header>
 
@@ -555,6 +620,50 @@
                     <p class="realm-description">Blueprints for community-owned assistants that run locally, respect privacy, and know when to ask the wider network for help.</p>
                     <div class="realm-actions">
                         <a class="realm-link" href="local-ai-companion.html">Meet the Architecture</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="rooms-section" id="rooms">
+            <div class="section-heading">
+                <h2 class="section-title">In-House Reading Rooms &amp; Studios</h2>
+                <p class="section-subtitle">These are the chambers we steward directly—quiet spaces for studying open books, reflecting together, and coordinating the work that lives both inside the Pavilion and across GitHub.</p>
+            </div>
+            <div class="rooms-grid">
+                <article class="room-card">
+                    <h3>Living Library</h3>
+                    <p>Browse curated shelves, review open-source book notes, and mark which public-domain editions we will mirror next.</p>
+                    <div class="room-links">
+                        <a class="room-link" href="living-library.html">Explore the Shelves</a>
+                    </div>
+                </article>
+                <article class="room-card">
+                    <h3>Reading &amp; Analysis Atrium</h3>
+                    <p>Host communal read-throughs, coordinate annotations, and prepare pull requests that share mirrored editions with proper licensing.</p>
+                    <div class="room-links">
+                        <a class="room-link" href="library-reading-room.html">Enter the Atrium</a>
+                    </div>
+                </article>
+                <article class="room-card">
+                    <h3>Writing Studio</h3>
+                    <p>Transform study notes into essays, zines, and scripts that circulate through the Pavilion and acknowledge the commons we draw from.</p>
+                    <div class="room-links">
+                        <a class="room-link" href="writing-studio.html">Visit the Studio</a>
+                    </div>
+                </article>
+                <article class="room-card">
+                    <h3>Meditation Hall</h3>
+                    <p>Link breathwork, soundscapes, and reflective pauses to each reading cycle so scholarship stays rooted in care.</p>
+                    <div class="room-links">
+                        <a class="room-link" href="sand-pavilion-enhanced-meditationroom.html">Begin a Session</a>
+                    </div>
+                </article>
+                <article class="room-card">
+                    <h3>Office Suite</h3>
+                    <p>Track stewardship tasks, cross-link GitHub projects, and celebrate contributions happening beyond our walls.</p>
+                    <div class="room-links">
+                        <a class="room-link" href="office-hub.html">Open the Office</a>
                     </div>
                 </article>
             </div>
@@ -714,7 +823,7 @@
 
         <section class="call-to-action">
             <h2 class="section-title">Hold the Flame With Us</h2>
-            <p>Every room you visit, reflection you share, and skill you pass forward keeps this pavilion alive. Share feedback, propose a new chamber, or steward a path so together we can build a commons free from greed.</p>
+            <p>Every room you visit, reflection you share, and skill you pass forward keeps this pavilion alive. Share feedback, propose a new chamber, spotlight the GitHub projects that inspire you, or steward a path so together we can build a commons free from greed.</p>
             <a class="cta-button" href="steward-board.html">Open the Steward Board</a>
         </section>
 

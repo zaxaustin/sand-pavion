@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Pavilion — Writing Studio</title>
+    <style>
+        :root { color-scheme: dark; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Source Sans Pro', system-ui, sans-serif;
+            background: linear-gradient(140deg, #120c16, #2b1530, #4b284f);
+            color: #fdf3ff;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            padding: 3.5rem 1rem 2rem;
+        }
+        header h1 {
+            font-size: 2.9rem;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.8rem;
+        }
+        header p {
+            max-width: 760px;
+            margin: 0 auto;
+            line-height: 1.7;
+            opacity: 0.85;
+        }
+        a.back {
+            display: inline-block;
+            margin-top: 1.8rem;
+            color: #f7b4ff;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        a.back:hover { text-decoration: underline; }
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+            display: grid;
+            gap: 2.3rem;
+        }
+        section {
+            background: rgba(28, 15, 37, 0.82);
+            border: 1px solid rgba(247, 180, 255, 0.3);
+            border-radius: 22px;
+            padding: 2rem;
+            box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
+        }
+        section h2 {
+            font-size: 1.7rem;
+            color: #ffd6ff;
+            margin-bottom: 1rem;
+        }
+        section p, section li {
+            font-size: 1rem;
+            line-height: 1.7;
+            opacity: 0.9;
+        }
+        ul { list-style: none; margin-top: 1rem; }
+        li + li { margin-top: 0.75rem; }
+        .columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.4rem;
+            margin-top: 1.2rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 214, 255, 0.25);
+        }
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #ffe1ff;
+        }
+        .note {
+            margin-top: 1.4rem;
+            padding: 1rem 1.2rem;
+            background: rgba(255, 214, 255, 0.12);
+            border-left: 3px solid rgba(255, 214, 255, 0.6);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .external {
+            color: #94f0ff;
+            text-decoration: none;
+        }
+        .external:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The Writing Studio</h1>
+        <p>A creative chamber where readers become scribes. Draft reflections, remix public-domain texts, and craft essays that honor the voices inside the Sand Pavilion.</p>
+        <a class="back" href="index.html">← Return to the Pavilion</a>
+    </header>
+    <main>
+        <section>
+            <h2>Collaborative Draft Tables</h2>
+            <p>Open pads and GitHub-backed notebooks invite co-authored commentary, translation projects, and newsletter releases.</p>
+            <ul>
+                <li>Pair with the Reading Atrium to summarize weekly study circles.</li>
+                <li>Link drafts directly to <a class="external" href="steward-board.html">Steward Board</a> proposals.</li>
+                <li>Use open-source editors (Etherpad, HedgeDoc) for synchronous writing jams.</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Publishing Lane</h2>
+            <div class="columns">
+                <div class="card">
+                    <h3>Commons Journals</h3>
+                    <p>Prepare zines and research digests derived from public-domain sources. Track citations according to the Open-Source Book Notes.</p>
+                </div>
+                <div class="card">
+                    <h3>Audio &amp; Script Library</h3>
+                    <p>Share scripts used in the Broadcast Booth and keep CC-licensed recordings organized for reuse.</p>
+                </div>
+                <div class="card">
+                    <h3>Translation Queue</h3>
+                    <p>Coordinate translators and cross-check with Wikisource/Wikibooks for attribution requirements.</p>
+                </div>
+            </div>
+            <div class="note">Upcoming enhancement: create a GitHub workflow that turns Markdown drafts into web-ready HTML, then submit a pull request to publish seasonal anthologies.</div>
+        </section>
+        <section>
+            <h2>Writer's Reflection Niche</h2>
+            <p>Daily prompts, meditation timers, and gratitude logs keep creativity grounded. Connect with the Meditation Room for breathing sequences between writing sprints.</p>
+            <ul>
+                <li>Sync prompts with the <a class="external" href="sand-pavilion-enhanced-meditationroom.html">Meditation Hall</a>.</li>
+                <li>Plan future integrations with the Local AI Companion for custom prompt generation.</li>
+                <li>Archive reflections in the Living Library for future researchers.</li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>
