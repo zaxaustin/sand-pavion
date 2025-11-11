@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, User, Home, Menu, X, Play, BookMarked, TrendingUp } from 'lucide-react';
+import { BookOpen, User, Home, Menu, X, Play, BookMarked, TrendingUp, Sparkles } from 'lucide-react';
 
 export default function SpiritualLibrary() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -19,6 +19,39 @@ export default function SpiritualLibrary() {
     { level: 'Beginner', description: 'Introduction to Eastern Philosophy', lessons: 8 },
     { level: 'Intermediate', description: 'Deep Dive into Sacred Texts', lessons: 12 },
     { level: 'Advanced', description: 'Comparative Analysis & Practice', lessons: 15 }
+  ];
+
+  const aiPlugins = [
+    {
+      id: 'summary-scribe',
+      title: 'Scribe of Echoes',
+      purpose: 'Summarizes key passages and composes luminous recaps to close each study vigil.',
+      rituals: [
+        'Highlight a paragraph and request a three-sentence retelling anchored to guild lore.',
+        'Schedule end-of-session reflections that gather questions for the next circle.',
+        'Export offline-friendly summaries that can be stored with the steward archives.'
+      ]
+    },
+    {
+      id: 'koan-weaver',
+      title: 'Koan Weaver',
+      purpose: "Transforms readings into gentle, layered prompts that mimic a mentor's inquiry.",
+      rituals: [
+        'Offer one warm-up question, one paradox, and one action challenge per excerpt.',
+        'Track which prompts a visitor resolves to adapt the next session’s depth.',
+        'Blend multiple traditions to show the resonance between guild rooms.'
+      ]
+    },
+    {
+      id: 'guardian-of-voices',
+      title: 'Guardian of Voices',
+      purpose: 'Validates pronunciations and phonetic hints before a TTS session begins.',
+      rituals: [
+        'Surface transliteration notes for Sanskrit, Pāli, and Classical Chinese terms.',
+        'Preview the speech synthesis voice and allow a visitor to tweak pacing offline.',
+        'Flag verses that might require a human elder for sensitive interpretation.'
+      ]
+    }
   ];
 
   const HomePage = () => (
@@ -141,6 +174,40 @@ export default function SpiritualLibrary() {
             </button>
           </div>
         )}
+
+        <section className="mt-12 bg-white/10 backdrop-blur-sm rounded-2xl border border-amber-400/30 p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <Sparkles className="w-8 h-8 text-amber-200" />
+            <div>
+              <h3 className="text-3xl font-bold text-amber-200">AI Study Prompt Loom</h3>
+              <p className="text-amber-100/80">Concept sketches for local LLM plugins that stay offline yet help each seeker reflect.</p>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {aiPlugins.map((plugin) => (
+              <article key={plugin.id} className="bg-black/30 rounded-xl border border-amber-200/20 p-6 flex flex-col">
+                <header className="mb-4">
+                  <h4 className="text-2xl font-semibold text-amber-100">{plugin.title}</h4>
+                  <p className="text-amber-100/70 text-sm uppercase tracking-wide">{plugin.purpose}</p>
+                </header>
+                <ul className="space-y-3 text-amber-50/80 text-sm flex-1">
+                  {plugin.rituals.map((ritual, index) => (
+                    <li key={index} className="bg-white/5 border border-amber-300/20 rounded-lg p-3">{ritual}</li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  className="mt-6 inline-flex items-center justify-center rounded-lg bg-amber-600 text-white px-4 py-2 font-medium hover:bg-amber-700 transition"
+                >
+                  Mark for Local Prototype
+                </button>
+              </article>
+            ))}
+          </div>
+          <p className="mt-6 text-sm text-amber-100/70">
+            Implementation note: each module will point to a local LLM service exposed via the Companion Artificers’ plugin API. The scaffolding here describes the prompt choreography so engineers can map UI events to offline inference hooks in a later sprint.
+          </p>
+        </section>
       </div>
     </div>
   );
