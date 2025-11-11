@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Companion Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .companion-container {
+            width: 400px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .companion-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .companion-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .companion-status {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .companion-visual {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 40px;
+        }
+
+        .companion-character {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .companion-character.listening {
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .companion-character.speaking {
+            animation: speak 0.8s infinite alternate;
+        }
+
+        .companion-character.thinking {
+            animation: think 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes speak {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.02) rotate(2deg); }
+        }
+
+        @keyframes think {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            max-width: 200px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(255, 255, 255, 0.95);
+        }
+
+        .voice-controls {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .voice-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .voice-button.active {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            animation: pulse 1s infinite;
+        }
+
+        .voice-status {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quick-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .waveform {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .waveform.show {
+            opacity: 1;
+        }
+
+        .wave-bar {
+            width: 3px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 2px;
+            animation: wave 1.2s infinite ease-in-out;
+        }
+
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes wave {
+            0%, 40%, 100% { transform: scaleY(1); }
+            20% { transform: scaleY(2); }
+        }
+
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 8s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Character variations */
+        .character-robot::before {
+            content: '🤖';
+        }
+
+        .character-fairy::before {
+            content: '🧚‍♀️';
+        }
+
+        .character-orb::before {
+            content: '⭐';
+        }
+
+        .character-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .character-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .character-option.active {
+            border-color: white;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .settings-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            opacity: 0.5;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="companion-container">
+        <!-- Character selector -->
+        <div class="character-selector">
+            <div class="character-option active" data-character="robot">🤖</div>
+            <div class="character-option" data-character="fairy">🧚‍♀️</div>
+            <div class="character-option" data-character="orb">⭐</div>
+        </div>
+
+        <!-- Header -->
+        <div class="companion-header">
+            <div class="companion-name" id="companionName">Alex</div>
+            <div class="companion-status" id="companionStatus">Ready to help</div>
+        </div>
+
+        <!-- Visual companion -->
+        <div class="companion-visual">
+            <div class="floating-particles" id="particles"></div>
+            
+            <div class="companion-character character-robot" id="companionCharacter">
+                <div class="speech-bubble" id="speechBubble">Hello! How can I help you today?</div>
+                <div class="waveform" id="waveform">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voice controls -->
+        <div class="voice-controls">
+            <button class="voice-button" id="voiceButton">🎤</button>
+            <div class="voice-status" id="voiceStatus">Tap to speak</div>
+            
+            <div class="quick-actions">
+                <button class="quick-action" onclick="quickAction('schedule')">Schedule</button>
+                <button class="quick-action" onclick="quickAction('reminder')">Remind Me</button>
+                <button class="quick-action" onclick="quickAction('focus')">Focus Time</button>
+            </div>
+        </div>
+
+        <div class="settings-hint">
+            Voice recognition works best in quiet environments
+        </div>
+    </div>
+
+    <script>
+        class AICompanion {
+            constructor() {
+                this.isListening = false;
+                this.isSpeaking = false;
+                this.currentCharacter = 'robot';
+                this.companionName = 'Alex';
+                
+                this.voiceButton = document.getElementById('voiceButton');
+                this.voiceStatus = document.getElementById('voiceStatus');
+                this.companionCharacter = document.getElementById('companionCharacter');
+                this.speechBubble = document.getElementById('speechBubble');
+                this.waveform = document.getElementById('waveform');
+                this.companionStatus = document.getElementById('companionStatus');
+                
+                this.setupEventListeners();
+                this.createParticles();
+                this.startIdleAnimation();
+            }
+            
+            setupEventListeners() {
+                this.voiceButton.addEventListener('click', () => this.toggleVoice());
+                
+                // Character selector
+                document.querySelectorAll('.character-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        this.changeCharacter(e.target.dataset.character);
+                    });
+                });
+            }
+            
+            toggleVoice() {
+                if (this.isListening) {
+                    this.stopListening();
+                } else {
+                    this.startListening();
+                }
+            }
+            
+            startListening() {
+                this.isListening = true;
+                this.voiceButton.classList.add('active');
+                this.voiceButton.innerHTML = '⏸️';
+                this.voiceStatus.textContent = 'Listening...';
+                this.companionCharacter.classList.add('listening');
+                this.companionStatus.textContent = 'Listening to you...';
+                this.waveform.classList.add('show');
+                
+                // Simulate processing after random time
+                setTimeout(() => {
+                    if (this.isListening) {
+                        this.processVoice();
+                    }
+                }, Math.random() * 3000 + 2000);
+            }
+            
+            stopListening() {
+                this.isListening = false;
+                this.voiceButton.classList.remove('active');
+                this.voiceButton.innerHTML = '🎤';
+                this.voiceStatus.textContent = 'Tap to speak';
+                this.companionCharacter.classList.remove('listening');
+                this.waveform.classList.remove('show');
+            }
+            
+            processVoice() {
+                this.stopListening();
+                this.companionCharacter.classList.add('thinking');
+                this.companionStatus.textContent = 'Processing...';
+                this.voiceStatus.textContent = 'Processing your request...';
+                
+                // Simulate AI processing time
+                setTimeout(() => {
+                    this.respondToUser();
+                }, 1500);
+            }
+            
+            respondToUser() {
+                const responses = [
+                    "I've added that to your calendar for tomorrow at 2 PM.",
+                    "Great idea! I'll set a reminder for you in 30 minutes.",
+                    "Based on your schedule, I'd recommend starting that project after lunch.",
+                    "I found three relevant articles about that topic. Would you like me to summarize them?",
+                    "Your focus session is ready. I'll block notifications for the next hour.",
+                    "I've analyzed your energy patterns - mornings work best for creative tasks."
+                ];
+                
+                this.companionCharacter.classList.remove('thinking');
+                this.companionCharacter.classList.add('speaking');
+                
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                this.speechBubble.textContent = response;
+                this.speechBubble.classList.add('show');
+                this.companionStatus.textContent = 'Speaking...';
+                this.voiceStatus.textContent = 'Speaking...';
+                
+                // Simulate speech duration
+                setTimeout(() => {
+                    this.finishSpeaking();
+                }, 3000);
+            }
+            
+            finishSpeaking() {
+                this.companionCharacter.classList.remove('speaking');
+                this.speechBubble.classList.remove('show');
+                this.companionStatus.textContent = 'Ready to help';
+                this.voiceStatus.textContent = 'Tap to speak';
+            }
+            
+            changeCharacter(character) {
+                document.querySelectorAll('.character-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+                document.querySelector(`[data-character="${character}"]`).classList.add('active');
+                
+                this.companionCharacter.className = `companion-character character-${character}`;
+                this.currentCharacter = character;
+                
+                // Update companion name based on character
+                const names = {
+                    robot: 'Alex',
+                    fairy: 'Luna',
+                    orb: 'Spark'
+                };
+                
+                this.companionName = names[character];
+                document.getElementById('companionName').textContent = this.companionName;
+            }
+            
+            createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                
+                setInterval(() => {
+                    if (Math.random() > 0.7) {
+                        const particle = document.createElement('div');
+                        particle.className = 'particle';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.animationDuration = (Math.random() * 6 + 4) + 's';
+                        particlesContainer.appendChild(particle);
+                        
+                        setTimeout(() => {
+                            if (particle.parentNode) {
+                                particle.parentNode.removeChild(particle);
+                            }
+                        }, 10000);
+                    }
+                }, 2000);
+            }
+            
+            startIdleAnimation() {
+                setInterval(() => {
+                    if (!this.isListening && !this.isSpeaking) {
+                        // Subtle idle animations
+                        if (Math.random() > 0.8) {
+                            this.companionCharacter.style.transform = 'translateY(-2px)';
+                            setTimeout(() => {
+                                this.companionCharacter.style.transform = 'translateY(0)';
+                            }, 500);
+                        }
+                    }
+                }, 5000);
+            }
+        }
+        
+        function quickAction(action) {
+            const companion = window.aiCompanion;
+            const actions = {
+                schedule: "What would you like me to add to your schedule?",
+                reminder: "What should I remind you about?",
+                focus: "Starting your focus session now. All notifications are paused."
+            };
+            
+            companion.speechBubble.textContent = actions[action];
+            companion.speechBubble.classList.add('show');
+            companion.companionCharacter.classList.add('speaking');
+            
+            setTimeout(() => {
+                companion.speechBubble.classList.remove('show');
+                companion.companionCharacter.classList.remove('speaking');
+            }, 2500);
+        }
+        
+        // Initialize the companion
+        window.aiCompanion = new AICompanion();
+        
+        // Show initial greeting after a moment
+        setTimeout(() => {
+            window.aiCompanion.speechBubble.classList.add('show');
+            setTimeout(() => {
+                window.aiCompanion.speechBubble.classList.remove('show');
+            }, 3000);
+        }, 1000);
+    </script>
+</body>
+</html>

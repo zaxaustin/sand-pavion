@@ -1,0 +1,22 @@
+temple-palace/
+├─ apps/
+│  ├─ palace-portal/            # Landing + Router (Next.js or Vite-React)
+│  ├─ room-meditation/          # Your sand-pavilion-enhanced.html (served by nginx)
+│  ├─ room-wellness/            # wellness-hub.tsx (Vite-React)
+│  ├─ room-community/           # bulliten board.tsx (Vite-React)
+│  └─ room-ai-village/          # ai-village-prototype.tsx (Vite-React)
+│
+├─ services/
+│  ├─ api-gateway/              # FastAPI (adapters, auth, temple data graph)
+│  ├─ tts/                      # (optional) Piper / Coqui TTS wrapper
+│  └─ workers/                  # cron-like agents, ETL, scoring, XP sync
+│
+├─ infra/
+│  ├─ reverse-proxy/            # Traefik config
+│  ├─ postgres/                 # init.sql, backups
+│  └─ scripts/                  # backup.sh, restore.sh, dev helpers
+│
+├─ docker-compose.yml
+├─ .env.example
+├─ Makefile
+└─ README.md

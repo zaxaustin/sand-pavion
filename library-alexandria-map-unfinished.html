@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library of Alexandria - Interactive Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: #1a1a2e;
+            overflow: hidden;
+            image-rendering: pixelated;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: #2a2a3e;
+            border: 4px solid #d4af37;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #d4af37;
+            border-radius: 10px;
+            padding: 15px;
+            color: #f5f5dc;
+            font-size: 10px;
+            z-index: 100;
+            min-width: 280px;
+        }
+
+        .hud-title {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-align: center;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 8px;
+        }
+
+        .hud-section {
+            margin: 10px 0;
+            line-height: 1.8;
+        }
+
+        .hud-label {
+            color: #daa520;
+        }
+
+        .quest-indicator {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 5px;
+            padding: 8px;
+            margin-top: 10px;
+            font-size: 8px;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #d4af37;
+            border-radius: 10px;
+            padding: 15px;
+            color: #f5f5dc;
+            font-size: 9px;
+            z-index: 100;
+        }
+
+        .controls-title {
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .control-row {
+            margin: 5px 0;
+        }
+
+        .minimap {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #d4af37;
+            border-radius: 10px;
+            padding: 10px;
+            z-index: 100;
+        }
+
+        .minimap-title {
+            color: #ffd700;
+            font-size: 10px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        #minimapCanvas {
+            border: 2px solid #8b4513;
+            display: block;
+        }
+
+        .interaction-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 4px solid #d4af37;
+            border-radius: 10px;
+            padding: 20px;
+            color: #f5f5dc;
+            font-size: 10px;
+            max-width: 450px;
+            display: none;
+            z-index: 100;
+            line-height: 1.6;
+        }
+
+        .interaction-box.active {
+            display: block;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .interaction-title {
+            color: #ffd700;
+            font-size: 12px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 5px;
+        }
+
+        .interaction-text {
+            margin: 10px 0;
+        }
+
+        .interaction-button {
+            background: #8b4513;
+            color: #fff;
+            border: 2px solid #d4af37;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: inherit;
+            font-size: 9px;
+            margin-right: 5px;
+        }
+
+        .interaction-button:hover {
+            background: #a0522d;
+        }
+
+        .npc-dialogue {
+            background: rgba(139, 69, 19, 0.3);
+            border-left: 3px solid #daa520;
+            padding: 10px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .book-preview {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #8b4513;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .book-preview:hover {
+            border-color: #ffd700;
+            background: rgba(139, 69, 19, 0.3);
+        }
+
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 4px solid #ffd700;
+            border-radius: 15px;
+            padding: 30px;
+            color: #ffd700;
+            font-size: 12px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            animation: achievementPop 0.5s;
+        }
+
+        .achievement-popup.show {
+            display: block;
+        }
+
+        @keyframes achievementPop {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .time-of-day {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 8px;
+            color: #daa520;
+        }
+
+        .prompt-indicator {
+            position: absolute;
+            color: #ffd700;
+            font-size: 16px;
+            animation: bounce 0.5s infinite;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="hud">
+        <div class="hud-title">📜 SCHOLAR STATUS</div>
+        <div class="hud-section">
+            <div><span class="hud-label">Name:</span> <span id="scholarName">Seeker</span></div>
+            <div><span class="hud-label">Location:</span> <span id="currentRoom">Entrance Hall</span></div>
+            <div><span class="hud-label">Books Read:</span> <span id="booksFound">0/24</span></div>
+            <div><span class="hud-label">Sections:</span> <span id="sectionsExplored">0/8</span></div>
+            <div><span class="hud-label">Wisdom:</span> <span id="wisdomPoints">0</span></div>
+        </div>
+        <div class="quest-indicator" id="questIndicator">
+            🎯 Quest: Explore the library
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="controls-title">⌨️ CONTROLS</div>
+        <div class="control-row">↑↓←→ / WASD - MOVE</div>
+        <div class="control-row">SPACE / E - INTERACT</div>
+        <div class="control-row">SHIFT - RUN</div>
+        <div class="control-row">ESC - CLOSE DIALOG</div>
+        <div class="control-row">M - TOGGLE MAP</div>
+    </div>
+
+    <div class="minimap" id="minimapContainer">
+        <div class="minimap-title">🗺️ MAP</div>
+        <canvas id="minimapCanvas" width="150" height="150"></canvas>
+        <div class="time-of-day" id="timeOfDay">Morning</div>
+    </div>
+
+    <canvas id="gameCanvas" width="960" height="640"></canvas>
+
+    <div class="interaction-box" id="interactionBox">
+        <div class="interaction-title" id="interactionTitle">Bookshelf</div>
+        <div class="interaction-text" id="interactionText"></div>
+        <button class="interaction-button" onclick="closeInteraction()">CLOSE [ESC]</button>
+    </div>
+
+    <div class="achievement-popup" id="achievementPopup">
+        <div style="font-size: 40px; margin-bottom: 15px;">🏆</div>
+        <div id="achievementText">Achievement Unlocked!</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const minimapCanvas = document.getElementById('minimapCanvas');
+        const minimapCtx = minimapCanvas.getContext('2d');
+
+        const TILE_SIZE = 32;
+        const MAP_WIDTH = 40;
+        const MAP_HEIGHT = 30;
+
+        // Player
+        const player = {
+            x: 20,
+            y: 26,
+            width: TILE_SIZE - 4,
+            height: TILE_SIZE - 4,
+            speed: 0.15,
+            runSpeed: 0.25,
+            direction: 'down',
+            animFrame: 0,
+            animTimer: 0,
+            isRunning: false
+        };
+
+        // Camera
+        const camera = {
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height
+        };
+
+        // Game state
+        const keys = {};
+        let booksFound = new Set();
+        let sectionsVisited = new Set();
+        let currentInteraction = null;
+        let wisdomPoints = 0;
+        let timeOfDay = 'Morning';
+        let gameTime = 0;
+        let npcsInteracted = new Set();
+        let achievements = new Set();
+        let showMinimap = true;
+
+        // NPCs
+        const npcs = [
+            { x: 19.5, y: 14, name: 'Librarian Master', dialogue: [
+                "Welcome to the Great Library, scholar.",
+                "Knowledge awaits in every corner.",
+                "Speak with the monks for wisdom."
+            ], color: '#8b0000' },
+            { x: 7, y: 6, name: 'Hindu Monk', dialogue: [
+                "The Vedas contain eternal truths.",
+                "Meditation reveals the self.",
+                "Have you studied the Upanishads?"
+            ], color: '#ff6b35' },
+            { x: 32, y: 6, name: 'Buddhist Scholar', dialogue: [
+                "Suffering ends through understanding.",
+                "The Middle Way brings peace.",
+                "Read the Heart Sutra carefully."
+            ], color: '#f7b731' },
+            { x: 7, y: 15, name: 'Philosopher', dialogue: [
+                "The Tao that can be told...",
+                "...is not the eternal Tao.",
+                "Wisdom comes through paradox."
+            ], color: '#5f27cd' },
+            { x: 32, y: 15, name: 'Meditation Guide', dialogue: [
+                "Breath is the bridge to now.",
+                "Practice makes presence.",
+                "Return to the breath."
+            ], color: '#00d2d3' }
+        ];
+
+        // Reading spots
+        const readingSpots = [
+            { x: 10, y: 7, name: 'Quiet Corner', bonus: 'Focus +10' },
+            { x: 29, y: 7, name: 'Window Seat', bonus: 'Inspiration +10' },
+            { x: 10, y: 16, name: 'Study Nook', bonus: 'Retention +10' },
+            { x: 29, y: 16, name: 'Meditation Cushion', bonus: 'Clarity +10' }
+        ];
+
+        // Candles and torches for atmosphere
+        const lights = [];
+        for (let i = 0; i < 30; i++) {
+            lights.push({
+                x: Math.random() * MAP_WIDTH,
+                y: Math.random() * MAP_HEIGHT,
+                flicker: Math.random() * Math.PI * 2
+            });
+        }
+
+        // Map tiles
+        const map = createLibraryMap();
+
+        // Interactive objects
+        const interactables = [
+            // Hinduism Section
+            { x: 5, y: 5, type: 'bookshelf', section: 'Hinduism', books: ['Bhagavad Gita', 'Upanishads', 'Vedas'], color: '#FF6B35', description: 'Ancient wisdom from the Indian subcontinent' },
+            { x: 8, y: 5, type: 'bookshelf', section: 'Hinduism', books: ['Ramayana', 'Mahabharata'], color: '#FF6B35', description: 'Epic tales of gods and heroes' },
+            { x: 5, y: 8, type: 'desk', section: 'Hinduism Study Desk', info: 'A peaceful place to contemplate Hindu philosophy. The scent of sandalwood lingers here.' },
+            { x: 11, y: 6, type: 'scroll', section: 'Sanskrit Scrolls', info: 'Ancient scrolls written in Sanskrit. Handle with care.' },
+            
+            // Buddhism Section
+            { x: 30, y: 5, type: 'bookshelf', section: 'Buddhism', books: ['Dhammapada', 'Heart Sutra', 'Lotus Sutra'], color: '#F7B731', description: 'Teachings of the Buddha' },
+            { x: 33, y: 5, type: 'bookshelf', section: 'Buddhism', books: ['Tibetan Book of the Dead'], color: '#F7B731', description: 'Guides for the journey beyond' },
+            { x: 30, y: 8, type: 'statue', section: 'Buddha Statue', info: 'A serene statue of Buddha in meditation. Its presence brings peace to all who enter.' },
+            { x: 28, y: 6, type: 'incense', section: 'Incense Altar', info: 'Fragrant incense burns continuously, filling the air with tranquility.' },
+            
+            // Philosophy Section
+            { x: 5, y: 14, type: 'bookshelf', section: 'Philosophy', books: ['Tao Te Ching', 'I Ching'], color: '#5F27CD', description: 'Chinese philosophical classics' },
+            { x: 8, y: 14, type: 'bookshelf', section: 'Philosophy', books: ['Analects', 'Zhuangzi'], color: '#5F27CD', description: 'Confucian and Taoist wisdom' },
+            { x: 5, y: 17, type: 'table', section: 'Philosophy Reading Table', info: 'Ancient texts rest here, their pages yellowed with age but wisdom eternal.' },
+            
+            // Meditation Section
+            { x: 30, y: 14, type: 'bookshelf', section: 'Meditation', books: ['Mindfulness Guide', 'Zen Practice'], color: '#00D2D3', description: 'Practical meditation techniques' },
+            { x: 33, y: 14, type: 'bookshelf', section: 'Meditation', books: ['Pranayama Techniques'], color: '#00D2D3', description: 'The art of breath control' },
+            { x: 30, y: 17, type: 'pillar', section: 'Meditation Corner', info: 'A quiet space for reflection. Many have found enlightenment here.' },
+            
+            // Comparative Studies
+            { x: 5, y: 22, type: 'bookshelf', section: 'Comparative', books: ['Perennial Philosophy', 'World Religions'], color: '#EE5A6F', description: 'Universal truths across traditions' },
+            { x: 8, y: 22, type: 'bookshelf', section: 'Comparative', books: ['Mysticism East & West'], color: '#EE5A6F', description: 'Bridging spiritual traditions' },
+            { x: 6, y: 24, type: 'globe', section: 'Sacred Globe', info: 'A globe marking holy sites across the world. Each pin tells a story.' },
+            
+            // Mysticism Section
+            { x: 30, y: 22, type: 'bookshelf', section: 'Mysticism', books: ['Sufi Poetry', 'Christian Mysticism'], color: '#C56CF0', description: 'The poetry of divine love' },
+            { x: 33, y: 22, type: 'bookshelf', section: 'Mysticism', books: ['Kabbalah Basics'], color: '#C56CF0', description: 'Mysteries of the Tree of Life' },
+            { x: 31, y: 24, type: 'crystal', section: 'Meditation Crystal', info: 'A large crystal used for focusing meditation. It seems to pulse with inner light.' },
+            
+            // Central Area
+            { x: 19, y: 13, type: 'statue', section: 'Central Monument', info: 'The Heart of Knowledge - A monument depicting scholars from all traditions in harmony.' },
+            { x: 19, y: 15, type: 'table', section: 'Grand Reading Table', info: 'Scholars gather here to share insights. Books lie open, inviting study.' },
+            { x: 21, y: 14, type: 'fountain', section: 'Fountain of Wisdom', info: 'Water flows eternally here, symbolizing the endless stream of knowledge.' }
+        ];
+
+        function createLibraryMap() {
+            const m = Array(MAP_HEIGHT).fill().map(() => Array(MAP_WIDTH).fill(0));
+            
+            // Outer walls
+            for (let x = 0; x < MAP_WIDTH; x++) {
+                m[0][x] = 1;
+                m[MAP_HEIGHT-1][x] = 1;
+            }
+            for (let y = 0; y < MAP_HEIGHT; y++) {
+                m[y][0] = 1;
+                m[y][MAP_WIDTH-1] = 1;
+            }
+
+            // Interior walls
+            for (let y = 3; y < 10; y++) { m[y][13] = 1; m[y][26] = 1; }
+            for (let y = 12; y < 19; y++) { m[y][13] = 1; m[y][26] = 1; }
+            for (let y = 21; y < 27; y++) { m[y][13] = 1; m[y][26] = 1; }
+            
+            for (let x = 3; x < 37; x++) {
+                if (x < 17 || x > 22) m[10][x] = 1;
+                if (x < 17 || x > 22) m[19][x] = 1;
+            }
+
+            // Carpet in center
+            for (let y = 11; y < 19; y++) {
+                for (let x = 17; x < 23; x++) {
+                    m[y][x] = 6;
+                }
+            }
+
+            // Decorative tiles
+            for (let i = 0; i < 50; i++) {
+                const x = Math.floor(Math.random() * MAP_WIDTH);
+                const y = Math.floor(Math.random() * MAP_HEIGHT);
+                if (m[y][x] === 0) m[y][x] = 8; // Decorative floor
+            }
+
+            // Place objects
+            interactables.forEach(obj => {
+                if (obj.type === 'bookshelf') m[obj.y][obj.x] = 2;
+                else if (obj.type === 'pillar') m[obj.y][obj.x] = 5;
+                else if (obj.type === 'statue') m[obj.y][obj.x] = 4;
+                else if (obj.type === 'table') m[obj.y][obj.x] = 3;
+                else if (obj.type === 'desk') m[obj.y][obj.x] = 7;
+            });
+
+            return m;
+        }
+
+        function drawTile(x, y, tile) {
+            const screenX = x * TILE_SIZE - camera.x;
+            const screenY = y * TILE_SIZE - camera.y;
+
+            if (screenX < -TILE_SIZE || screenX > canvas.width || 
+                screenY < -TILE_SIZE || screenY > canvas.height) return;
+
+            switch(tile) {
+                case 0: // Floor
+                    ctx.fillStyle = '#3a3a4a';
+                    ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#2a2a3a';
+                    ctx.fillRect(screenX + 2, screenY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+                    break;
+                case 1: // Wall
+                    ctx.fillStyle = '#5c4033';
+                    ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#4a3028';
+                    ctx.fillRect(screenX + 3, screenY + 3, TILE_SIZE - 6, TILE_SIZE - 6);
+                    ctx.strokeStyle = '#8b6914';
+                    ctx.strokeRect(screenX + 1, screenY + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                    break;
+                case 2: // Bookshelf
+                    const obj = interactables.find(o => o.x === x && o.y === y && o.type === 'bookshelf');
+                    ctx.fillStyle = obj ? obj.color : '#8b4513';
+                    ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#000';
+                    for (let i = 0; i < 3; i++) {
+                        ctx.fillRect(screenX + 4, screenY + 5 + i * 8, TILE_SIZE - 8, 6);
+                    }
+                    // Add book spines
+                    ctx.fillStyle = obj ? obj.color : '#8b4513';
+                    for (let i = 0; i < 5; i++) {
+                        ctx.fillRect(screenX + 5 + i * 5, screenY + 6, 3, 5);
+                    }
+                    break;
+                case 3: // Table
+                    ctx.fillStyle = '#8b6914';
+                    ctx.fillRect(screenX + 4, screenY + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+                    ctx.fillStyle = '#a0791a';
+                    ctx.fillRect(screenX + 6, screenY + 6, TILE_SIZE - 12, TILE_SIZE - 12);
+                    // Add book on table
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(screenX + 10, screenY + 10, 12, 8);
+                    break;
+                case 4: // Statue
+                    ctx.fillStyle = '#c0c0c0';
+                    ctx.fillRect(screenX + 8, screenY + 4, TILE_SIZE - 16, TILE_SIZE - 8);
+                    ctx.fillStyle = '#a0a0a0';
+                    ctx.fillRect(screenX + 10, screenY + 12, TILE_SIZE - 20, TILE_SIZE - 16);
+                    break;
+                case 5: // Pillar
+                    ctx.fillStyle = '#8b7355';
+                    ctx.fillRect(screenX + 6, screenY + 2, TILE_SIZE - 12, TILE_SIZE - 4);
+                    ctx.fillStyle = '#6b5335';
+                    ctx.fillRect(screenX + 8, screenY + 4, TILE_SIZE - 16, TILE_SIZE - 8);
+                    break;
+                case 6: // Carpet
+                    ctx.fillStyle = '#6b2020';
+                    ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#8b3030';
+                    ctx.fillRect(screenX + 4, screenY + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+                    // Pattern
+                    ctx.fillStyle = '#6b2020';
+                    ctx.fillRect(screenX + 14, screenY + 14, 4, 4);
+                    break;
+                case 7: // Desk
+                    ctx.fillStyle = '#6b4423';
+                    ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE - 8);
+                    ctx.fillStyle = '#8b5a33';
+                    ctx.fillRect(screenX + 2, screenY + 2, TILE_SIZE - 4, TILE_SIZE - 12);
+                    break;
+                case 8: // Decorative floor
+                    ctx.fillStyle = '#3a3a4a';
+                    ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#4a4a5a';
+                    ctx.fillRect(screenX + 4, screenY + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+                    break;
+            }
+        }
+
+        function drawNPCs() {
+            npcs.forEach(npc => {
+                const screenX = npc.x * TILE_SIZE - camera.x;
+                const screenY = npc.y * TILE_SIZE - camera.y;
+
+                if (screenX < -TILE_SIZE || screenX > canvas.width || 
+                    screenY < -TILE_SIZE || screenY > canvas.height) return;
+
+                // Body
+                ctx.fillStyle = npc.color;
+                ctx.fillRect(screenX + 4, screenY + 10, 24, 20);
+                
+                // Head
+                ctx.fillStyle = '#ffdbac';
+                ctx.fillRect(screenX + 8, screenY + 2, 16, 16);
+
+                // Check if player is near
+                const dist = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));
+                if (dist < 2) {
+                    ctx.fillStyle = '#ffd700';
+                    ctx.font = '20px Arial';
+                    ctx.fillText('💬', screenX + 8, screenY - 5);
+                }
+            });
+        }
+
+        function drawPlayer() {
+            const screenX = player.x * TILE_SIZE - camera.x;
+            const screenY = player.y * TILE_SIZE - camera.y;
+
+            // Body
+            ctx.fillStyle = player.isRunning ? '#6aa8ff' : '#4a90e2';
+            ctx.fillRect(screenX + 6, screenY + 8, 20, 20);
+            
+            // Head
+            ctx.fillStyle = '#ffdbac';
+            const isMoving = keys['w'] || keys['s'] || keys['a'] || keys['d'] ||
+                           keys['ArrowUp'] || keys['ArrowDown'] || keys['ArrowLeft'] || keys['ArrowRight'];
+            if (isMoving) {
+                const offset = Math.sin(player.animTimer * 10) * 2;
+                ctx.fillRect(screenX + 10, screenY + 4 + offset, 12, 12);
+            } else {
+                ctx.fillRect(screenX + 10, screenY + 4, 12, 12);
+            }
+
+            // Book icon when holding
+            if (booksFound.size > 0) {
+                ctx.fillStyle = '#8b4513';
+                ctx.fillRect(screenX + 20, screenY + 12, 6, 8);
+            }
+        }
+
+        function checkCollision(newX, newY) {
+            const gridX = Math.floor(newX);
+            const gridY = Math.floor(newY);
+            
+            if (gridX < 0 || gridX >= MAP_WIDTH || gridY < 0 || gridY >= MAP_HEIGHT) return true;
+            
+            const tile = map[gridY][gridX];
+            if (tile === 1 || tile === 2 || tile === 3 || tile === 4 || tile === 5 || tile === 7) return true;
+
+            // Check NPC collision
+            for (let npc of npcs) {
+                const npcX = Math.floor(npc.x);
+                const npcY = Math.floor(npc.y);
+                if (gridX === npcX && gridY === npcY) return true;
+            }
+
+            return false;
+        }
+
+        function updatePlayer(deltaTime) {
+            let moveX = 0;
+            let moveY = 0;
+
+            player.isRunning = keys['Shift'];
+            const currentSpeed = player.isRunning ? player.runSpeed : player.speed;
+
+            if (keys['w'] || keys['ArrowUp']) moveY -= currentSpeed;
+            if (keys['s'] || keys['ArrowDown']) moveY += currentSpeed;
+            if (keys['a'] || keys['ArrowLeft']) moveX -= currentSpeed;
+            if (keys['d'] || keys['ArrowRight']) moveX += currentSpeed;
+
+            if (moveX !== 0 || moveY !== 0) {
+                player.animTimer += deltaTime;
+                
+                const newX = player.x + moveX;
+                const newY = player.y + moveY;
+
+                if (!checkCollision(newX, player.y)) player.x = newX;
+                if (!checkCollision(player.x, newY)) player.y = newY;
+            }
+
+            camera.x = player.x * TILE_SIZE - canvas.width / 2 + TILE_SIZE / 2;
+            camera.y = player.y * TILE_SIZE - canvas.height / 2 + TILE_SIZE / 2;
+
+            camera.x = Math.max(0, Math.min(camera.x, MAP_WIDTH * TILE_SIZE - canvas.width));
+            camera.y = Math.max(0, Math.min(camera.y, MAP_HEIGHT * TILE_SIZE - canvas.height));
+
+            updateHUD();
+        }
+
+        function checkInteraction() {
+            const directions = [
+                { x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }
+            ];
+
+            // Check NPCs first
+            for (let npc of npcs) {
+                const dist = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));
+                if (dist < 1.5) {
+                    showNPCDialogue(npc);
+                    return true;
+                }
+            }
+
+            // Check objects
+            for (let dir of directions) {
+                const checkX = Math.floor(player.x + dir.x);
+                const checkY = Math.floor(player.y + dir.y);
+
+                const obj = interactables.find(o => 
+                    Math.floor(o.x) === checkX && Math.floor(o.y) === checkY
+                );
+
+                if (obj) {
+                    showInteraction(obj);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function showNPCDialogue(npc) {
+            const box = document.getElementById('interactionBox');
+            const title = document.getElementById('interactionTitle');
+            const text = document.getElementById('interactionText');
+
+            npcsInteracted.add(npc.name);
+            
+            const dialogueIndex = npcsInteracted.has(npc.name + '_visited') ? 
+                Math.floor(Math.random() * npc.dialogue.length) : 0;
+            
+            npcsInteracted.add(npc.name + '_visited');
+
+            title.textContent = `💬 ${npc.name}`;
+            
+            let content = '<div class="npc-dialogue">';
+            content += `"${npc.dialogue[dialogueIndex]}"`;
+            content += '</div>';
+            
+            if (npc.name === 'Librarian Master' && booksFound.size === 0) {
+                content += '<div style="margin-top: 10px; color: #daa520;">The librarian gestures toward the bookshelves around the hall.</div>';
+            }
+
+            wisdomPoints += 5;
+            content += '<div style="margin-top: 10px; color: #90EE90;">+5 Wisdom gained from conversation</div>';
+
+            text.innerHTML = content;
+            box.classList.add('active');
+            currentInteraction = npc;
+
+            if (npcsInteracted.size === 5 && !achievements.has('socialite')) {
+                showAchievement('Social Scholar', 'Spoke with all NPCs');
+                achievements.add('socialite');
+            }
+        }
+
+        function showInteraction(obj) {
+            const box = document.getElementById('interactionBox');
+            const title = document.getElementById('interactionTitle');
+            const text = document.getElementById('interactionText');
+
+            title.textContent = obj.section;
+            let content = '';
+            
+            if (obj.type === 'bookshelf') {
+                sectionsVisited.add(obj.section);
+                content += '<div style="margin-bottom: 10px;">📚 ' + obj.description + '</div>';
+                content += '<div style="color: #daa520; margin-bottom: 8px; border-bottom: 1px solid #8b4513; padding-bottom: 5px;">Books in this section:</div>';
+                
+                obj.books.forEach(book => {
+                    const found = booksFound.has(book);
+                    const bookClass = found ? 'book-preview' : 'book-preview';
+                    content += `<div class="${bookClass}" style="${found ? 'opacity: 0.7;' : ''}" onclick="readBook('${book}')">`;
+                    content += `<div style="display: flex; justify-content: space-between; align-items: center;">`;
+                    content += `<span>${found ? '✓' : '📖'} ${book}</span>`;
+                    content += `<span style="color: #daa520; font-size: 8px;">${found ? 'READ' : 'Click to read'}</span>`;
+                    content += `</div>`;
+                    content += '</div>';
+                    if (!found) {
+                        booksFound.add(book);
+                        wisdomPoints += 10;
+                    }
+                });
+
+                if (obj.books.length > 0 && !achievements.has('first_book')) {
+                    showAchievement('First Steps', 'Found your first book!');
+                    achievements.add('first_book');
+                }
+            } else if (obj.type === 'statue' || obj.type === 'pillar' || obj.type === 'table' || 
+                       obj.type === 'desk' || obj.type === 'scroll' || obj.type === 'incense' ||
+                       obj.type === 'globe' || obj.type === 'crystal' || obj.type === 'fountain') {
+                content = `<div>${obj.info}</div>`;
+                sectionsVisited.add(obj.section);
+                wisdomPoints += 3;
+                content += '<div style="margin-top: 10px; color: #90EE90;">+3 Wisdom from observation</div>';
+            }
+
+            text.innerHTML = content;
+            box.classList.add('active');
+            currentInteraction = obj;
+            updateHUD();
+            checkAchievements();
+        }
+
+        function readBook(bookName) {
+            const extraWisdom = 15;
+            wisdomPoints += extraWisdom;
+            
+            const box = document.getElementById('interactionBox');
+            const text = document.getElementById('interactionText');
+            
+            let bookContent = '';
+            switch(bookName) {
+                case 'Bhagavad Gita':
+                    bookContent = 'You open the Bhagavad Gita. "One who sees inaction in action, and action in inaction, is intelligent among men." The words resonate deeply.';
+                    break;
+                case 'Dhammapada':
+                    bookContent = 'The Dhammapada speaks: "All that we are is the result of what we have thought." You feel understanding dawning.';
+                    break;
+                case 'Tao Te Ching':
+                    bookContent = 'You read from the Tao Te Ching: "The journey of a thousand miles begins with a single step." Simplicity holds profound truth.';
+                    break;
+                case 'Heart Sutra':
+                    bookContent = 'The Heart Sutra reveals: "Form is emptiness, emptiness is form." The paradox opens new understanding.';
+                    break;
+                default:
+                    bookContent = `You carefully read through ${bookName}. Its wisdom fills your mind with new perspectives and understanding.`;
+            }
+
+            text.innerHTML = `<div style="background: rgba(139, 69, 19, 0.3); padding: 15px; border-left: 3px solid #ffd700; margin: 10px 0; font-style: italic;">
+                ${bookContent}
+            </div>
+            <div style="margin-top: 10px; color: #ffd700;">+${extraWisdom} Wisdom from deep reading</div>
+            <div style="margin-top: 10px; font-size: 8px; color: #daa520;">Press ESC to close</div>`;
+        }
+
+        function checkAchievements() {
+            if (booksFound.size >= 10 && !achievements.has('avid_reader')) {
+                showAchievement('Avid Reader', 'Read 10 books');
+                achievements.add('avid_reader');
+            }
+            if (booksFound.size >= 24 && !achievements.has('master_scholar')) {
+                showAchievement('Master Scholar', 'Read all 24 books!');
+                achievements.add('master_scholar');
+            }
+            if (sectionsVisited.size >= 8 && !achievements.has('explorer')) {
+                showAchievement('Library Explorer', 'Visited all sections');
+                achievements.add('explorer');
+            }
+            if (wisdomPoints >= 100 && !achievements.has('wise_one')) {
+                showAchievement('Wise One', 'Gained 100 wisdom');
+                achievements.add('wise_one');
+            }
+        }
+
+        function showAchievement(title, description) {
+            const popup = document.getElementById('achievementPopup');
+            const text = document.getElementById('achievementText');
+            text.innerHTML = `<div style="font-size: 14px; margin-bottom: 10px;">${title}</div>
+                             <div style="font-size: 8px; color: #daa520;">${description}</div>`;
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeInteraction() {
+            document.getElementById('interactionBox').classList.remove('active');
+            currentInteraction = null;
+        }
+
+        function updateHUD() {
+            const gridX = Math.floor(player.x);
+            const gridY = Math.floor(player.y);
+            let location = 'Entrance Hall';
+
+            if (gridX < 13 && gridY < 10) location = 'Hinduism Section';
+            else if (gridX > 26 && gridY < 10) location = 'Buddhism Section';
+            else if (gridX < 13 && gridY < 19 && gridY > 10) location = 'Philosophy Section';
+            else if (gridX > 26 && gridY < 19 && gridY > 10) location = 'Meditation Section';
+            else if (gridX < 13 && gridY > 20) location = 'Comparative Studies';
+            else if (gridX > 26 && gridY > 20) location = 'Mysticism Section';
+            else if (gridX > 17 && gridX < 23 && gridY > 11 && gridY < 19) location = 'Central Hall';
+
+            document.getElementById('currentRoom').textContent = location;
+            document.getElementById('booksFound').textContent = `${booksFound.size}/24`;
+            document.getElementById('sectionsExplored').textContent = `${sectionsVisited.size}/8`;
+            document.getElementById('wisdomPoints').textContent = wisdomPoints;
+
+            // Update quest
+            let questText = '🎯 Quest: Explore the library';
+            if (booksFound.size === 0) {
+                questText = '🎯 Quest: Find your first book';
+            } else if (booksFound.size < 5) {
+                questText = '🎯 Quest: Discover more texts';
+            } else if (sectionsVisited.size < 8) {
+                questText = '🎯 Quest: Explore all sections';
+            } else if (npcsInteracted.size < 5) {
+                questText = '🎯 Quest: Speak with all scholars';
+            } else if (booksFound.size < 24) {
+                questText = '🎯 Quest: Master the library';
+            } else {
+                questText = '✅ Quest Complete: Library Master!';
+            }
+            document.getElementById('questIndicator').textContent = questText;
+
+            // Update time of day
+            gameTime += 0.001;
+            if (gameTime < 100) timeOfDay = 'Morning';
+            else if (gameTime < 200) timeOfDay = 'Afternoon';
+            else if (gameTime < 300) timeOfDay = 'Evening';
+            else timeOfDay = 'Night';
+            document.getElementById('timeOfDay').textContent = timeOfDay;
+        }
+
+        function drawMinimap() {
+            if (!showMinimap) return;
+
+            const scale = 3.75;
+            minimapCtx.fillStyle = '#1a1a2e';
+            minimapCtx.fillRect(0, 0, minimapCanvas.width, minimapCanvas.height);
+
+            for (let y = 0; y < MAP_HEIGHT; y++) {
+                for (let x = 0; x < MAP_WIDTH; x++) {
+                    const tile = map[y][x];
+                    if (tile === 1) {
+                        minimapCtx.fillStyle = '#5c4033';
+                        minimapCtx.fillRect(x * scale, y * scale, scale, scale);
+                    } else if (tile === 2) {
+                        minimapCtx.fillStyle = '#8b4513';
+                        minimapCtx.fillRect(x * scale, y * scale, scale, scale);
+                    } else if (tile === 6) {
+                        minimapCtx.fillStyle = '#6b2020';
+                        minimapCtx.fillRect(x * scale, y * scale, scale, scale);
+                    }
+                }
+            }
+
+            // Draw NPCs on minimap
+            npcs.forEach(npc => {
+                minimapCtx.fillStyle = '#ff6b6b';
+                minimapCtx.fillRect(npc.x * scale - 1, npc.y * scale - 1, scale + 2, scale + 2);
+            });
+
+            // Draw player
+            minimapCtx.fillStyle = '#00ff00';
+            minimapCtx.fillRect(player.x * scale - 1, player.y * scale - 1, scale + 2, scale + 2);
+        }
+
+        function drawInteractionPrompts() {
+            // Check for nearby NPCs
+            npcs.forEach(npc => {
+                const dist = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));
+                if (dist < 2) {
+                    const screenX = npc.x * TILE_SIZE - camera.x + TILE_SIZE/2 - 8;
+                    const screenY = npc.y * TILE_SIZE - camera.y - 10;
+                    ctx.fillStyle = '#ffd700';
+                    ctx.font = '16px Arial';
+                    const offset = Math.sin(Date.now() / 200) * 3;
+                    ctx.fillText('E', screenX, screenY + offset);
+                }
+            });
+
+            // Check for nearby objects
+            const directions = [
+                { x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }
+            ];
+
+            for (let dir of directions) {
+                const checkX = Math.floor(player.x + dir.x);
+                const checkY = Math.floor(player.y + dir.y);
+
+                const obj = interactables.find(o => 
+                    Math.floor(o.x) === checkX && Math.floor(o.y) === checkY
+                );
+
+                if (obj) {
+                    const screenX = obj.x * TILE_SIZE - camera.x + TILE_SIZE/2 - 8;
+                    const screenY = obj.y * TILE_SIZE - camera.y - 10;
+                    ctx.fillStyle = '#ffd700';
+                    ctx.font = '16px Arial';
+                    const offset = Math.sin(Date.now() / 200) * 3;
+                    ctx.fillText('E', screenX, screenY + offset);
+                    break;
+                }
+            }
+        }
+
+        function gameLoop(currentTime) {
+            const deltaTime = 16 / 1000;
+            
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const startX = Math.floor(camera.x / TILE_SIZE);
+            const startY = Math.floor(camera.y / TILE_SIZE);
+            const endX = Math.min(startX + Math.ceil(canvas.width / TILE_SIZE) + 1, MAP_WIDTH);
+            const endY = Math.min(startY + Math.ceil(canvas.height / TILE_SIZE) + 1, MAP_HEIGHT);
+
+            for (let y = Math.max(0, startY); y < endY; y++) {
+                for (let x = Math.max(0, startX); x < endX; x++) {
+                    drawTile(x, y, map[y][x]);
+                }
+            }
+
+            // Draw lighting effects
+            lights.forEach(light => {
+                light.flicker += 0.05;
+                const screenX = light.x * TILE_SIZE - camera.x;
+                const screenY = light.y * TILE_SIZE - camera.y;
+                
+                if (screenX > -50 && screenX < canvas.width + 50 && 
+                    screenY > -50 && screenY < canvas.height + 50) {
+                    const gradient = ctx.createRadialGradient(screenX, screenY, 0, screenX, screenY, 30);
+                    gradient.addColorStop(0, `rgba(255, 200, 100, ${0.2 + Math.sin(light.flicker) * 0.1})`);
+                    gradient.addColorStop(1, 'rgba(255, 200, 100, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(screenX - 30, screenY - 30, 60, 60);
+                }
+            });
+
+            updatePlayer(deltaTime);
+            drawNPCs();
+            drawPlayer();
+            drawInteractionPrompts();
+            drawMinimap();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+
+            if ((e.key === ' ' || e.key.toLowerCase() === 'e') && !document.getElementById('interactionBox').classList.contains('active')) {
+                e.preventDefault();
+                checkInteraction();
+            }
+            if (e.key === 'Escape') {
+                closeInteraction();
+            }
+            if (e.key.toLowerCase() === 'm') {
+                showMinimap = !showMinimap;
+                document.getElementById('minimapContainer').style.display = showMinimap ? 'block' : 'none';
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        canvas.addEventListener('click', () => {
+            canvas.focus();
+        });
+
+        // Welcome message
+        setTimeout(() => {
+            const box = document.getElementById('interactionBox');
+            const title = document.getElementById('interactionTitle');
+            const text = document.getElementById('interactionText');
+            
+            title.textContent = '🏛️ Welcome to the Library of Alexandria';
+            text.innerHTML = `<div style="margin-bottom: 10px;">Welcome, seeker of wisdom!</div>
+                             <div style="margin-bottom: 10px;">This sacred space holds the world's spiritual knowledge. Explore the halls, speak with scholars, and discover ancient texts.</div>
+                             <div style="color: #daa520; margin-top: 10px;">Use WASD or Arrow keys to move. Press E to interact with people and objects.</div>`;
+            box.classList.add('active');
+        }, 1000);
+
+        gameLoop(0);
+    </script>
+</body>
+</html>
