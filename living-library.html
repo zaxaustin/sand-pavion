@@ -57,6 +57,156 @@
         .shelf h2 { color: #ffd787; margin-bottom: 0.8rem; font-size: 1.5rem; }
         .shelf ul { list-style: none; }
         .shelf li { margin-bottom: 0.6rem; }
+        .library-holdings {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+        .library-holdings__header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .library-holdings__header h2 {
+            color: #ffe6a7;
+            font-size: 2.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .library-holdings__header p {
+            max-width: 860px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        .book-grid {
+            display: grid;
+            gap: 1.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        .book-grid__empty,
+        .book-grid__error {
+            grid-column: 1 / -1;
+            padding: 1.6rem;
+            border-radius: 18px;
+            border: 1px dashed rgba(255, 219, 144, 0.45);
+            background: rgba(24, 17, 9, 0.55);
+            text-align: center;
+            line-height: 1.6;
+            color: rgba(255, 230, 167, 0.85);
+        }
+        .book-card {
+            background: rgba(24, 17, 9, 0.85);
+            border-radius: 22px;
+            padding: 1.8rem;
+            border: 1px solid rgba(255, 219, 144, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .book-card__header h3 {
+            font-size: 1.6rem;
+            color: #ffd787;
+            margin-bottom: 0.4rem;
+        }
+        .book-card__lesson {
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 230, 167, 0.8);
+        }
+        .book-card__author {
+            font-size: 1rem;
+            color: rgba(255, 230, 167, 0.9);
+        }
+        .book-card__meta {
+            display: grid;
+            gap: 0.6rem;
+        }
+        .book-card__meta div {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 12px;
+        }
+        .book-card__meta dt {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 230, 167, 0.6);
+            margin-bottom: 0.25rem;
+        }
+        .book-card__meta dd {
+            margin: 0;
+            line-height: 1.5;
+        }
+        .book-card__excerpt {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(255, 246, 228, 0.92);
+            background: rgba(0, 0, 0, 0.25);
+            border-left: 3px solid rgba(255, 219, 144, 0.7);
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+        }
+        .book-card__controls,
+        .book-card__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background: rgba(255, 219, 144, 0.28);
+            color: #1b1a24;
+            padding: 0.55rem 1.1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 219, 144, 0.6);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .button:hover,
+        .button:focus {
+            background: rgba(255, 219, 144, 0.45);
+            transform: translateY(-1px);
+            outline: none;
+        }
+        .button:disabled,
+        .button[aria-disabled="true"] {
+            cursor: not-allowed;
+            opacity: 0.6;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 246, 228, 0.6);
+        }
+        .button--ghost {
+            background: transparent;
+            color: #ffe6a7;
+            border-color: rgba(255, 230, 167, 0.5);
+        }
+        .button--ghost:hover,
+        .button--ghost:focus {
+            background: rgba(255, 230, 167, 0.18);
+            color: #1b1a24;
+        }
+        .tts-evaluation {
+            max-width: 960px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+            text-align: center;
+        }
+        .tts-evaluation h2 {
+            color: #ffe6a7;
+            font-size: 1.9rem;
+            margin-bottom: 1rem;
+        }
+        .tts-evaluation p {
+            line-height: 1.7;
+            opacity: 0.85;
+        }
         .tracks {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 18px;
@@ -136,7 +286,7 @@
         <a class="back" href="index.html">← Return to the Pavilion</a>
     </header>
 
-    <section class="shelves">
+    <section class="shelves" aria-label="Living Library study rooms">
         <article class="shelf">
             <h2>Shelf I · Hindu Wisdom Room</h2>
             <ul>
@@ -169,6 +319,47 @@
                 <li>Zen Practice — community podcast with weekly koan reflections.</li>
             </ul>
         </article>
+    </section>
+
+    <section class="library-holdings" aria-labelledby="public-domain-holdings">
+        <div class="library-holdings__header">
+            <h2 id="public-domain-holdings">Mirrored Public-Domain Holdings</h2>
+            <p>Guild archivists keep at least three mirrored editions on-site so that every initiate has resilient access to our shared study canon. Each card below names the lineage, shares our lore-friendly study focus, and links to the local copy.</p>
+        </div>
+        <div class="book-grid" role="list" data-library-grid></div>
+        <template id="book-card-template">
+            <article class="book-card" role="listitem" data-book-card>
+                <header class="book-card__header">
+                    <p class="book-card__lesson" data-field="lesson"></p>
+                    <h3 data-field="title"></h3>
+                    <p class="book-card__author" data-field="author"></p>
+                </header>
+                <dl class="book-card__meta">
+                    <div>
+                        <dt>Format</dt>
+                        <dd data-field="format"></dd>
+                    </div>
+                    <div>
+                        <dt>Guild Lore</dt>
+                        <dd data-field="lore"></dd>
+                    </div>
+                </dl>
+                <blockquote class="book-card__excerpt" data-field="excerpt"></blockquote>
+                <div class="book-card__controls" data-tts-container>
+                    <button type="button" class="button" data-tts-action="play">▶ Play excerpt</button>
+                    <button type="button" class="button button--ghost" data-tts-action="pause" disabled>⏸ Pause narration</button>
+                </div>
+                <div class="book-card__actions">
+                    <a class="button" data-action="download" download>⬇ Download text</a>
+                    <a class="button button--ghost" data-action="read" target="_blank" rel="noopener">📖 Read locally</a>
+                </div>
+            </article>
+        </template>
+    </section>
+
+    <section class="tts-evaluation" aria-labelledby="tts-eval-heading">
+        <h2 id="tts-eval-heading">Voice Invocation Assessment</h2>
+        <p>The guild tested the browser-native <strong>Web Speech API</strong> because it requires no external services, keeps sacred texts offline, and respects our moneyless charter. Modern Chromium, Firefox, and Safari builds expose speech synthesis voices without additional dependencies, though mobile Safari presently limits background playback. The controls above lean on this API to offer immediate play and pause support per excerpt; if a visitor’s browser lacks the feature, the buttons announce that speech is unavailable and fall back to silent reading.</p>
     </section>
 
     <section class="tracks">
@@ -228,5 +419,233 @@
     <footer>
         Future work: digitize more oral histories, add language accessibility layers, and connect track completion with Steward Board missions. “Set your heart upon your work, never on its reward.” — Lord Krishna
     </footer>
+
+    <script>
+        async function hydrateLibraryGrid() {
+            const grid = document.querySelector('[data-library-grid]');
+            const template = document.getElementById('book-card-template');
+            if (!grid || !template) {
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            try {
+                const response = await fetch('assets/library/catalog.json', { cache: 'no-cache' });
+                if (!response.ok) {
+                    throw new Error(`Catalog request failed with status ${response.status}`);
+                }
+                const payload = await response.json();
+                const books = Array.isArray(payload.books) ? payload.books : [];
+                const activeBooks = books.filter((book) => book.status === 'active');
+
+                if (!activeBooks.length) {
+                    const empty = document.createElement('p');
+                    empty.className = 'book-grid__empty';
+                    empty.textContent = 'No public-domain holdings are available right now. Stewards are reviewing the shelves.';
+                    grid.appendChild(empty);
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+
+                activeBooks.forEach((book) => {
+                    const card = template.content.cloneNode(true);
+                    const article = card.querySelector('[data-book-card]');
+                    if (!article) {
+                        return;
+                    }
+
+                    const excerptEl = article.querySelector('[data-field="excerpt"]');
+                    const lessonEl = article.querySelector('[data-field="lesson"]');
+                    const titleEl = article.querySelector('[data-field="title"]');
+                    const authorEl = article.querySelector('[data-field="author"]');
+                    const formatEl = article.querySelector('[data-field="format"]');
+                    const loreEl = article.querySelector('[data-field="lore"]');
+                    const downloadLink = article.querySelector('[data-action="download"]');
+                    const readLink = article.querySelector('[data-action="read"]');
+                    const controls = article.querySelector('[data-tts-container]');
+
+                    const excerptId = `excerpt-${book.id}`;
+                    article.dataset.bookId = book.id;
+                    article.dataset.bookStatus = book.status;
+
+                    if (lessonEl) lessonEl.textContent = book.sectLesson || 'Sect Lesson pending';
+                    if (titleEl) titleEl.textContent = book.title || 'Untitled Manuscript';
+                    if (authorEl) authorEl.textContent = book.author || 'Unknown author';
+                    if (formatEl) formatEl.textContent = book.formatNotes || 'Format review pending';
+                    if (loreEl) loreEl.textContent = book.lore || 'Lore annotation forthcoming from the steward circle.';
+
+                    if (excerptEl) {
+                        excerptEl.id = excerptId;
+                        excerptEl.textContent = book.excerpt || 'Excerpt forthcoming after steward review.';
+                    }
+
+                    if (controls) {
+                        controls.setAttribute('data-tts-target', excerptId);
+                        controls.setAttribute('data-tts-lang', book.ttsLang || 'en-US');
+                        controls.dataset.ttsBound = 'false';
+                    }
+
+                    const filePath = book.file || book.excerptSource;
+                    if (downloadLink && filePath) {
+                        downloadLink.href = filePath;
+                        downloadLink.setAttribute('aria-label', `Download ${book.title || 'the manuscript'} as a local file`);
+                    } else if (downloadLink) {
+                        downloadLink.removeAttribute('href');
+                        downloadLink.textContent = 'Download pending';
+                        downloadLink.classList.add('button--ghost');
+                        downloadLink.setAttribute('aria-disabled', 'true');
+                    }
+
+                    if (readLink && filePath) {
+                        readLink.href = filePath;
+                        readLink.setAttribute('aria-label', `Open ${book.title || 'the manuscript'} in a new tab`);
+                    } else if (readLink) {
+                        readLink.removeAttribute('href');
+                        readLink.textContent = 'Reading link pending';
+                        readLink.setAttribute('aria-disabled', 'true');
+                    }
+
+                    fragment.appendChild(card);
+                });
+
+                grid.appendChild(fragment);
+                setupSpeechControls();
+            } catch (error) {
+                console.error('Unable to load library catalog.', error);
+                const failure = document.createElement('p');
+                failure.className = 'book-grid__error';
+                failure.textContent = 'The living catalog is temporarily offline. Please refresh after the stewards finish repairs.';
+                grid.replaceWith(failure);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', hydrateLibraryGrid);
+    </script>
+    <script>
+        let speechSynthesisUnavailableHandled = false;
+        let currentTtsContainer = null;
+        let currentUtterance = null;
+
+        function setupSpeechControls() {
+            const containers = Array.from(document.querySelectorAll('[data-tts-container]')).filter(
+                (container) => container.dataset.ttsBound !== 'true'
+            );
+
+            if (!containers.length) {
+                return;
+            }
+
+            const supportWarning = 'Speech synthesis is unavailable in this browser.';
+
+            if (!('speechSynthesis' in window)) {
+                if (!speechSynthesisUnavailableHandled) {
+                    console.warn('Speech synthesis unsupported; disabling narration controls.');
+                    speechSynthesisUnavailableHandled = true;
+                }
+                containers.forEach((container) => {
+                    container.dataset.ttsBound = 'true';
+                    container.querySelectorAll('button').forEach((button) => {
+                        button.disabled = true;
+                        button.setAttribute('aria-disabled', 'true');
+                        button.title = supportWarning;
+                        button.textContent = 'Speech unavailable';
+                    });
+                });
+                return;
+            }
+
+            const synthesis = window.speechSynthesis;
+
+            function resetButtons(container) {
+                container.querySelectorAll('[data-tts-action="pause"]').forEach((pauseButton) => {
+                    pauseButton.disabled = true;
+                });
+                container.querySelectorAll('[data-tts-action="play"]').forEach((playButton) => {
+                    playButton.disabled = false;
+                    playButton.textContent = '▶ Play excerpt';
+                });
+            }
+
+            function announceState(container, message) {
+                container.setAttribute('data-tts-status', message);
+            }
+
+            containers.forEach((container) => {
+                const targetId = container.getAttribute('data-tts-target');
+                if (!targetId) {
+                    return;
+                }
+                const excerpt = document.getElementById(targetId);
+                if (!excerpt) {
+                    return;
+                }
+
+                const text = excerpt.textContent.trim();
+                const lang = container.getAttribute('data-tts-lang') || 'en-US';
+                const playButton = container.querySelector('[data-tts-action="play"]');
+                const pauseButton = container.querySelector('[data-tts-action="pause"]');
+
+                if (!playButton || !pauseButton) {
+                    return;
+                }
+
+                container.dataset.ttsBound = 'true';
+
+                playButton.addEventListener('click', () => {
+                    if (currentTtsContainer === container && synthesis.paused) {
+                        synthesis.resume();
+                        pauseButton.disabled = false;
+                        playButton.textContent = '▶ Playing…';
+                        announceState(container, 'playing');
+                        return;
+                    }
+
+                    if (synthesis.speaking) {
+                        synthesis.cancel();
+                    }
+
+                    currentUtterance = new SpeechSynthesisUtterance(text);
+                    currentUtterance.lang = lang;
+                    currentUtterance.rate = 1;
+                    currentUtterance.onend = currentUtterance.onerror = () => {
+                        if (currentTtsContainer === container) {
+                            resetButtons(container);
+                            announceState(container, 'idle');
+                            currentTtsContainer = null;
+                            currentUtterance = null;
+                        }
+                    };
+
+                    document.querySelectorAll('[data-tts-container][data-tts-bound="true"]').forEach((otherContainer) => {
+                        if (otherContainer !== container) {
+                            resetButtons(otherContainer);
+                            announceState(otherContainer, 'idle');
+                        }
+                    });
+
+                    pauseButton.disabled = false;
+                    playButton.textContent = '▶ Playing…';
+                    announceState(container, 'playing');
+                    currentTtsContainer = container;
+                    synthesis.speak(currentUtterance);
+                });
+
+                pauseButton.addEventListener('click', () => {
+                    if (currentTtsContainer !== container) {
+                        return;
+                    }
+                    if (synthesis.speaking && !synthesis.paused) {
+                        synthesis.pause();
+                        pauseButton.disabled = true;
+                        playButton.disabled = false;
+                        playButton.textContent = '▶ Resume excerpt';
+                        announceState(container, 'paused');
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 </html>

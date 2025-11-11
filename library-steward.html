@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Pavilion — Library Steward Console</title>
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at top, #1c1a26 0%, #0e0b11 100%);
+            color: #f6f1de;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header, main {
+            width: min(960px, 96vw);
+            margin: 0 auto;
+        }
+        header {
+            padding: 3rem 0 1rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            margin: 0 auto;
+            max-width: 640px;
+            line-height: 1.6;
+            color: rgba(246, 241, 222, 0.78);
+        }
+        .console-grid {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            margin-bottom: 3rem;
+        }
+        .panel {
+            background: rgba(20, 16, 29, 0.75);
+            border: 1px solid rgba(222, 184, 135, 0.28);
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+        }
+        .panel h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.6rem;
+            color: #fcdca3;
+        }
+        .panel p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: rgba(246, 241, 222, 0.8);
+        }
+        form {
+            display: grid;
+            gap: 1rem;
+        }
+        fieldset {
+            border: 1px solid rgba(222, 184, 135, 0.25);
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+        }
+        fieldset legend {
+            padding: 0 0.5rem;
+            font-weight: 600;
+            color: #fcdca3;
+        }
+        label {
+            display: grid;
+            gap: 0.35rem;
+            font-size: 0.95rem;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        textarea,
+        select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 219, 144, 0.2);
+            border-radius: 10px;
+            padding: 0.65rem 0.75rem;
+            color: inherit;
+            font: inherit;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        input[type="file"] {
+            color: rgba(246, 241, 222, 0.85);
+        }
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 0.75rem 1.4rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fcdca3 0%, #c99158 100%);
+            color: #201410;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+        }
+        .status-box {
+            margin-top: 1rem;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            border: 1px solid rgba(252, 220, 163, 0.35);
+            background: rgba(255, 255, 255, 0.06);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .status-box[hidden] {
+            display: none;
+        }
+        .status-box strong {
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+        code {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+        }
+        footer {
+            margin-top: auto;
+            padding: 2rem 0 3rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(246, 241, 222, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Library Steward Console</h1>
+        <p>Run the upload steward server with <code>npm install</code> then <code>npm run start:library-server</code>. Submit manuscripts for review, or file takedown complaints to hide copies until a steward resolves the issue.</p>
+    </header>
+    <main>
+        <section class="console-grid">
+            <article class="panel">
+                <h2>Upload a Manuscript</h2>
+                <p>Only mirror works that are firmly in the public domain or those with explicit redistribution grants. Provide as much provenance as possible so the rights check can validate the submission.</p>
+                <form id="upload-form">
+                    <fieldset>
+                        <legend>Manuscript Details</legend>
+                        <label>
+                            Title
+                            <input name="title" type="text" required>
+                        </label>
+                        <label>
+                            Author / Translator credit
+                            <input name="author" type="text" required>
+                        </label>
+                        <label>
+                            Sect lesson or shelving note
+                            <input name="sectLesson" type="text" placeholder="Sect Lesson · ...">
+                        </label>
+                        <label>
+                            Guild lore annotation
+                            <textarea name="lore" placeholder="Describe how the guild uses this text."></textarea>
+                        </label>
+                        <label>
+                            Format notes
+                            <input name="formatNotes" type="text" placeholder="Plain text mirror, public domain (U.S.)">
+                        </label>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Rights &amp; Provenance</legend>
+                        <label>
+                            Publication year
+                            <input name="publicationYear" type="number" min="0" max="2100" step="1">
+                        </label>
+                        <label>
+                            Source URL
+                            <input name="sourceUrl" type="url" placeholder="https://">
+                        </label>
+                        <label>
+                            Copyright status
+                            <select name="copyrightStatus" required>
+                                <option value="">Select status…</option>
+                                <option value="public_domain">Public domain</option>
+                                <option value="creative_commons">Creative Commons</option>
+                                <option value="licensed">Licensed (written permission)</option>
+                            </select>
+                        </label>
+                        <label>
+                            License (for CC)
+                            <input name="license" type="text" placeholder="CC BY-SA 4.0">
+                        </label>
+                        <label>
+                            Rights notes / permissions
+                            <textarea name="rightsNotes" placeholder="Link to permission email or cite PD evidence."></textarea>
+                        </label>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Excerpt &amp; Narration</legend>
+                        <label>
+                            Optional excerpt override
+                            <textarea name="excerpt" placeholder="Paste a short excerpt to override auto-selection."></textarea>
+                        </label>
+                        <label>
+                            Preferred TTS voice locale
+                            <input name="ttsLang" type="text" placeholder="en-US">
+                        </label>
+                        <label>
+                            Manuscript file (max 5 MB, txt/md/pdf/epub)
+                            <input name="manuscript" type="file" required>
+                        </label>
+                    </fieldset>
+                    <button type="submit">Submit for steward review</button>
+                </form>
+                <div class="status-box" id="upload-status" hidden></div>
+            </article>
+            <article class="panel">
+                <h2>File a Complaint</h2>
+                <p>If a visitor raises a rights or attribution concern, suspend the title while you investigate. Suspended works disappear from the living stacks until you resolve the report.</p>
+                <form id="complaint-form">
+                    <label>
+                        Book identifier
+                        <input name="bookId" type="text" placeholder="e.g., tao-te-ching-chapter-1" required>
+                    </label>
+                    <label>
+                        Complainant name (optional)
+                        <input name="complainant" type="text" placeholder="Anonymous">
+                    </label>
+                    <label>
+                        Complaint summary
+                        <textarea name="reason" required placeholder="Describe the concern so the review circle can follow up."></textarea>
+                    </label>
+                    <button type="submit">Suspend book</button>
+                </form>
+                <div class="status-box" id="complaint-status" hidden></div>
+            </article>
+            <article class="panel">
+                <h2>Resolve Complaint</h2>
+                <p>Once documentation is collected, reinstate the work or keep it in review. Provide the next status so the catalog reflects the decision.</p>
+                <form id="resolve-form">
+                    <label>
+                        Book identifier
+                        <input name="bookId" type="text" required>
+                    </label>
+                    <label>
+                        Next status
+                        <select name="nextStatus">
+                            <option value="pending_review">Pending review</option>
+                            <option value="active">Activate immediately</option>
+                        </select>
+                    </label>
+                    <button type="submit">Update status</button>
+                </form>
+                <div class="status-box" id="resolve-status" hidden></div>
+            </article>
+        </section>
+    </main>
+    <footer>
+        Steward tip: keep original scans or attribution emails in the <code>archives/rights/</code> locker for audits.
+    </footer>
+
+    <script>
+        const API_ROOT = 'http://localhost:4545';
+
+        async function submitForm(form, endpoint, options = {}) {
+            const statusBox = document.getElementById(options.statusBoxId);
+            if (statusBox) {
+                statusBox.hidden = false;
+                statusBox.innerHTML = '<strong>Processing…</strong> Checking with the steward server.';
+            }
+
+            const formData = new FormData(form);
+            const fetchOptions = {
+                method: options.method || 'POST',
+                body: options.body || formData
+            };
+
+            try {
+                const response = await fetch(`${API_ROOT}${endpoint}`, fetchOptions);
+                const payload = await response.json();
+                if (!response.ok) {
+                    throw payload;
+                }
+
+                if (statusBox) {
+                    statusBox.innerHTML = `<strong>Success</strong>${payload.message ? ` ${payload.message}` : ' Request completed.'}`;
+                }
+                form.reset();
+            } catch (error) {
+                console.error('Steward console error:', error);
+                if (statusBox) {
+                    const details = Array.isArray(error.warnings) ? `\n• ${error.warnings.join('\n• ')}` : '';
+                    statusBox.innerHTML = `<strong>Error</strong> ${error.error || 'Unable to reach steward server.'}${details}`;
+                }
+            }
+        }
+
+        document.getElementById('upload-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            submitForm(event.currentTarget, '/library/upload', { statusBoxId: 'upload-status' });
+        });
+
+        document.getElementById('complaint-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const payload = new URLSearchParams(new FormData(form));
+            submitForm(form, '/library/complaint', {
+                statusBoxId: 'complaint-status',
+                body: payload,
+                method: 'POST'
+            });
+        });
+
+        document.getElementById('resolve-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const data = new FormData(form);
+            const bookId = data.get('bookId');
+            const nextStatus = data.get('nextStatus');
+            const payload = new URLSearchParams({ nextStatus });
+            submitForm(form, `/library/complaint/${encodeURIComponent(bookId)}/resolve`, {
+                statusBoxId: 'resolve-status',
+                body: payload,
+                method: 'POST'
+            });
+        });
+    </script>
+</body>
+</html>
