@@ -35,6 +35,13 @@ The Sand Pavilion is tended as an initiatory sect devoted to moneyless learning 
 - Connect the Steward Board to live submission forms and integrate with Local AI companions for mission tracking.
 - Expand multilingual support and accessibility cues across every room.
 - Continue integrating the remaining concept files (education platform, inheritance paths builder, etc.) into the unified flow.
+- Wire plugin manifests directly into the companion shell (`local_ai_architecture.tsx`) once the Node/FS bridge lands, replacing the static demo data.
+
+## Open Questions & Resource Needs
+- **GPU + Hardware Guidance**: Need benchmarks for 7B and 13B models on common hardware (Mac M-series, modest NVIDIA GPUs) to set realistic expectations for travelers.
+- **UI Mockups**: Seeking design mockups for the plugin management console and consent prompts that align with the Pavilion aesthetic.
+- **Security Review**: Require volunteers to audit sandbox profiles and confirm manifests uphold privacy commitments.
+- **Localization**: Contributors fluent in non-English languages can help translate rituals and interface copy while keeping cultural nuance.
 
 ## Contributing
 Share ideas or new rooms by opening an issue or dropping concepts into the Steward Board. Every contribution should honour the pavilion’s ethos: generosity, respect, and collective stewardship.

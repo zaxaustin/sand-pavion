@@ -1,0 +1,33 @@
+{
+  "id": "ritual-guidance",
+  "type": "ritual-scheduler",
+  "enabled": false,
+  "description": "Delivers breathwork, meditation, and movement prompts that stay inside the local sanctuary.",
+  "ritual_packs": [
+    {
+      "name": "dawn_breath_sequence",
+      "script_path": "rituals/dawn_breath_sequence.yaml",
+      "media_dir": "rituals/dawn/media",
+      "sharing": "device-only",
+      "requires_bio_data": false
+    },
+    {
+      "name": "circle_check_in",
+      "script_path": "rituals/circle_check_in.yaml",
+      "media_dir": null,
+      "sharing": "household-mesh",
+      "requires_bio_data": false
+    }
+  ],
+  "safety": {
+    "collects_health_data": false,
+    "stores_completion_logs": true,
+    "completion_log_retention_days": 14,
+    "retention_override": "user-controlled"
+  },
+  "privacy_commitments": [
+    "Always run timers locally; do not ping external APIs for scheduling.",
+    "Store ritual reflections in the encrypted journal only with the traveler's consent.",
+    "Allow the traveler to wipe all ritual data via a single hardware or UI command."
+  ]
+}

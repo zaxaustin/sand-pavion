@@ -421,131 +421,11 @@
     </footer>
 
     <script>
-        async function hydrateLibraryGrid() {
-            const grid = document.querySelector('[data-library-grid]');
-            const template = document.getElementById('book-card-template');
-            if (!grid || !template) {
-                return;
-            }
-
-            grid.innerHTML = '';
-
-            try {
-                const response = await fetch('assets/library/catalog.json', { cache: 'no-cache' });
-                if (!response.ok) {
-                    throw new Error(`Catalog request failed with status ${response.status}`);
-                }
-                const payload = await response.json();
-                const books = Array.isArray(payload.books) ? payload.books : [];
-                const activeBooks = books.filter((book) => book.status === 'active');
-
-                if (!activeBooks.length) {
-                    const empty = document.createElement('p');
-                    empty.className = 'book-grid__empty';
-                    empty.textContent = 'No public-domain holdings are available right now. Stewards are reviewing the shelves.';
-                    grid.appendChild(empty);
-                    return;
-                }
-
-                const fragment = document.createDocumentFragment();
-
-                activeBooks.forEach((book) => {
-                    const card = template.content.cloneNode(true);
-                    const article = card.querySelector('[data-book-card]');
-                    if (!article) {
-                        return;
-                    }
-
-                    const excerptEl = article.querySelector('[data-field="excerpt"]');
-                    const lessonEl = article.querySelector('[data-field="lesson"]');
-                    const titleEl = article.querySelector('[data-field="title"]');
-                    const authorEl = article.querySelector('[data-field="author"]');
-                    const formatEl = article.querySelector('[data-field="format"]');
-                    const loreEl = article.querySelector('[data-field="lore"]');
-                    const downloadLink = article.querySelector('[data-action="download"]');
-                    const readLink = article.querySelector('[data-action="read"]');
-                    const controls = article.querySelector('[data-tts-container]');
-
-                    const excerptId = `excerpt-${book.id}`;
-                    article.dataset.bookId = book.id;
-                    article.dataset.bookStatus = book.status;
-
-                    if (lessonEl) lessonEl.textContent = book.sectLesson || 'Sect Lesson pending';
-                    if (titleEl) titleEl.textContent = book.title || 'Untitled Manuscript';
-                    if (authorEl) authorEl.textContent = book.author || 'Unknown author';
-                    if (formatEl) formatEl.textContent = book.formatNotes || 'Format review pending';
-                    if (loreEl) loreEl.textContent = book.lore || 'Lore annotation forthcoming from the steward circle.';
-
-                    if (excerptEl) {
-                        excerptEl.id = excerptId;
-                        excerptEl.textContent = book.excerpt || 'Excerpt forthcoming after steward review.';
-                    }
-
-                    if (controls) {
-                        controls.setAttribute('data-tts-target', excerptId);
-                        controls.setAttribute('data-tts-lang', book.ttsLang || 'en-US');
-                        controls.dataset.ttsBound = 'false';
-                    }
-
-                    const filePath = book.file || book.excerptSource;
-                    if (downloadLink && filePath) {
-                        downloadLink.href = filePath;
-                        downloadLink.setAttribute('aria-label', `Download ${book.title || 'the manuscript'} as a local file`);
-                    } else if (downloadLink) {
-                        downloadLink.removeAttribute('href');
-                        downloadLink.textContent = 'Download pending';
-                        downloadLink.classList.add('button--ghost');
-                        downloadLink.setAttribute('aria-disabled', 'true');
-                    }
-
-                    if (readLink && filePath) {
-                        readLink.href = filePath;
-                        readLink.setAttribute('aria-label', `Open ${book.title || 'the manuscript'} in a new tab`);
-                    } else if (readLink) {
-                        readLink.removeAttribute('href');
-                        readLink.textContent = 'Reading link pending';
-                        readLink.setAttribute('aria-disabled', 'true');
-                    }
-
-                    fragment.appendChild(card);
-                });
-
-                grid.appendChild(fragment);
-                setupSpeechControls();
-            } catch (error) {
-                console.error('Unable to load library catalog.', error);
-                const failure = document.createElement('p');
-                failure.className = 'book-grid__error';
-                failure.textContent = 'The living catalog is temporarily offline. Please refresh after the stewards finish repairs.';
-                grid.replaceWith(failure);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', hydrateLibraryGrid);
-    </script>
-    <script>
-        let speechSynthesisUnavailableHandled = false;
-        let currentTtsContainer = null;
-        let currentUtterance = null;
-
-        function setupSpeechControls() {
-            const containers = Array.from(document.querySelectorAll('[data-tts-container]')).filter(
-                (container) => container.dataset.ttsBound !== 'true'
-            );
-
-            if (!containers.length) {
-                return;
-            }
-
+        (function () {
             const supportWarning = 'Speech synthesis is unavailable in this browser.';
-
+            const containers = Array.from(document.querySelectorAll('[data-tts-target]'));
             if (!('speechSynthesis' in window)) {
-                if (!speechSynthesisUnavailableHandled) {
-                    console.warn('Speech synthesis unsupported; disabling narration controls.');
-                    speechSynthesisUnavailableHandled = true;
-                }
                 containers.forEach((container) => {
-                    container.dataset.ttsBound = 'true';
                     container.querySelectorAll('button').forEach((button) => {
                         button.disabled = true;
                         button.setAttribute('aria-disabled', 'true');
@@ -574,27 +454,17 @@
 
             containers.forEach((container) => {
                 const targetId = container.getAttribute('data-tts-target');
-                if (!targetId) {
-                    return;
-                }
                 const excerpt = document.getElementById(targetId);
                 if (!excerpt) {
                     return;
                 }
-
                 const text = excerpt.textContent.trim();
                 const lang = container.getAttribute('data-tts-lang') || 'en-US';
                 const playButton = container.querySelector('[data-tts-action="play"]');
                 const pauseButton = container.querySelector('[data-tts-action="pause"]');
 
-                if (!playButton || !pauseButton) {
-                    return;
-                }
-
-                container.dataset.ttsBound = 'true';
-
                 playButton.addEventListener('click', () => {
-                    if (currentTtsContainer === container && synthesis.paused) {
+                    if (currentContainer === container && synthesis.paused) {
                         synthesis.resume();
                         pauseButton.disabled = false;
                         playButton.textContent = '▶ Playing…';
@@ -614,11 +484,15 @@
                             resetButtons(container);
                             announceState(container, 'idle');
                             currentTtsContainer = null;
+                        if (currentContainer === container) {
+                            resetButtons(container);
+                            announceState(container, 'idle');
+                            currentContainer = null;
                             currentUtterance = null;
                         }
                     };
 
-                    document.querySelectorAll('[data-tts-container][data-tts-bound="true"]').forEach((otherContainer) => {
+                    containers.forEach((otherContainer) => {
                         if (otherContainer !== container) {
                             resetButtons(otherContainer);
                             announceState(otherContainer, 'idle');
@@ -633,7 +507,7 @@
                 });
 
                 pauseButton.addEventListener('click', () => {
-                    if (currentTtsContainer !== container) {
+                    if (currentContainer !== container) {
                         return;
                     }
                     if (synthesis.speaking && !synthesis.paused) {
@@ -646,6 +520,7 @@
                 });
             });
         }
+        })();
     </script>
 </body>
 </html>
