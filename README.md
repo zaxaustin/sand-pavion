@@ -47,6 +47,12 @@ The Sand Pavilion is tended as an initiatory sect devoted to moneyless learning 
 - Rotate caches and logs regularly; offer one-click deletion from the UI and a CLI command for headless setups.
 - Favor LAN or mesh sync over cloud relays. When federation is necessary, require steward countersignature and show a printable audit trail.
 - Never assume consent—surface opt-in prompts when a plugin requests new data access or network scopes.
+## Maintaining the Living Library
+1. **Select a public-domain text**: Confirm that the edition you wish to mirror is public domain (or explicitly licensed for redistribution). Note the translator and publication year for attribution in the lore notes.
+2. **Add the local file**: Place the text inside `assets/library/` as a UTF-8 `.txt` file. Use a descriptive, kebab-case filename (for example, `dao-de-jing-chapter-1.txt`).
+3. **Register the holding**: In `living-library.html`, duplicate an existing `.book-card` within the “Mirrored Public-Domain Holdings” section. Update the title, author, sect lesson, lore description, download/read links, and `blockquote` excerpt. Set the `data-tts-target` attribute on the control wrapper to match the excerpt’s `id`, and choose an appropriate `data-tts-lang` code for pronunciation.
+4. **Verify text-to-speech**: Open `living-library.html` in a modern browser, trigger the play/pause controls, and confirm the Web Speech API narration toggles correctly. Browsers without speech synthesis will show “Speech unavailable,” ensuring graceful fallback.
+5. **Document new rituals**: If the holding introduces a novel study practice, add a short note in the README so fellow stewards understand how to use the text in ceremony.
 
 ## Future Work
 - Build interactive versions of the realm pages (e.g., transform `journeys.html` into a fully editable path builder).

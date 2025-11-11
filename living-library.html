@@ -57,6 +57,145 @@
         .shelf h2 { color: #ffd787; margin-bottom: 0.8rem; font-size: 1.5rem; }
         .shelf ul { list-style: none; }
         .shelf li { margin-bottom: 0.6rem; }
+        .library-holdings {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+        .library-holdings__header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .library-holdings__header h2 {
+            color: #ffe6a7;
+            font-size: 2.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .library-holdings__header p {
+            max-width: 860px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        .book-grid {
+            display: grid;
+            gap: 1.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        .book-card {
+            background: rgba(24, 17, 9, 0.85);
+            border-radius: 22px;
+            padding: 1.8rem;
+            border: 1px solid rgba(255, 219, 144, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .book-card__header h3 {
+            font-size: 1.6rem;
+            color: #ffd787;
+            margin-bottom: 0.4rem;
+        }
+        .book-card__lesson {
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 230, 167, 0.8);
+        }
+        .book-card__author {
+            font-size: 1rem;
+            color: rgba(255, 230, 167, 0.9);
+        }
+        .book-card__meta {
+            display: grid;
+            gap: 0.6rem;
+        }
+        .book-card__meta div {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 12px;
+        }
+        .book-card__meta dt {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 230, 167, 0.6);
+            margin-bottom: 0.25rem;
+        }
+        .book-card__meta dd {
+            margin: 0;
+            line-height: 1.5;
+        }
+        .book-card__excerpt {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(255, 246, 228, 0.92);
+            background: rgba(0, 0, 0, 0.25);
+            border-left: 3px solid rgba(255, 219, 144, 0.7);
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+        }
+        .book-card__controls,
+        .book-card__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background: rgba(255, 219, 144, 0.28);
+            color: #1b1a24;
+            padding: 0.55rem 1.1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 219, 144, 0.6);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .button:hover,
+        .button:focus {
+            background: rgba(255, 219, 144, 0.45);
+            transform: translateY(-1px);
+            outline: none;
+        }
+        .button:disabled,
+        .button[aria-disabled="true"] {
+            cursor: not-allowed;
+            opacity: 0.6;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 246, 228, 0.6);
+        }
+        .button--ghost {
+            background: transparent;
+            color: #ffe6a7;
+            border-color: rgba(255, 230, 167, 0.5);
+        }
+        .button--ghost:hover,
+        .button--ghost:focus {
+            background: rgba(255, 230, 167, 0.18);
+            color: #1b1a24;
+        }
+        .tts-evaluation {
+            max-width: 960px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+            text-align: center;
+        }
+        .tts-evaluation h2 {
+            color: #ffe6a7;
+            font-size: 1.9rem;
+            margin-bottom: 1rem;
+        }
+        .tts-evaluation p {
+            line-height: 1.7;
+            opacity: 0.85;
+        }
         .tracks {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 18px;
@@ -136,7 +275,7 @@
         <a class="back" href="index.html">← Return to the Pavilion</a>
     </header>
 
-    <section class="shelves">
+    <section class="shelves" aria-label="Living Library study rooms">
         <article class="shelf">
             <h2>Shelf I · Hindu Wisdom Room</h2>
             <ul>
@@ -169,6 +308,132 @@
                 <li>Zen Practice — community podcast with weekly koan reflections.</li>
             </ul>
         </article>
+    </section>
+
+    <section class="library-holdings" aria-labelledby="public-domain-holdings">
+        <div class="library-holdings__header">
+            <h2 id="public-domain-holdings">Mirrored Public-Domain Holdings</h2>
+            <p>Guild archivists keep at least three mirrored editions on-site so that every initiate has resilient access to our shared study canon. Each card below names the lineage, shares our lore-friendly study focus, and links to the local copy.</p>
+        </div>
+        <div class="book-grid" role="list">
+            <article class="book-card" role="listitem">
+                <header class="book-card__header">
+                    <p class="book-card__lesson">Sect Lesson · Stoic Breath Vigil</p>
+                    <h3>Meditations — Book II</h3>
+                    <p class="book-card__author">Marcus Aurelius (tr. George Long, 1862)</p>
+                </header>
+                <dl class="book-card__meta">
+                    <div>
+                        <dt>Format</dt>
+                        <dd>Plain text mirror, public domain (U.S.)</dd>
+                    </div>
+                    <div>
+                        <dt>Guild Lore</dt>
+                        <dd>Used in resilience circles to rehearse the Stoic cooperative vow before dawn meditations.</dd>
+                    </div>
+                </dl>
+                <blockquote id="excerpt-meditations" class="book-card__excerpt">
+                    Begin the morning by saying to thyself, I shall meet with the busy-body, the ungrateful, arrogant, deceitful, envious, unsocial…
+                </blockquote>
+                <div class="book-card__controls" data-tts-target="excerpt-meditations" data-tts-lang="en-GB">
+                    <button type="button" class="button" data-tts-action="play">▶ Play excerpt</button>
+                    <button type="button" class="button button--ghost" data-tts-action="pause" disabled>⏸ Pause narration</button>
+                </div>
+                <div class="book-card__actions">
+                    <a class="button" href="assets/library/meditations-book-ii.txt" download>⬇ Download text</a>
+                    <a class="button button--ghost" href="assets/library/meditations-book-ii.txt" target="_blank" rel="noopener">📖 Read locally</a>
+                </div>
+            </article>
+            <article class="book-card" role="listitem">
+                <header class="book-card__header">
+                    <p class="book-card__lesson">Sect Lesson · Wayfinding Breath</p>
+                    <h3>Tao Te Ching — Chapter 1</h3>
+                    <p class="book-card__author">Laozi (tr. James Legge, 1891)</p>
+                </header>
+                <dl class="book-card__meta">
+                    <div>
+                        <dt>Format</dt>
+                        <dd>Plain text mirror, public domain (U.S.)</dd>
+                    </div>
+                    <div>
+                        <dt>Guild Lore</dt>
+                        <dd>Placed in the orientation vestibule to remind initiates that the name is never the path.</dd>
+                    </div>
+                </dl>
+                <blockquote id="excerpt-tao" class="book-card__excerpt">
+                    The Tao that can be trodden is not the enduring and unchanging Tao. The name that can be named is not the enduring and unchanging name…
+                </blockquote>
+                <div class="book-card__controls" data-tts-target="excerpt-tao" data-tts-lang="en-US">
+                    <button type="button" class="button" data-tts-action="play">▶ Play excerpt</button>
+                    <button type="button" class="button button--ghost" data-tts-action="pause" disabled>⏸ Pause narration</button>
+                </div>
+                <div class="book-card__actions">
+                    <a class="button" href="assets/library/tao-te-ching-chapter-1.txt" download>⬇ Download text</a>
+                    <a class="button button--ghost" href="assets/library/tao-te-ching-chapter-1.txt" target="_blank" rel="noopener">📖 Read locally</a>
+                </div>
+            </article>
+            <article class="book-card" role="listitem">
+                <header class="book-card__header">
+                    <p class="book-card__lesson">Sect Lesson · Compassion Ledger</p>
+                    <h3>The Dhammapada — Twin Verses</h3>
+                    <p class="book-card__author">Anonymous Pāli verses (tr. F. Max Müller, 1881)</p>
+                </header>
+                <dl class="book-card__meta">
+                    <div>
+                        <dt>Format</dt>
+                        <dd>Plain text mirror, public domain (U.S.)</dd>
+                    </div>
+                    <div>
+                        <dt>Guild Lore</dt>
+                        <dd>Recited after reconciliation circles to anchor non-retaliation covenants.</dd>
+                    </div>
+                </dl>
+                <blockquote id="excerpt-dhammapada" class="book-card__excerpt">
+                    All that we are is the result of what we have thought: it is founded on our thoughts, it is made up of our thoughts…
+                </blockquote>
+                <div class="book-card__controls" data-tts-target="excerpt-dhammapada" data-tts-lang="en-IN">
+                    <button type="button" class="button" data-tts-action="play">▶ Play excerpt</button>
+                    <button type="button" class="button button--ghost" data-tts-action="pause" disabled>⏸ Pause narration</button>
+                </div>
+                <div class="book-card__actions">
+                    <a class="button" href="assets/library/dhammapada-chapter-1.txt" download>⬇ Download text</a>
+                    <a class="button button--ghost" href="assets/library/dhammapada-chapter-1.txt" target="_blank" rel="noopener">📖 Read locally</a>
+                </div>
+            </article>
+            <article class="book-card" role="listitem">
+                <header class="book-card__header">
+                    <p class="book-card__lesson">Sect Lesson · Warrior's Surrender</p>
+                    <h3>The Bhagavad-Gita — Chapter II</h3>
+                    <p class="book-card__author">Vyasa (tr. Sir Edwin Arnold, 1885)</p>
+                </header>
+                <dl class="book-card__meta">
+                    <div>
+                        <dt>Format</dt>
+                        <dd>Plain text mirror, public domain (U.S.)</dd>
+                    </div>
+                    <div>
+                        <dt>Guild Lore</dt>
+                        <dd>Serves the martial devotees who study compassionate duty before taking stewardship oaths.</dd>
+                    </div>
+                </dl>
+                <blockquote id="excerpt-gita" class="book-card__excerpt">
+                    Thou grievest where no grief should be! thou speak'st words lacking wisdom; for the wise in heart mourn not for those that live, nor those that die…
+                </blockquote>
+                <div class="book-card__controls" data-tts-target="excerpt-gita" data-tts-lang="en-IN">
+                    <button type="button" class="button" data-tts-action="play">▶ Play excerpt</button>
+                    <button type="button" class="button button--ghost" data-tts-action="pause" disabled>⏸ Pause narration</button>
+                </div>
+                <div class="book-card__actions">
+                    <a class="button" href="assets/library/bhagavad-gita-chapter-2.txt" download>⬇ Download text</a>
+                    <a class="button button--ghost" href="assets/library/bhagavad-gita-chapter-2.txt" target="_blank" rel="noopener">📖 Read locally</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="tts-evaluation" aria-labelledby="tts-eval-heading">
+        <h2 id="tts-eval-heading">Voice Invocation Assessment</h2>
+        <p>The guild tested the browser-native <strong>Web Speech API</strong> because it requires no external services, keeps sacred texts offline, and respects our moneyless charter. Modern Chromium, Firefox, and Safari builds expose speech synthesis voices without additional dependencies, though mobile Safari presently limits background playback. The controls above lean on this API to offer immediate play and pause support per excerpt; if a visitor’s browser lacks the feature, the buttons announce that speech is unavailable and fall back to silent reading.</p>
     </section>
 
     <section class="tracks">
@@ -228,5 +493,105 @@
     <footer>
         Future work: digitize more oral histories, add language accessibility layers, and connect track completion with Steward Board missions. “Set your heart upon your work, never on its reward.” — Lord Krishna
     </footer>
+
+    <script>
+        (function () {
+            const supportWarning = 'Speech synthesis is unavailable in this browser.';
+            const containers = Array.from(document.querySelectorAll('[data-tts-target]'));
+            if (!('speechSynthesis' in window)) {
+                containers.forEach((container) => {
+                    container.querySelectorAll('button').forEach((button) => {
+                        button.disabled = true;
+                        button.setAttribute('aria-disabled', 'true');
+                        button.title = supportWarning;
+                        button.textContent = 'Speech unavailable';
+                    });
+                });
+                return;
+            }
+
+            const synthesis = window.speechSynthesis;
+            let currentContainer = null;
+            let currentUtterance = null;
+
+            function resetButtons(container) {
+                container.querySelectorAll('[data-tts-action="pause"]').forEach((pauseButton) => {
+                    pauseButton.disabled = true;
+                });
+                container.querySelectorAll('[data-tts-action="play"]').forEach((playButton) => {
+                    playButton.disabled = false;
+                    playButton.textContent = '▶ Play excerpt';
+                });
+            }
+
+            function announceState(container, message) {
+                container.setAttribute('data-tts-status', message);
+            }
+
+            containers.forEach((container) => {
+                const targetId = container.getAttribute('data-tts-target');
+                const excerpt = document.getElementById(targetId);
+                if (!excerpt) {
+                    return;
+                }
+                const text = excerpt.textContent.trim();
+                const lang = container.getAttribute('data-tts-lang') || 'en-US';
+                const playButton = container.querySelector('[data-tts-action="play"]');
+                const pauseButton = container.querySelector('[data-tts-action="pause"]');
+
+                playButton.addEventListener('click', () => {
+                    if (currentContainer === container && synthesis.paused) {
+                        synthesis.resume();
+                        pauseButton.disabled = false;
+                        playButton.textContent = '▶ Playing…';
+                        announceState(container, 'playing');
+                        return;
+                    }
+
+                    if (synthesis.speaking) {
+                        synthesis.cancel();
+                    }
+
+                    currentUtterance = new SpeechSynthesisUtterance(text);
+                    currentUtterance.lang = lang;
+                    currentUtterance.rate = 1;
+                    currentUtterance.onend = currentUtterance.onerror = () => {
+                        if (currentContainer === container) {
+                            resetButtons(container);
+                            announceState(container, 'idle');
+                            currentContainer = null;
+                            currentUtterance = null;
+                        }
+                    };
+
+                    containers.forEach((otherContainer) => {
+                        if (otherContainer !== container) {
+                            resetButtons(otherContainer);
+                            announceState(otherContainer, 'idle');
+                        }
+                    });
+
+                    pauseButton.disabled = false;
+                    playButton.textContent = '▶ Playing…';
+                    announceState(container, 'playing');
+                    currentContainer = container;
+                    synthesis.speak(currentUtterance);
+                });
+
+                pauseButton.addEventListener('click', () => {
+                    if (currentContainer !== container) {
+                        return;
+                    }
+                    if (synthesis.speaking && !synthesis.paused) {
+                        synthesis.pause();
+                        pauseButton.disabled = true;
+                        playButton.disabled = false;
+                        playButton.textContent = '▶ Resume excerpt';
+                        announceState(container, 'paused');
+                    }
+                });
+            });
+        })();
+    </script>
 </body>
 </html>
