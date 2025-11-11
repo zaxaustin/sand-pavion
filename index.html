@@ -48,6 +48,32 @@
                 max-width: 600px;
                 margin: 0 auto;
             }
+
+            .blessing-ribbon {
+                margin: 1.6rem auto 0;
+                padding: 0.8rem 1.4rem;
+                max-width: 720px;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 215, 128, 0.35);
+                border-radius: 18px;
+                display: grid;
+                gap: 0.6rem;
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+
+            .blessing-ribbon span {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #ffe7a9;
+            }
+
+            .blessing-ribbon em {
+                color: #f5f5dc;
+                font-style: normal;
+                opacity: 0.85;
+            }
     
             .pavilions-grid {
                 display: grid;
@@ -479,6 +505,66 @@
                 padding-bottom: 3rem;
             }
 
+            .member-section {
+                max-width: 1050px;
+                margin: 0 auto;
+                padding: 3rem 1rem 1rem;
+                display: grid;
+                gap: 1.5rem;
+                background: rgba(0, 0, 0, 0.22);
+                border: 1px solid rgba(218, 165, 32, 0.35);
+                border-radius: 22px;
+            }
+
+            .member-section h2 {
+                font-size: 2rem;
+                color: #ffd700;
+                text-align: center;
+            }
+
+            .member-copy {
+                text-align: center;
+                font-size: 1rem;
+                line-height: 1.7;
+                opacity: 0.82;
+                max-width: 760px;
+                margin: 0 auto;
+            }
+
+            .member-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1.2rem;
+            }
+
+            .member-card {
+                background: rgba(139, 69, 19, 0.28);
+                border-radius: 18px;
+                padding: 1.5rem;
+                border: 1px solid rgba(255, 215, 128, 0.35);
+                display: grid;
+                gap: 0.6rem;
+            }
+
+            .member-card h3 {
+                font-size: 1.2rem;
+                color: #ffe7a9;
+            }
+
+            .member-card p {
+                font-size: 0.9rem;
+                line-height: 1.6;
+                opacity: 0.82;
+            }
+
+            .member-actions {
+                text-align: center;
+            }
+
+            .member-actions .cta-button {
+                margin-top: 0.6rem;
+            }
+
             .call-to-action {
                 text-align: center;
                 padding: 3rem 1rem 4rem;
@@ -529,6 +615,10 @@
                     padding: 1.4rem;
                 }
 
+                .member-section {
+                    padding: 2.2rem 1rem;
+                }
+
                 .call-to-action {
                     padding: 2.5rem 1rem 3rem;
                 }
@@ -542,6 +632,11 @@
         <header class="header">
             <h1 class="logo">The Sand Pavilion</h1>
             <p class="tagline">A commons-built library of open-source knowledge, contemplative practice, and collaborative craft</p>
+            <div class="blessing-ribbon" aria-label="Blessings from many teachers">
+                <span>✶ <em>“Peace I leave with you; my peace I give you.” — Jesus (John 14:27)</em></span>
+                <span>✶ <em>“Radiate boundless love towards the entire world.” — The Buddha (Metta Sutta)</em></span>
+                <span>✶ <em>“Set your heart upon your work, never on its reward.” — Lord Krishna (Bhagavad Gita)</em></span>
+            </div>
             <div class="search-bar">
                 <input type="text" class="search-input" placeholder="Search for learning resources, tools, or topics..." id="searchInput">
             </div>
@@ -550,6 +645,9 @@
                 <a class="nav-link" href="#realms">Featured Realms</a>
                 <a class="nav-link" href="#rooms">Library Rooms</a>
                 <a class="nav-link" href="#districts">Learning Districts</a>
+                <a class="nav-link" href="#membership">Members</a>
+                <a class="nav-link" href="office-hub.html">Office</a>
+                <a class="nav-link" href="member-portal.html">Login</a>
                 <a class="nav-link" href="office-hub.html">Office</a>
             </nav>
         </header>
@@ -821,14 +919,38 @@
             </main>
         </section>
 
+        <section class="member-section" id="membership">
+            <h2>Membership, Levels &amp; Living Quests</h2>
+            <p class="member-copy">Become a pavilion member to design your own learning levels, craft quests with friends, and pass along inheritances of wisdom. Every track is community-authored so the library keeps growing from within.</p>
+            <div class="member-grid">
+                <div class="member-card">
+                    <h3>Gentle Entry</h3>
+                    <p>Set personal intentions, choose your first practices, and receive a welcome blessing from Jesus, the Buddha, and Krishna to remind you you are held in peace.</p>
+                </div>
+                <div class="member-card">
+                    <h3>Quest Weaving</h3>
+                    <p>Outline challenges, add reflective checkpoints, and invite mentors from any room of the pavilion to co-design your track.</p>
+                </div>
+                <div class="member-card">
+                    <h3>Inheritance Design</h3>
+                    <p>Document stories, rituals, and gifts you wish to pass forward. Link them to the Living Library so future members can pick up your thread.</p>
+                </div>
+            </div>
+            <div class="member-actions">
+                <a class="cta-button" href="member-portal.html">Enter the Member Portal</a>
+            </div>
+        </section>
+
         <section class="call-to-action">
             <h2 class="section-title">Hold the Flame With Us</h2>
+            <p>“May all beings be happy; may all beings be without disease. May all beings experience the auspicious.” — Rig Veda blessing. Carry this promise as you share feedback, propose new chambers, and steward quests that kindle joy for every seeker.</p>
+            <a class="cta-button" href="steward-board.html">Join the Steward Board</a>
             <p>Every room you visit, reflection you share, and skill you pass forward keeps this pavilion alive. Share feedback, propose a new chamber, spotlight the GitHub projects that inspire you, or steward a path so together we can build a commons free from greed.</p>
             <a class="cta-button" href="steward-board.html">Open the Steward Board</a>
         </section>
 
         <footer>
-            Crafted with care for all who seek knowledge, healing, and solidarity.
+            Crafted with care for all who seek knowledge, healing, and solidarity. “Let your light shine before others.” — Jesus (Matthew 5:16)
         </footer>
     </div>
 

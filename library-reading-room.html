@@ -31,6 +31,27 @@
             line-height: 1.6;
             opacity: 0.85;
         }
+        .blessing-banner {
+            margin: 1.8rem auto 0;
+            padding: 1rem 1.2rem;
+            max-width: 760px;
+            background: rgba(255, 219, 164, 0.12);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 219, 164, 0.38);
+            display: grid;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+        }
+        .blessing-banner span {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            color: #ffdca8;
+        }
+        .blessing-banner em {
+            font-style: normal;
+            opacity: 0.85;
+        }
         .nav-home {
             display: inline-block;
             margin-top: 1.8rem;
@@ -105,6 +126,11 @@
     <header>
         <h1>Reading &amp; Analysis Atrium</h1>
         <p>Welcome to the heart of the Sand Pavilion library where texts are read aloud, annotated in community, and transformed into living knowledge. These rooms prepare us for future pull requests when we begin mirroring open books into our own stacks.</p>
+        <div class="blessing-banner" aria-label="Reading blessings">
+            <span>✶ <em>“Come to me, all who are weary, and I will give you rest.” — Jesus (Matthew 11:28)</em></span>
+            <span>✶ <em>“There is no path to happiness: happiness is the path.” — The Buddha</em></span>
+            <span>✶ <em>“When meditation is mastered, the mind is unwavering like the flame of a lamp in a windless place.” — Bhagavad Gita</em></span>
+        </div>
         <a class="nav-home" href="index.html">← Return to the Pavilion</a>
     </header>
     <main>
@@ -150,5 +176,8 @@
             </ul>
         </section>
     </main>
+    <footer style="text-align:center; padding:2rem 1rem 3rem; font-size:0.88rem; opacity:0.75;">
+        “Let noble thoughts come to us from every side.” — Rig Veda. Thank you for tending the Atrium.
+    </footer>
 </body>
 </html>

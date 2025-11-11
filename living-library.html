@@ -18,6 +18,27 @@
         }
         header h1 { font-size: 3rem; margin-bottom: 0.6rem; letter-spacing: 0.06em; }
         header p { max-width: 760px; margin: 0 auto; font-size: 1.05rem; opacity: 0.85; }
+        .blessing-banner {
+            margin: 1.6rem auto 0;
+            padding: 1rem 1.2rem;
+            max-width: 760px;
+            background: rgba(255, 245, 220, 0.1);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 219, 144, 0.4);
+            display: grid;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+        }
+        .blessing-banner span {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            color: #ffe6a7;
+        }
+        .blessing-banner em {
+            font-style: normal;
+            opacity: 0.85;
+        }
         .shelves {
             max-width: 1200px;
             margin: 0 auto;
@@ -65,6 +86,11 @@
     <header>
         <h1>Living Library</h1>
         <p>The Living Library blends sacred texts, comparative studies, and contemporary practice manuals. Everything is freely available, community-annotated, and paired with learning tracks so you never walk alone.</p>
+        <div class="blessing-banner" aria-label="Library blessings">
+            <span>✶ <em>“Peace I leave with you; my peace I give you.” — Jesus (John 14:27)</em></span>
+            <span>✶ <em>“May the lamp of knowledge remove the darkness of ignorance.” — Invocation to Saraswati</em></span>
+            <span>✶ <em>“As rain falls equally on the just and unjust, let your heart be impartial.” — The Buddha</em></span>
+        </div>
         <a class="back" href="index.html">← Return to the Pavilion</a>
     </header>
 
@@ -146,7 +172,7 @@
     </section>
 
     <footer>
-        Future work: digitize more oral histories, add language accessibility layers, and connect track completion with Steward Board missions.
+        Future work: digitize more oral histories, add language accessibility layers, and connect track completion with Steward Board missions. “Set your heart upon your work, never on its reward.” — Lord Krishna
     </footer>
 </body>
 </html>
