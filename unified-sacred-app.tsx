@@ -28,7 +28,12 @@ import {
   ScrollText,
   ClipboardList,
   ShieldCheck,
-  PlusCircle
+  PlusCircle,
+  PenSquare,
+  Newspaper,
+  FlaskConical,
+  Bot,
+  HandHeart
 } from 'lucide-react';
 
 // ============================================
@@ -990,6 +995,226 @@ const SacredKnowledgeApp = () => {
   // LIBRARY PAGE
   // ============================================
   const LibraryPage = () => {
+    type WritingMode = 'personal' | 'news' | 'science';
+
+    const scriptureGuides = [
+      {
+        id: 'echoing-oracle',
+        name: 'Oracle of Echoing Sands',
+        role: 'Crystal statue channeling ancestral voices',
+        description:
+          'A towering quartz statue whose etched runes glow as it speaks. The oracle invites you to breathe deeply and ask for a verse that meets your moment.',
+        rituals: [
+          'Place both palms on the glowing lectern to attune.',
+          'State the virtue you seek to strengthen.',
+          'Listen for the verse and note the guiding action it suggests.'
+        ],
+        verses: [
+          {
+            source: 'Bhagavad Gita · 2.20',
+            text: 'The soul is neither born, and nor does it die; it is eternal and indestructible. Know yourself as more than the tides of circumstance.'
+          },
+          {
+            source: 'Bhagavad Gita · 4.7',
+            text: 'Whenever harmony wanes and unrest rises, I manifest with new forms of guidance. Let your service be the bridge between worlds.'
+          },
+          {
+            source: 'Bhagavad Gita · 18.66',
+            text: 'Surrender all duties to the Divine and take refuge. I shall liberate you from every sin; do not despair.'
+          }
+        ]
+      },
+      {
+        id: 'lantern-scribe',
+        name: 'Lantern Scribe Nima',
+        role: 'Caretaker spirit who carries floating scripture scrolls',
+        description:
+          'Nima drifts between shelves with a lantern halo, offering verses that focus the mind and invite communal reflection.',
+        rituals: [
+          'Bow your head as the lantern passes over your notes.',
+          'Ask how the verse might guide your circle or team.',
+          'Record any commitments sparked by the teaching.'
+        ],
+        verses: [
+          {
+            source: 'Dhammapada · Verse 5',
+            text: 'For hatred does not cease by hatred at any time; hatred ceases by love. This is an eternal law to practice with others.'
+          },
+          {
+            source: 'Dhammapada · Verse 183',
+            text: 'Cease to do evil, learn to do good, and purify the mind—this is the teaching of the Buddhas.'
+          },
+          {
+            source: 'Lotus Sutra · Chapter 2',
+            text: 'All paths you have walked are skillful means. Trust that the wisdom you need is already blooming within.'
+          }
+        ]
+      },
+      {
+        id: 'desert-cartographer',
+        name: 'Desert Cartographer Rafi',
+        role: 'Animated relief map that whispers Taoist imagery',
+        description:
+          'Rafi unfurls from the wall as moving dunes and rivers, tracing pathways through paradox and balance.',
+        rituals: [
+          'Trace a route across the living map with your fingertip.',
+          'Name a tension you wish to harmonize.',
+          'Let the verse suggest the gentlest next move.'
+        ],
+        verses: [
+          {
+            source: 'Tao Te Ching · Chapter 8',
+            text: 'The highest good is like water: it nourishes all things without striving. Flow to the place where your presence is needed most.'
+          },
+          {
+            source: 'Tao Te Ching · Chapter 33',
+            text: 'Knowing others is intelligence; knowing yourself is true wisdom. Mastering others is strength; mastering yourself is true power.'
+          },
+          {
+            source: 'Tao Te Ching · Chapter 64',
+            text: 'A journey of a thousand miles begins beneath your feet. Attend to the smallest change to steer the grand design.'
+          }
+        ]
+      }
+    ];
+
+    const writingModeOptions: {
+      id: WritingMode;
+      label: string;
+      icon: React.ComponentType<{ className?: string }>;
+      tagline: string;
+    }[] = [
+      {
+        id: 'personal',
+        label: 'Personal Notes',
+        icon: PenSquare,
+        tagline: 'Capture inner weather & intentions'
+      },
+      {
+        id: 'news',
+        label: 'News Article',
+        icon: Newspaper,
+        tagline: 'Report discoveries for pavilion readers'
+      },
+      {
+        id: 'science',
+        label: 'Scientific Report',
+        icon: FlaskConical,
+        tagline: 'Document experiments & evidence'
+      }
+    ];
+
+    const writingModes: Record<WritingMode, {
+      description: string;
+      cues: string[];
+      outline: { label: string; guidance: string }[];
+      proTips: string[];
+    }> = {
+      personal: {
+        description: 'A reflective log with space for emotions, sensory cues, and commitments to future self.',
+        cues: [
+          'Begin with the most vivid sensation or image from this visit.',
+          'Name the feeling underneath the observation.',
+          'Close with a question or intention you will revisit in 72 hours.'
+        ],
+        outline: [
+          { label: 'Opening Hook', guidance: 'Describe the scene or symbol that captured your attention.' },
+          { label: 'Inner Dialogue', guidance: 'Summarize the thought that kept repeating and why it matters.' },
+          { label: 'Integration Move', guidance: 'List one micro-action you can take before the next session.' }
+        ],
+        proTips: [
+          'Write in present tense to stay grounded in the experience.',
+          'Add a gratitude line to seal the entry.',
+          'Use bullet points for commitments to keep them scannable.'
+        ]
+      },
+      news: {
+        description: 'Craft a pavilion dispatch announcing discoveries, updates, or community achievements.',
+        cues: [
+          'Lead with the most newsworthy outcome or quote.',
+          'Include who is impacted and why it matters now.',
+          'Close with a call to action or upcoming milestone.'
+        ],
+        outline: [
+          { label: 'Headline', guidance: 'Condense the story into a bold, action-oriented line.' },
+          { label: 'Lede Paragraph', guidance: 'Answer who, what, when, where, and why in 2-3 polished sentences.' },
+          { label: 'Support & Quotes', guidance: 'List two evidence points or steward quotes that support the story.' },
+          { label: 'Call to Action', guidance: 'Invite readers to participate, donate, or attend a follow-up event.' }
+        ],
+        proTips: [
+          'Keep sentences under 22 words for clarity.',
+          'Use active voice and precise verbs.',
+          'Link to pavilion resources or paths for deeper context.'
+        ]
+      },
+      science: {
+        description: 'Document experiments, observations, and results with rigor suitable for the research archive.',
+        cues: [
+          'State the research question in one crisp sentence.',
+          'List materials or collaborators involved in the test.',
+          'Summarize results, then interpret what they mean for pavilion practice.'
+        ],
+        outline: [
+          { label: 'Abstract', guidance: 'Write a 3-sentence overview of purpose, method, and key findings.' },
+          { label: 'Methods', guidance: 'Detail the steps taken so peers can replicate the process.' },
+          { label: 'Results', guidance: 'Record measured outcomes, referencing charts or attachments.' },
+          { label: 'Discussion', guidance: 'Note implications, limitations, and next research actions.' }
+        ],
+        proTips: [
+          'Use precise units and cite data sources.',
+          'Include visuals or tables when available.',
+          'End with how the findings support a pavilion path or mission.'
+        ]
+      }
+    };
+
+    const donationGuide = {
+      intro:
+        'Stewards welcome texts that honor the pavilion ethos. Follow this pathway to ensure every donation is respectful, legal, and easy to onboard.',
+      steps: [
+        {
+          title: 'Curate & Confirm Rights',
+          detail:
+            'Select works in the public domain or those you hold distribution rights to. Include publication dates and any licensing paperwork.'
+        },
+        {
+          title: 'Prepare Digital Manuscripts',
+          detail:
+            'Provide clean PDF or EPUB files plus a short synopsis. Add formatting notes and preferred citation style if applicable.'
+        },
+        {
+          title: 'Submit Through Steward Portal',
+          detail:
+            'Upload via the Library Steward Console with metadata tags, contributor credit, and suggested room placement.'
+        },
+        {
+          title: 'Schedule a Review Ritual',
+          detail:
+            'Book a 20-minute alignment call with archivists. They will verify provenance and plan an unveiling ceremony if accepted.'
+        }
+      ],
+      contact: 'stewards@pavilion.org'
+    };
+
+    const [activeGuideIndex, setActiveGuideIndex] = useState(0);
+    const [activeVerseIndex, setActiveVerseIndex] = useState(0);
+    const [activeWritingMode, setActiveWritingMode] = useState<WritingMode>('personal');
+
+    useEffect(() => {
+      setActiveVerseIndex(0);
+    }, [activeGuideIndex]);
+
+    const activeGuide = scriptureGuides[activeGuideIndex] ?? scriptureGuides[0];
+    const activeVerse = activeGuide.verses[activeVerseIndex] ?? activeGuide.verses[0];
+    const activeWritingTemplate = writingModes[activeWritingMode];
+
+    const rotateVerse = () => {
+      setActiveVerseIndex((prev) => {
+        const total = scriptureGuides[activeGuideIndex]?.verses.length ?? 1;
+        return (prev + 1) % total;
+      });
+    };
+
     if (selectedBook && selectedChapter) {
       return (
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -1084,8 +1309,8 @@ const SacredKnowledgeApp = () => {
 
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-amber-900 mb-8">Sacred Library</h1>
-        
+        <h1 className="text-4xl font-bold text-amber-900 mb-6">Sacred Library</h1>
+
         <div className="mb-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-400" />
@@ -1099,8 +1324,168 @@ const SacredKnowledgeApp = () => {
           </div>
         </div>
 
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          <div className="bg-gradient-to-br from-amber-50 via-rose-50 to-orange-100 border-2 border-amber-200 rounded-2xl p-6 shadow-xl">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start gap-3 text-amber-900">
+                <Bot className="w-10 h-10 text-amber-600" />
+                <div>
+                  <h2 className="text-2xl font-bold">Scripture Room</h2>
+                  <p className="text-sm text-amber-700">{activeGuide.role}</p>
+                </div>
+              </div>
+              <span className="text-xs uppercase tracking-wide text-amber-700 bg-white/80 border border-amber-200 rounded-full px-3 py-1">
+                Luminous NPC
+              </span>
+            </div>
+
+            <p className="text-amber-800 text-sm md:text-base mb-4">{activeGuide.description}</p>
+
+            <div className="grid sm:grid-cols-3 gap-3 mb-4">
+              {scriptureGuides.map((guide, index) => {
+                const isActive = index === activeGuideIndex;
+                return (
+                  <button
+                    key={guide.id}
+                    onClick={() => setActiveGuideIndex(index)}
+                    className={`text-left rounded-xl border px-3 py-2 transition-all ${
+                      isActive
+                        ? 'bg-amber-600 border-amber-600 text-white shadow-lg'
+                        : 'bg-white/80 border-amber-200 text-amber-800 hover:border-amber-400 hover:bg-white'
+                    }`}
+                  >
+                    <p className="text-sm font-semibold leading-tight">{guide.name}</p>
+                    <p className="text-[11px] md:text-xs text-amber-100 opacity-90 md:text-amber-50" hidden={!isActive}>
+                      {guide.role}
+                    </p>
+                    {!isActive && <p className="text-[11px] text-amber-600 mt-1">Tap to attune</p>}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="bg-white/85 border border-amber-200 rounded-xl p-4 mb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-amber-700 text-xs font-semibold uppercase tracking-wide">
+                  <ScrollText className="w-4 h-4" />
+                  {activeVerse.source}
+                </div>
+                <button
+                  onClick={rotateVerse}
+                  className="text-xs text-amber-600 hover:text-amber-800 font-semibold"
+                >
+                  Next verse →
+                </button>
+              </div>
+              <p className="text-amber-900 italic mt-3 leading-relaxed">“{activeVerse.text}”</p>
+            </div>
+
+            <div>
+              <h3 className="text-xs uppercase tracking-wide text-amber-700 font-semibold mb-2">Ritual cues</h3>
+              <ul className="list-disc list-inside space-y-1 text-sm text-amber-700">
+                {activeGuide.rituals.map((ritual, idx) => (
+                  <li key={idx}>{ritual}</li>
+                ))}
+              </ul>
+              <p className="text-xs text-amber-600 mt-3">
+                Bonus: Log the verse in your archive to earn +10 scripture resonance points.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 via-violet-50 to-rose-100 border-2 border-blue-200 rounded-2xl p-6 shadow-xl">
+            <div className="flex items-start gap-3 text-blue-900 mb-4">
+              <ScrollText className="w-10 h-10 text-blue-600" />
+              <div>
+                <h2 className="text-2xl font-bold">Note Station</h2>
+                <p className="text-sm text-blue-700">Choose a format to unlock guided, professional layouts.</p>
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-2 mb-4">
+              {writingModeOptions.map((mode) => {
+                const ModeIcon = mode.icon;
+                const isActive = mode.id === activeWritingMode;
+                return (
+                  <button
+                    key={mode.id}
+                    onClick={() => setActiveWritingMode(mode.id)}
+                    className={`rounded-xl border px-3 py-3 text-left transition-all flex flex-col gap-1 ${
+                      isActive
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-lg'
+                        : 'bg-white/80 border-blue-200 text-blue-800 hover:border-blue-400 hover:bg-white'
+                    }`}
+                  >
+                    <ModeIcon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-blue-500'}`} />
+                    <span className="text-sm font-semibold leading-tight">{mode.label}</span>
+                    <span className={`text-[11px] ${isActive ? 'text-blue-100 opacity-90' : 'text-blue-600'}`}>{mode.tagline}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <p className="text-blue-800 text-sm md:text-base mb-4">{activeWritingTemplate.description}</p>
+
+            <div className="bg-white/90 border border-blue-200 rounded-xl p-4 mb-4">
+              <h3 className="text-xs uppercase tracking-wide text-blue-900 font-semibold mb-3">Guided outline</h3>
+              <div className="space-y-3">
+                {activeWritingTemplate.outline.map((section, idx) => (
+                  <div key={idx} className="bg-blue-50/70 border border-blue-100 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-blue-900">{section.label}</p>
+                    <p className="text-xs text-blue-600 mt-1 leading-relaxed">{section.guidance}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white/70 border border-blue-100 rounded-xl p-4">
+              <h4 className="text-xs uppercase tracking-wide text-blue-900 font-semibold mb-2">Professional cues</h4>
+              <ul className="list-disc list-inside space-y-1 text-xs text-blue-700">
+                {activeWritingTemplate.cues.map((cue, idx) => (
+                  <li key={idx}>{cue}</li>
+                ))}
+              </ul>
+              <div className="mt-3 text-xs text-blue-600">
+                <span className="font-semibold text-blue-900">Pro tips:</span>
+                <ul className="list-disc list-inside mt-1 space-y-1">
+                  {activeWritingTemplate.proTips.map((tip, idx) => (
+                    <li key={idx}>{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-emerald-50 via-amber-50 to-rose-50 border-2 border-emerald-200 rounded-2xl p-6 shadow-xl mb-10">
+          <div className="flex items-start gap-3 text-emerald-900 mb-4">
+            <HandHeart className="w-10 h-10 text-emerald-600" />
+            <div>
+              <h2 className="text-2xl font-bold">Donate to the Living Library</h2>
+              <p className="text-sm text-emerald-700">Transform your treasured texts into shared quests for the community.</p>
+            </div>
+          </div>
+          <p className="text-emerald-800 text-sm md:text-base mb-4">{donationGuide.intro}</p>
+          <ol className="list-decimal list-inside bg-white/85 border border-emerald-100 rounded-xl p-4 space-y-3 text-sm text-emerald-800">
+            {donationGuide.steps.map((step, idx) => (
+              <li key={idx}>
+                <span className="font-semibold text-emerald-900">{step.title}:</span> {step.detail}
+              </li>
+            ))}
+          </ol>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-emerald-700">
+            <span>
+              Need assistance? Email <span className="font-semibold text-emerald-900">{donationGuide.contact}</span>
+            </span>
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+              <Gem className="w-4 h-4" />
+              Download donation packet
+            </button>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {CONTENT_DATABASE.books.filter(book => 
+          {CONTENT_DATABASE.books.filter(book =>
             book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             book.description.toLowerCase().includes(searchTerm.toLowerCase())
           ).map((book) => (
@@ -2001,6 +2386,11 @@ const SacredKnowledgeApp = () => {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
             <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
               <div className="flex items-center gap-2 mb-4 text-rose-900">
@@ -2019,6 +2409,62 @@ const SacredKnowledgeApp = () => {
 
             <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
               <div className="flex items-center gap-2 mb-4 text-rose-900">
+                <Gamepad className="w-5 h-5" />
+                <h2 className="text-2xl font-semibold">Cross-Pavilion Play Concepts</h2>
+              </div>
+              <p className="text-rose-700 mb-4">
+                Blend these playful elements across plugin controls, consent rituals, and learning journeys.
+              </p>
+              <div className="grid md:grid-cols-2 gap-3 text-sm">
+                {allGameMoments.map((moment, idx) => (
+                  <div key={idx} className="bg-rose-50 border border-rose-100 rounded-xl p-3">
+                    {moment}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
+              <div className="flex items-center gap-2 mb-4 text-rose-900">
+                <ClipboardList className="w-5 h-5" />
+                <h2 className="text-xl font-semibold">Initiative Backlog</h2>
+              </div>
+              <p className="text-sm text-rose-700 mb-4">
+                Choose a focus to adjust the plan. Each card highlights an upcoming concept sprint.
+              </p>
+              <div className="space-y-3">
+                {CONTENT_DATABASE.designInitiatives.map((initiative) => (
+                  <button
+                    key={initiative.id}
+                    onClick={() => selectDesignInitiative(initiative)}
+                    className={`w-full text-left border rounded-xl p-4 transition-all ${
+                      selectedDesign.id === initiative.id
+                        ? 'border-rose-400 bg-rose-50 shadow-md'
+                        : 'border-rose-100 bg-white hover:border-rose-200'
+                    }`}
+                  >
+                    <h3 className="text-sm font-semibold text-rose-900">{initiative.title}</h3>
+                    <p className="text-xs text-rose-600 mt-1">{initiative.focus}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
+              <div className="flex items-center gap-2 mb-4 text-rose-900">
+                <Target className="w-5 h-5" />
+                <h2 className="text-xl font-semibold">Next Moves Checklist</h2>
+              </div>
+              <ul className="list-disc list-inside text-sm text-rose-700 space-y-2">
+                <li>Draft UI mockups that mirror pavilion geometry and glowing control surfaces.</li>
+                <li>Storyboard consent prompts with cooperative spirit guides and transparent disclosures.</li>
+                <li>Prototype gameful scoreboards for plugin health, featuring animated energy rings.</li>
+                <li>Collect feedback from stewards and adapt quests to reinforce trust signals.</li>
+              </ul>
+            </div>
+          </div>
                 <Gamepad className="w-5 h-5" />
                 <h2 className="text-2xl font-semibold">Cross-Pavilion Play Concepts</h2>
               </div>
