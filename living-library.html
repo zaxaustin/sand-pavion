@@ -77,6 +77,46 @@
             line-height: 1.6;
             opacity: 0.9;
         }
+        .catalog-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .catalog-controls__filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .catalog-controls__filters label,
+        .catalog-controls__filters .catalog-controls__search {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 219, 144, 0.4);
+            border-radius: 16px;
+            padding: 0.55rem 0.8rem;
+        }
+        .catalog-controls__filters select,
+        .catalog-controls__filters input {
+            background: transparent;
+            border: none;
+            color: #ffe6a7;
+            font-weight: 600;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .catalog-controls__filters option {
+            color: #1b1a24;
+        }
+        .catalog-controls__filters input::placeholder {
+            color: rgba(255, 230, 167, 0.6);
+        }
+        .catalog-controls__status {
+            font-size: 0.85rem;
+            color: rgba(255, 230, 167, 0.8);
+        }
         .book-grid {
             display: grid;
             gap: 1.8rem;
@@ -492,6 +532,21 @@
             <h2 id="public-domain-holdings">Mirrored Public-Domain Holdings</h2>
             <p>Guild archivists keep at least three mirrored editions on-site so that every initiate has resilient access to our shared study canon. Each card below names the lineage, shares our lore-friendly study focus, and links to the local copy.</p>
         </div>
+        <div class="catalog-controls">
+            <div class="catalog-controls__filters">
+                <label>
+                    <span style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em;">Lesson</span>
+                    <select data-catalog-filter>
+                        <option value="all">All lessons</option>
+                    </select>
+                </label>
+                <div class="catalog-controls__search">
+                    <span aria-hidden="true">🔍</span>
+                    <input type="search" data-catalog-search placeholder="Search title or lore">
+                </div>
+            </div>
+            <p class="catalog-controls__status" data-catalog-status></p>
+        </div>
         <div class="book-grid" role="list" data-library-grid></div>
         <template id="book-card-template">
             <article class="book-card" role="listitem" data-book-card>
@@ -671,6 +726,11 @@
             const viewerDate = document.querySelector('[data-viewer-date]');
             const viewerBody = document.querySelector('[data-viewer-body]');
             const viewerEmpty = document.querySelector('[data-viewer-empty]');
+            const catalogGrid = document.querySelector('[data-library-grid]');
+            const catalogStatus = document.querySelector('[data-catalog-status]');
+            const catalogFilter = document.querySelector('[data-catalog-filter]');
+            const catalogSearch = document.querySelector('[data-catalog-search]');
+            const bookCardTemplate = document.getElementById('book-card-template');
 
             function loadNotes() {
                 try {
@@ -849,9 +909,208 @@
                 render();
             });
 
+            let catalogBooks = [];
+
+            function renderCatalogMessage(text, tone = 'empty') {
+                if (!catalogGrid) return;
+                catalogGrid.innerHTML = '';
+                const message = document.createElement('p');
+                message.className = tone === 'error' ? 'book-grid__error' : 'book-grid__empty';
+                message.textContent = text;
+                catalogGrid.appendChild(message);
+            }
+
+            function populateCatalogFilters() {
+                if (!catalogFilter) return;
+                const previous = catalogFilter.value;
+                catalogFilter.innerHTML = '';
+                const defaultOption = document.createElement('option');
+                defaultOption.value = 'all';
+                defaultOption.textContent = 'All lessons';
+                catalogFilter.appendChild(defaultOption);
+
+                const lessons = new Set();
+                catalogBooks
+                    .filter((book) => !book.status || book.status === 'active')
+                    .forEach((book) => lessons.add(book.sectLesson || 'Unassigned Lesson'));
+
+                Array.from(lessons)
+                    .sort((a, b) => a.localeCompare(b))
+                    .forEach((lesson) => {
+                        const option = document.createElement('option');
+                        option.value = lesson;
+                        option.textContent = lesson;
+                        catalogFilter.appendChild(option);
+                    });
+
+                if (previous && lessons.has(previous)) {
+                    catalogFilter.value = previous;
+                } else {
+                    catalogFilter.value = 'all';
+                }
+            }
+
+            function getVisibleBooks() {
+                const filterValue = catalogFilter ? catalogFilter.value : 'all';
+                const searchValue = catalogSearch ? catalogSearch.value.trim().toLowerCase() : '';
+                return catalogBooks
+                    .filter((book) => !book.status || book.status === 'active')
+                    .filter((book) => (filterValue === 'all' ? true : (book.sectLesson || 'Unassigned Lesson') === filterValue))
+                    .filter((book) => {
+                        if (!searchValue) return true;
+                        const haystack = [book.title, book.author, book.lore, book.sectLesson]
+                            .filter(Boolean)
+                            .join(' ')
+                            .toLowerCase();
+                        return haystack.includes(searchValue);
+                    });
+            }
+
+            function renderCatalog() {
+                if (!catalogGrid || !bookCardTemplate) return;
+                const visibleBooks = getVisibleBooks();
+                catalogGrid.innerHTML = '';
+
+                if (visibleBooks.length === 0) {
+                    if (catalogBooks.length === 0) {
+                        renderCatalogMessage('Catalog is awaiting steward uploads.');
+                        if (catalogStatus) catalogStatus.textContent = '';
+                    } else {
+                        renderCatalogMessage('No books match the current filters.');
+                        if (catalogStatus) catalogStatus.textContent = '';
+                    }
+                    setupSpeechSynthesis();
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                visibleBooks.forEach((book, index) => {
+                    const clone = bookCardTemplate.content.cloneNode(true);
+                    const card = clone.querySelector('[data-book-card]');
+                    if (!card) {
+                        return;
+                    }
+
+                    const lessonField = card.querySelector('[data-field="lesson"]');
+                    const titleField = card.querySelector('[data-field="title"]');
+                    const authorField = card.querySelector('[data-field="author"]');
+                    const formatField = card.querySelector('[data-field="format"]');
+                    const loreField = card.querySelector('[data-field="lore"]');
+                    const excerptField = card.querySelector('[data-field="excerpt"]');
+                    const downloadLink = card.querySelector('[data-action="download"]');
+                    const readLink = card.querySelector('[data-action="read"]');
+                    const controls = card.querySelector('[data-tts-container]');
+
+                    if (lessonField) lessonField.textContent = book.sectLesson || 'Unassigned Lesson';
+                    if (titleField) titleField.textContent = book.title || 'Untitled Manuscript';
+                    if (authorField) authorField.textContent = book.author || 'Unknown Author';
+                    if (formatField) formatField.textContent = book.formatNotes || 'Awaiting steward review.';
+                    if (loreField) loreField.textContent = book.lore || 'Awaiting lore steward annotation.';
+                    if (excerptField) {
+                        excerptField.textContent = book.excerpt || 'Excerpt pending steward review.';
+                        const excerptId = `catalog-excerpt-${book.id || index}`;
+                        excerptField.id = excerptId;
+                        if (controls) {
+                            controls.setAttribute('data-tts-target', excerptId);
+                            controls.setAttribute('data-tts-lang', book.ttsLang || 'en-US');
+                        }
+                    }
+
+                    if (downloadLink) {
+                        if (book.file) {
+                            downloadLink.href = book.file;
+                            downloadLink.removeAttribute('aria-disabled');
+                        } else {
+                            downloadLink.removeAttribute('href');
+                            downloadLink.setAttribute('aria-disabled', 'true');
+                            downloadLink.textContent = 'Unavailable';
+                        }
+                    }
+
+                    if (readLink) {
+                        if (book.file) {
+                            readLink.href = book.file;
+                        } else {
+                            readLink.removeAttribute('href');
+                            readLink.setAttribute('aria-disabled', 'true');
+                            readLink.textContent = 'Unavailable';
+                        }
+                    }
+
+                    fragment.appendChild(clone);
+                });
+
+                catalogGrid.appendChild(fragment);
+                if (catalogStatus) {
+                    catalogStatus.textContent = `${visibleBooks.length} of ${catalogBooks.length} books visible.`;
+                }
+                setupSpeechSynthesis();
+            }
+
+            async function loadCatalog() {
+                if (!catalogStatus) return;
+                try {
+                    catalogStatus.textContent = 'Loading catalog…';
+                    const response = await fetch('/library/catalog');
+                    if (!response.ok) {
+                        throw new Error(`Unable to load catalog (status ${response.status})`);
+                    }
+                    const payload = await response.json();
+                    if (!payload || !Array.isArray(payload.books)) {
+                        throw new Error('Catalog response was malformed.');
+                    }
+                    catalogBooks = payload.books;
+                    populateCatalogFilters();
+                    renderCatalog();
+                    if (catalogBooks.length === 0) {
+                        renderCatalogMessage('Catalog is awaiting steward uploads.');
+                        catalogStatus.textContent = '';
+                    }
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : 'Unable to load catalog.';
+                    if (catalogStatus) catalogStatus.textContent = message;
+                    renderCatalogMessage(message, 'error');
+                    setupSpeechSynthesis();
+                }
+            }
+
+            if (catalogFilter) {
+                catalogFilter.addEventListener('change', () => {
+                    renderCatalog();
+                });
+            }
+
+            if (catalogSearch) {
+                catalogSearch.addEventListener('input', () => {
+                    renderCatalog();
+                });
+            }
+
+            loadCatalog();
+
             const supportWarning = 'Speech synthesis is unavailable in this browser.';
-            const containers = Array.from(document.querySelectorAll('[data-tts-target]'));
-            if (!('speechSynthesis' in window)) {
+            const speech = {
+                synthesis: typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis : null,
+                currentUtterance: null,
+                currentContainer: null
+            };
+
+            function resetSpeechButtons(container) {
+                const pauseButton = container.querySelector('[data-tts-action="pause"]');
+                const playButton = container.querySelector('[data-tts-action="play"]');
+                if (pauseButton) pauseButton.disabled = true;
+                if (playButton) {
+                    playButton.disabled = false;
+                    playButton.textContent = '▶ Play excerpt';
+                }
+            }
+
+            function announceSpeechState(container, state) {
+                container.setAttribute('data-tts-status', state);
+            }
+
+            function disableSpeechControls() {
+                const containers = document.querySelectorAll('[data-tts-container]');
                 containers.forEach((container) => {
                     container.querySelectorAll('button').forEach((button) => {
                         button.disabled = true;
@@ -860,89 +1119,95 @@
                         button.textContent = 'Speech unavailable';
                     });
                 });
-                return;
             }
 
-            const synthesis = window.speechSynthesis;
-            let currentUtterance = null;
-            let currentContainer = null;
+            function attachSpeechControls() {
+                const containers = Array.from(document.querySelectorAll('[data-tts-container]'));
+                containers.forEach((container) => {
+                    const targetId = container.getAttribute('data-tts-target');
+                    const excerpt = targetId ? document.getElementById(targetId) : null;
+                    const playButton = container.querySelector('[data-tts-action="play"]');
+                    const pauseButton = container.querySelector('[data-tts-action="pause"]');
+                    if (!excerpt || !playButton || !pauseButton) {
+                        return;
+                    }
 
-            function resetButtons(container) {
-                container.querySelectorAll('[data-tts-action="pause"]').forEach((pauseButton) => {
+                    const text = excerpt.textContent.trim();
+                    const lang = container.getAttribute('data-tts-lang') || 'en-US';
                     pauseButton.disabled = true;
-                });
-                container.querySelectorAll('[data-tts-action="play"]').forEach((playButton) => {
-                    playButton.disabled = false;
-                    playButton.textContent = '▶ Play excerpt';
-                });
-            }
 
-            function announceState(container, message) {
-                container.setAttribute('data-tts-status', message);
-            }
+                    if (!text) {
+                        playButton.disabled = true;
+                        pauseButton.disabled = true;
+                        playButton.textContent = 'No excerpt';
+                        return;
+                    }
 
-            containers.forEach((container) => {
-                const targetId = container.getAttribute('data-tts-target');
-                const excerpt = document.getElementById(targetId);
-                if (!excerpt) {
-                    return;
-                }
+                    playButton.addEventListener('click', () => {
+                        if (speech.currentContainer === container && speech.synthesis && speech.synthesis.paused) {
+                            speech.synthesis.resume();
+                            pauseButton.disabled = false;
+                            playButton.textContent = '▶ Playing…';
+                            announceSpeechState(container, 'playing');
+                            return;
+                        }
 
-                const text = excerpt.textContent.trim();
-                const lang = container.getAttribute('data-tts-lang') || 'en-US';
-                const playButton = container.querySelector('[data-tts-action="play"]');
-                const pauseButton = container.querySelector('[data-tts-action="pause"]');
+                        if (speech.synthesis && speech.synthesis.speaking) {
+                            speech.synthesis.cancel();
+                        }
 
-                playButton.addEventListener('click', () => {
-                    if (currentContainer === container && synthesis.paused) {
-                        synthesis.resume();
+                        if (!speech.synthesis) {
+                            return;
+                        }
+
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.lang = lang;
+                        utterance.onend = utterance.onerror = () => {
+                            resetSpeechButtons(container);
+                            announceSpeechState(container, 'idle');
+                            speech.currentContainer = null;
+                            speech.currentUtterance = null;
+                        };
+
+                        containers.forEach((other) => {
+                            if (other !== container) {
+                                resetSpeechButtons(other);
+                                announceSpeechState(other, 'idle');
+                            }
+                        });
+
                         pauseButton.disabled = false;
                         playButton.textContent = '▶ Playing…';
-                        announceState(container, 'playing');
-                        return;
-                    }
-
-                    if (synthesis.speaking) {
-                        synthesis.cancel();
-                    }
-
-                    currentUtterance = new SpeechSynthesisUtterance(text);
-                    currentUtterance.lang = lang;
-                    currentUtterance.rate = 1;
-                    currentUtterance.onend = currentUtterance.onerror = () => {
-                        resetButtons(container);
-                        announceState(container, 'idle');
-                        currentContainer = null;
-                        currentUtterance = null;
-                    };
-
-                    containers.forEach((otherContainer) => {
-                        if (otherContainer !== container) {
-                            resetButtons(otherContainer);
-                            announceState(otherContainer, 'idle');
-                        }
+                        announceSpeechState(container, 'playing');
+                        speech.currentContainer = container;
+                        speech.currentUtterance = utterance;
+                        speech.synthesis.speak(utterance);
                     });
 
-                    pauseButton.disabled = false;
-                    playButton.textContent = '▶ Playing…';
-                    announceState(container, 'playing');
-                    currentContainer = container;
-                    synthesis.speak(currentUtterance);
+                    pauseButton.addEventListener('click', () => {
+                        if (!speech.synthesis || speech.currentContainer !== container) {
+                            return;
+                        }
+                        if (speech.synthesis.speaking && !speech.synthesis.paused) {
+                            speech.synthesis.pause();
+                            pauseButton.disabled = true;
+                            playButton.disabled = false;
+                            playButton.textContent = '▶ Resume excerpt';
+                            announceSpeechState(container, 'paused');
+                        }
+                    });
                 });
+            }
 
-                pauseButton.addEventListener('click', () => {
-                    if (currentContainer !== container) {
-                        return;
-                    }
-                    if (synthesis.speaking && !synthesis.paused) {
-                        synthesis.pause();
-                        pauseButton.disabled = true;
-                        playButton.disabled = false;
-                        playButton.textContent = '▶ Resume excerpt';
-                        announceState(container, 'paused');
-                    }
-                });
-            });
+            function setupSpeechSynthesis() {
+                if (!speech.synthesis) {
+                    disableSpeechControls();
+                    return;
+                }
+                attachSpeechControls();
+            }
+
+            setupSpeechSynthesis();
         })();
     </script>
 </body>

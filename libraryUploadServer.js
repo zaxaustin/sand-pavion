@@ -7,10 +7,21 @@ const { randomUUID } = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 4545;
 
-const LIBRARY_ROOT = path.join(__dirname, 'assets', 'library');
-const UPLOADS_DIR = path.join(LIBRARY_ROOT, 'uploads');
-const CATALOG_PATH = path.join(LIBRARY_ROOT, 'catalog.json');
-const COMPLAINT_LOG = path.join(LIBRARY_ROOT, 'complaints.log');
+const LIBRARY_ROOT = process.env.LIBRARY_ROOT
+    ? path.resolve(process.env.LIBRARY_ROOT)
+    : path.join(__dirname, 'assets', 'library');
+const UPLOADS_DIR = process.env.LIBRARY_UPLOADS_DIR
+    ? path.resolve(process.env.LIBRARY_UPLOADS_DIR)
+    : path.join(LIBRARY_ROOT, 'uploads');
+const CATALOG_PATH = process.env.LIBRARY_CATALOG_PATH
+    ? path.resolve(process.env.LIBRARY_CATALOG_PATH)
+    : path.join(LIBRARY_ROOT, 'catalog.json');
+const COMPLAINT_LOG = process.env.LIBRARY_COMPLAINT_LOG
+    ? path.resolve(process.env.LIBRARY_COMPLAINT_LOG)
+    : path.join(LIBRARY_ROOT, 'complaints.log');
+const NOTES_PATH = process.env.LIBRARY_NOTES_PATH
+    ? path.resolve(process.env.LIBRARY_NOTES_PATH)
+    : path.join(LIBRARY_ROOT, 'notes.json');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -69,6 +80,28 @@ async function loadCatalog() {
 async function saveCatalog(catalog) {
     catalog.updatedAt = new Date().toISOString();
     await fs.writeFile(CATALOG_PATH, `${JSON.stringify(catalog, null, 2)}\n`, 'utf8');
+}
+
+async function loadNotesLedger() {
+    try {
+        const raw = await fs.readFile(NOTES_PATH, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.notes)) {
+            throw new Error('Malformed notes ledger');
+        }
+        return parsed;
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            return { updatedAt: new Date().toISOString(), notes: [] };
+        }
+        throw err;
+    }
+}
+
+async function saveNotesLedger(ledger) {
+    await fs.mkdir(path.dirname(NOTES_PATH), { recursive: true });
+    ledger.updatedAt = new Date().toISOString();
+    await fs.writeFile(NOTES_PATH, `${JSON.stringify(ledger, null, 2)}\n`, 'utf8');
 }
 
 function runCopyrightChecks(metadata) {
@@ -134,6 +167,29 @@ function buildBookRecord(data) {
         createdAt: new Date().toISOString(),
         suspension: null,
         complaints: []
+    };
+}
+
+function normalizeVisibility(input) {
+    return input === 'public' ? 'public' : 'private';
+}
+
+function buildNoteRecord(payload) {
+    const id = payload.id || `note-${randomUUID()}`;
+    const visibility = normalizeVisibility(payload.visibility);
+    const now = new Date().toISOString();
+
+    return {
+        id,
+        folderId: payload.folderId || 'shared',
+        title: payload.title || 'Untitled note',
+        content: payload.content || '',
+        ownerId: payload.ownerId,
+        ownerName: payload.ownerName || 'Unknown member',
+        visibility,
+        createdAt: payload.createdAt || now,
+        updatedAt: now,
+        publishedAt: visibility === 'public' ? now : payload.publishedAt || null
     };
 }
 
@@ -292,6 +348,122 @@ app.get('/library/catalog', async (req, res) => {
     }
 });
 
+app.get('/library/notes/public', async (req, res) => {
+    try {
+        const ledger = await loadNotesLedger();
+        const notes = ledger.notes
+            .filter((entry) => normalizeVisibility(entry.visibility) === 'public')
+            .map((entry) => ({
+                id: entry.id,
+                folderId: entry.folderId,
+                title: entry.title,
+                content: entry.content,
+                ownerId: entry.ownerId,
+                ownerName: entry.ownerName,
+                visibility: 'public',
+                createdAt: entry.createdAt,
+                updatedAt: entry.updatedAt,
+                publishedAt: entry.publishedAt || entry.updatedAt || entry.createdAt
+            }));
+
+        res.json({ updatedAt: ledger.updatedAt, notes });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Unable to load public notes.', details: err.message });
+    }
+});
+
+app.post('/library/notes', async (req, res) => {
+    try {
+        const { id, ownerId, ownerName, title, content, visibility, folderId, createdAt } = req.body || {};
+
+        if (!ownerId || !ownerName || !title || !content) {
+            return res.status(400).json({ error: 'Notes require ownerId, ownerName, title, and content.' });
+        }
+
+        const ledger = await loadNotesLedger();
+        const existingIndex = ledger.notes.findIndex((entry) => entry.id === id);
+
+        if (existingIndex >= 0) {
+            const existing = ledger.notes[existingIndex];
+            if (existing.ownerId !== ownerId) {
+                return res.status(403).json({ error: 'Only the original author may update this note.' });
+            }
+
+            const now = new Date().toISOString();
+            const nextVisibility = normalizeVisibility(visibility || existing.visibility);
+            ledger.notes[existingIndex] = {
+                ...existing,
+                title,
+                content,
+                folderId: folderId || existing.folderId,
+                visibility: nextVisibility,
+                ownerName,
+                updatedAt: now,
+                publishedAt:
+                    nextVisibility === 'public'
+                        ? existing.publishedAt || now
+                        : null
+            };
+
+            await saveNotesLedger(ledger);
+            return res.json({ note: ledger.notes[existingIndex] });
+        }
+
+        const record = buildNoteRecord({
+            id,
+            ownerId,
+            ownerName,
+            title,
+            content,
+            visibility,
+            folderId,
+            createdAt
+        });
+
+        ledger.notes.push(record);
+        await saveNotesLedger(ledger);
+        return res.status(201).json({ note: record });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Unable to save note.', details: err.message });
+    }
+});
+
+app.patch('/library/notes/:id/visibility', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { ownerId, visibility } = req.body || {};
+
+        if (!ownerId) {
+            return res.status(400).json({ error: 'ownerId is required to update visibility.' });
+        }
+
+        const nextVisibility = normalizeVisibility(visibility);
+        const ledger = await loadNotesLedger();
+        const note = ledger.notes.find((entry) => entry.id === id);
+
+        if (!note) {
+            return res.status(404).json({ error: 'Note not found.' });
+        }
+
+        if (note.ownerId !== ownerId) {
+            return res.status(403).json({ error: 'Only the original author may change visibility.' });
+        }
+
+        const now = new Date().toISOString();
+        note.visibility = nextVisibility;
+        note.updatedAt = now;
+        note.publishedAt = nextVisibility === 'public' ? note.publishedAt || now : null;
+
+        await saveNotesLedger(ledger);
+        res.json({ note });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Unable to update note visibility.', details: err.message });
+    }
+});
+
 app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         return res.status(400).json({ error: err.message });
@@ -303,6 +475,18 @@ app.use((err, req, res, next) => {
     next();
 });
 
-app.listen(PORT, () => {
-    console.log(`📚 Library steward server ready on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`📚 Library steward server ready on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = {
+    app,
+    loadCatalog,
+    saveCatalog,
+    loadNotesLedger,
+    saveNotesLedger,
+    buildNoteRecord,
+    normalizeVisibility
+};
