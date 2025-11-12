@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BookOpen, User, Home, Menu, X, Play, BookMarked, TrendingUp, Sparkles } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { BookOpen, User, Home, Menu, X, Play, BookMarked, TrendingUp, Sparkles, Folder, FileText, Plus, PenSquare } from 'lucide-react';
 
 export default function SpiritualLibrary() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -53,6 +53,159 @@ export default function SpiritualLibrary() {
       ]
     }
   ];
+
+  type Note = {
+    id: string;
+    folderId: string;
+    title: string;
+    content: string;
+    createdAt: string;
+  };
+
+  type FolderItem = {
+    id: string;
+    name: string;
+  };
+
+  type NotesState = {
+    folders: FolderItem[];
+    notes: Note[];
+  };
+
+  const notesStorageKey = 'spiritual-library-notes';
+
+  const initialNotesState: NotesState = useMemo(
+    () => ({
+      folders: [
+        {
+          id: 'illumined-strategy',
+          name: 'Illumined Strategy'
+        }
+      ],
+      notes: [
+        {
+          id: 'business-quest-dashboard-inspiration',
+          folderId: 'illumined-strategy',
+          title: 'Business Quest Dashboard Inspiration',
+          content: [
+            'Highlights gathered from the Business Quest Dashboard study:',
+            '• Quest categories: Business Fundamentals, Finance & Accounting, Marketing & Sales, Operations, Leadership & People, Legal & Compliance.',
+            '• Featured books: The Lean Startup, Zero to One, The E-Myth Revisited, Profit First, and Building a StoryBrand.',
+            '• Guild channels to revisit: Y Combinator, The Futur, Valuetainment, Minority Mindset, Accounting Stuff, and The Swedish Investor.'
+          ].join('\n'),
+          createdAt: new Date().toISOString()
+        }
+      ]
+    }),
+    []
+  );
+
+  const [notesState, setNotesState] = useState<NotesState>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem(notesStorageKey);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved) as NotesState;
+          if (parsed?.folders && parsed?.notes) {
+            return parsed;
+          }
+        } catch (error) {
+          console.warn('Unable to parse stored notes state', error);
+        }
+      }
+    }
+    return initialNotesState;
+  });
+
+  const [activeFolderId, setActiveFolderId] = useState<string>(() => notesState.folders[0]?.id ?? '');
+  const [activeNoteId, setActiveNoteId] = useState<string>(() => {
+    const firstFolderId = notesState.folders[0]?.id;
+    return notesState.notes.find((note) => note.folderId === firstFolderId)?.id ?? '';
+  });
+  const [newFolderName, setNewFolderName] = useState('');
+  const [newNoteTitle, setNewNoteTitle] = useState('');
+  const [newNoteContent, setNewNoteContent] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(notesStorageKey, JSON.stringify(notesState));
+    }
+  }, [notesState]);
+
+  useEffect(() => {
+    if (!notesState.folders.some((folder) => folder.id === activeFolderId)) {
+      const fallbackId = notesState.folders[0]?.id ?? '';
+      setActiveFolderId(fallbackId);
+    }
+  }, [notesState, activeFolderId]);
+
+  useEffect(() => {
+    if (!activeFolderId) {
+      setActiveNoteId('');
+      return;
+    }
+
+    const availableNotes = notesState.notes.filter((note) => note.folderId === activeFolderId);
+    if (!availableNotes.some((note) => note.id === activeNoteId)) {
+      setActiveNoteId(availableNotes[0]?.id ?? '');
+    }
+  }, [notesState, activeFolderId, activeNoteId]);
+
+  const handleAddFolder = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmed = newFolderName.trim();
+    if (!trimmed) return;
+
+    const newFolder: FolderItem = {
+      id: `folder-${Date.now()}`,
+      name: trimmed
+    };
+
+    setNotesState((prev) => ({
+      ...prev,
+      folders: [...prev.folders, newFolder]
+    }));
+    setActiveFolderId(newFolder.id);
+    setNewFolderName('');
+  };
+
+  const handleAddNote = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!activeFolderId) return;
+
+    const title = newNoteTitle.trim();
+    const content = newNoteContent.trim();
+    if (!title || !content) return;
+
+    const newNote: Note = {
+      id: `note-${Date.now()}`,
+      folderId: activeFolderId,
+      title,
+      content,
+      createdAt: new Date().toISOString()
+    };
+
+    setNotesState((prev) => ({
+      ...prev,
+      notes: [newNote, ...prev.notes]
+    }));
+    setActiveNoteId(newNote.id);
+    setNewNoteTitle('');
+    setNewNoteContent('');
+  };
+
+  const activeFolder = notesState.folders.find((folder) => folder.id === activeFolderId);
+  const folderNotes = notesState.notes.filter((note) => note.folderId === activeFolderId);
+  const activeNote = notesState.notes.find((note) => note.id === activeNoteId);
+
+  const formatDate = (isoDate: string) => {
+    const date = new Date(isoDate);
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
   const HomePage = () => (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
@@ -323,6 +476,174 @@ export default function SpiritualLibrary() {
           )}
         </div>
       </nav>
+
+      <section className="bg-amber-50/80 border-b border-amber-200/60">
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="flex items-center gap-3 text-amber-900">
+                <PenSquare className="w-7 h-7" />
+                <h2 className="text-3xl font-bold">My Notes</h2>
+              </div>
+              <p className="text-amber-700 mt-2 max-w-2xl">
+                Collect personal reflections, copy guild prompts, and store study observations from each library room.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+            <aside className="bg-white/95 border border-amber-100 rounded-2xl shadow-md p-5 flex flex-col gap-6">
+              <div>
+                <h3 className="flex items-center gap-2 text-lg font-semibold text-amber-900">
+                  <Folder className="w-5 h-5 text-amber-500" /> Folders
+                </h3>
+                <ul className="mt-4 space-y-2">
+                  {notesState.folders.length === 0 && (
+                    <li className="text-sm text-amber-600">Create a folder to begin your note collection.</li>
+                  )}
+                  {notesState.folders.map((folder) => (
+                    <li key={folder.id}>
+                      <button
+                        onClick={() => setActiveFolderId(folder.id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg border transition-colors text-sm font-medium ${
+                          folder.id === activeFolderId
+                            ? 'border-amber-400 bg-amber-100 text-amber-900 shadow-sm'
+                            : 'border-transparent bg-amber-50 hover:border-amber-200 text-amber-700'
+                        }`}
+                      >
+                        {folder.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <form onSubmit={handleAddFolder} className="bg-amber-50/80 border border-amber-200 rounded-xl p-4 space-y-3">
+                <label className="block text-sm font-semibold text-amber-800" htmlFor="new-folder-name">
+                  New folder
+                </label>
+                <input
+                  id="new-folder-name"
+                  value={newFolderName}
+                  onChange={(event) => setNewFolderName(event.target.value)}
+                  className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-amber-900 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200"
+                  placeholder="e.g. Meditation Reflections"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-700"
+                >
+                  <Plus className="w-4 h-4" /> Create folder
+                </button>
+              </form>
+            </aside>
+
+            <div className="space-y-6">
+              <div className="bg-white/95 border border-amber-100 rounded-2xl shadow-md p-5">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="flex items-center gap-2 text-lg font-semibold text-amber-900">
+                      <FileText className="w-5 h-5 text-amber-500" /> Notes
+                    </h3>
+                    <p className="text-sm text-amber-700">
+                      {activeFolder ? `Viewing notes in “${activeFolder.name}”` : 'Create a folder to begin writing notes.'}
+                    </p>
+                  </div>
+                  <span className="text-xs uppercase tracking-wide text-amber-500">
+                    {folderNotes.length} {folderNotes.length === 1 ? 'entry' : 'entries'}
+                  </span>
+                </div>
+
+                <div className="mt-4">
+                  {folderNotes.length === 0 ? (
+                    <p className="rounded-lg border border-dashed border-amber-200 bg-amber-50/80 px-4 py-6 text-center text-sm text-amber-600">
+                      No notes yet. Add a new note below to begin documenting your journey.
+                    </p>
+                  ) : (
+                    <ul className="grid gap-2 sm:grid-cols-2">
+                      {folderNotes.map((note) => (
+                        <li key={note.id}>
+                          <button
+                            onClick={() => setActiveNoteId(note.id)}
+                            className={`w-full rounded-lg border px-3 py-3 text-left text-sm transition-all ${
+                              note.id === activeNoteId
+                                ? 'border-amber-400 bg-amber-100 text-amber-900 shadow-sm'
+                                : 'border-transparent bg-amber-50 hover:border-amber-200 text-amber-700'
+                            }`}
+                          >
+                            <span className="block font-semibold text-amber-900">{note.title}</span>
+                            <span className="block text-xs text-amber-600">{formatDate(note.createdAt)}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              <form onSubmit={handleAddNote} className="bg-white/95 border border-amber-100 rounded-2xl shadow-md p-6 space-y-4">
+                <h3 className="text-lg font-semibold text-amber-900">Add a new note</h3>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-amber-800" htmlFor="note-title">
+                      Note title
+                    </label>
+                    <input
+                      id="note-title"
+                      value={newNoteTitle}
+                      onChange={(event) => setNewNoteTitle(event.target.value)}
+                      className="mt-1 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-amber-900 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200"
+                      placeholder="e.g. Sutra study takeaways"
+                      disabled={!activeFolderId}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-amber-800" htmlFor="note-content">
+                      Note content
+                    </label>
+                    <textarea
+                      id="note-content"
+                      value={newNoteContent}
+                      onChange={(event) => setNewNoteContent(event.target.value)}
+                      className="mt-1 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-amber-900 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200"
+                      placeholder={activeFolderId ? 'Capture quotes, reflections, or study prompts...' : 'Create or select a folder to begin writing.'}
+                      rows={5}
+                      disabled={!activeFolderId}
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={!activeFolderId}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-700 disabled:cursor-not-allowed disabled:bg-amber-300"
+                  >
+                    <Plus className="w-4 h-4" /> Save note
+                  </button>
+                </div>
+              </form>
+
+              <article className="bg-white/95 border border-amber-100 rounded-2xl shadow-md p-6">
+                {activeNote ? (
+                  <div className="space-y-4">
+                    <header>
+                      <h3 className="text-2xl font-semibold text-amber-900">{activeNote.title}</h3>
+                      <p className="text-sm text-amber-600">Written on {formatDate(activeNote.createdAt)}</p>
+                    </header>
+                    <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-4 text-sm leading-relaxed text-amber-900 whitespace-pre-wrap">
+                      {activeNote.content}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-amber-200 bg-amber-50/80 px-4 py-10 text-center text-sm text-amber-600">
+                    Select a note to see its contents.
+                  </div>
+                )}
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {currentPage === 'home' && <HomePage />}
       {currentPage === 'library' && <LibraryPage />}

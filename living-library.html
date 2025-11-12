@@ -192,6 +192,172 @@
             background: rgba(255, 230, 167, 0.18);
             color: #1b1a24;
         }
+        .notes-panel {
+            margin: 3rem auto;
+            max-width: 1100px;
+            padding: 2.4rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 219, 144, 0.35);
+            background: rgba(24, 17, 9, 0.82);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+            display: grid;
+            gap: 2rem;
+        }
+        .notes-panel__intro h2 {
+            font-size: 2.2rem;
+            color: #ffe6a7;
+            margin-bottom: 0.6rem;
+        }
+        .notes-panel__intro p {
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+        .notes-panel__layout {
+            display: grid;
+            gap: 1.6rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+        .notes-panel__column {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 219, 144, 0.25);
+            padding: 1.6rem;
+            display: grid;
+            gap: 1.2rem;
+            align-content: start;
+        }
+        .notes-panel__column--wide {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .notes-panel__column h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffd787;
+            font-size: 1.2rem;
+        }
+        .notes-panel__column p {
+            font-size: 0.9rem;
+            color: rgba(255, 230, 167, 0.78);
+        }
+        .notes-panel__folder-list,
+        .notes-panel__note-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.6rem;
+        }
+        .notes-panel__button {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border-radius: 14px;
+            border: 1px solid transparent;
+            background: rgba(255, 219, 144, 0.12);
+            color: #ffe6a7;
+            font-weight: 600;
+            font-size: 0.92rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: background 0.25s ease, border 0.25s ease, transform 0.2s ease;
+        }
+        .notes-panel__button:hover,
+        .notes-panel__button:focus {
+            background: rgba(255, 219, 144, 0.22);
+            border-color: rgba(255, 219, 144, 0.35);
+            outline: none;
+            transform: translateY(-1px);
+        }
+        .notes-panel__button.is-active {
+            background: rgba(255, 219, 144, 0.32);
+            border-color: rgba(255, 219, 144, 0.6);
+            color: #1b1a24;
+        }
+        .notes-panel__form {
+            background: rgba(255, 219, 144, 0.12);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 219, 144, 0.25);
+            padding: 1.2rem;
+            display: grid;
+            gap: 0.8rem;
+        }
+        .notes-panel__form label {
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: rgba(255, 230, 167, 0.85);
+        }
+        .notes-panel__form input,
+        .notes-panel__form textarea {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 219, 144, 0.4);
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.75rem 0.9rem;
+            color: #ffe6a7;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border 0.2s ease, background 0.2s ease;
+        }
+        .notes-panel__form input:focus,
+        .notes-panel__form textarea:focus {
+            border-color: rgba(255, 219, 144, 0.65);
+            background: rgba(0, 0, 0, 0.35);
+            outline: none;
+        }
+        .notes-panel__form textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+        .notes-panel__form button {
+            justify-self: start;
+        }
+        .notes-panel__notes-meta {
+            font-size: 0.85rem;
+            opacity: 0.75;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .notes-panel__viewer {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 219, 144, 0.25);
+            padding: 1.6rem;
+            display: grid;
+            gap: 0.8rem;
+        }
+        .notes-panel__viewer h3 {
+            color: #ffd787;
+            font-size: 1.6rem;
+        }
+        .notes-panel__viewer time {
+            font-size: 0.85rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(255, 230, 167, 0.65);
+        }
+        .notes-panel__viewer-content {
+            background: rgba(0, 0, 0, 0.28);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 219, 144, 0.22);
+            padding: 1.2rem;
+            line-height: 1.7;
+            color: rgba(255, 246, 228, 0.92);
+            white-space: pre-wrap;
+        }
+        .notes-panel__empty {
+            border: 1px dashed rgba(255, 219, 144, 0.35);
+            border-radius: 16px;
+            padding: 1.4rem;
+            text-align: center;
+            color: rgba(255, 230, 167, 0.72);
+            font-size: 0.95rem;
+        }
         .tts-evaluation {
             max-width: 960px;
             margin: 0 auto 3rem;
@@ -357,6 +523,51 @@
         </template>
     </section>
 
+    <section class="notes-panel" aria-labelledby="notes-heading">
+        <div class="notes-panel__intro">
+            <h2 id="notes-heading">My Notes</h2>
+            <p>Collect personal reflections, guild prompts, and study breadcrumbs. Organize them into folders that travel with you across every library room.</p>
+        </div>
+        <div class="notes-panel__layout">
+            <aside class="notes-panel__column">
+                <h3>Folders</h3>
+                <p data-folder-empty>Begin by creating a folder for your reflections.</p>
+                <ul class="notes-panel__folder-list" data-note-folders></ul>
+                <form class="notes-panel__form" data-folder-form>
+                    <label for="folder-name">New folder</label>
+                    <input id="folder-name" name="folder-name" type="text" placeholder="e.g. Comparative Sutras" data-folder-input autocomplete="off">
+                    <button type="submit" class="button">Create Folder</button>
+                </form>
+            </aside>
+            <div class="notes-panel__column notes-panel__column--wide" style="gap: 1.6rem;">
+                <div class="notes-panel__column" style="background: transparent; border: 1px solid rgba(255, 219, 144, 0.28);">
+                    <div>
+                        <h3>Notes</h3>
+                        <p data-active-folder-label>Select a folder to view its notes.</p>
+                    </div>
+                    <span class="notes-panel__notes-meta" data-note-count>0 entries</span>
+                    <ul class="notes-panel__note-list" data-note-list></ul>
+                    <p class="notes-panel__empty" data-note-empty hidden>No notes yet. Add a new note below to begin.</p>
+                </div>
+                <form class="notes-panel__form" data-note-form>
+                    <label for="note-title">Note title</label>
+                    <input id="note-title" name="note-title" type="text" placeholder="e.g. Dharma Reflections" data-note-title autocomplete="off">
+                    <label for="note-content">Note content</label>
+                    <textarea id="note-content" name="note-content" placeholder="Capture quotes, questions, and personal observations." data-note-content></textarea>
+                    <button type="submit" class="button">Save Note</button>
+                </form>
+                <article class="notes-panel__viewer" data-note-viewer hidden>
+                    <header>
+                        <h3 data-viewer-title></h3>
+                        <time data-viewer-date></time>
+                    </header>
+                    <div class="notes-panel__viewer-content" data-viewer-body></div>
+                </article>
+                <p class="notes-panel__empty" data-viewer-empty>Select a note to read its contents.</p>
+            </div>
+        </div>
+    </section>
+
     <section class="tts-evaluation" aria-labelledby="tts-eval-heading">
         <h2 id="tts-eval-heading">Voice Invocation Assessment</h2>
         <p>The guild tested the browser-native <strong>Web Speech API</strong> because it requires no external services, keeps sacred texts offline, and respects our moneyless charter. Modern Chromium, Firefox, and Safari builds expose speech synthesis voices without additional dependencies, though mobile Safari presently limits background playback. The controls above lean on this API to offer immediate play and pause support per excerpt; if a visitor’s browser lacks the feature, the buttons announce that speech is unavailable and fall back to silent reading.</p>
@@ -422,6 +633,222 @@
 
     <script>
         (function () {
+            const notesStorageKey = 'living-library-notes';
+            const initialNotes = {
+                folders: [
+                    { id: 'illumined-strategy', name: 'Illumined Strategy' }
+                ],
+                notes: [
+                    {
+                        id: 'business-quest-dashboard-inspiration',
+                        folderId: 'illumined-strategy',
+                        title: 'Business Quest Dashboard Inspiration',
+                        content: [
+                            'Highlights gathered from the Business Quest Dashboard study:',
+                            '• Quest categories: Business Fundamentals, Finance & Accounting, Marketing & Sales, Operations, Leadership & People, Legal & Compliance.',
+                            '• Featured books: The Lean Startup, Zero to One, The E-Myth Revisited, Profit First, and Building a StoryBrand.',
+                            '• Guild channels to revisit: Y Combinator, The Futur, Valuetainment, Minority Mindset, Accounting Stuff, and The Swedish Investor.'
+                        ].join('\n'),
+                        createdAt: new Date().toISOString()
+                    }
+                ]
+            };
+
+            const folderList = document.querySelector('[data-note-folders]');
+            const folderEmpty = document.querySelector('[data-folder-empty]');
+            const noteList = document.querySelector('[data-note-list]');
+            const noteEmpty = document.querySelector('[data-note-empty]');
+            const noteCount = document.querySelector('[data-note-count]');
+            const activeFolderLabel = document.querySelector('[data-active-folder-label]');
+            const folderForm = document.querySelector('[data-folder-form]');
+            const folderInput = document.querySelector('[data-folder-input]');
+            const noteForm = document.querySelector('[data-note-form]');
+            const noteTitleInput = document.querySelector('[data-note-title]');
+            const noteContentInput = document.querySelector('[data-note-content]');
+            const noteSubmitButton = noteForm.querySelector('button');
+            const viewer = document.querySelector('[data-note-viewer]');
+            const viewerTitle = document.querySelector('[data-viewer-title]');
+            const viewerDate = document.querySelector('[data-viewer-date]');
+            const viewerBody = document.querySelector('[data-viewer-body]');
+            const viewerEmpty = document.querySelector('[data-viewer-empty]');
+
+            function loadNotes() {
+                try {
+                    const stored = localStorage.getItem(notesStorageKey);
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        if (parsed && Array.isArray(parsed.folders) && Array.isArray(parsed.notes)) {
+                            return parsed;
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Unable to parse stored notes', error);
+                }
+                return initialNotes;
+            }
+
+            function persist() {
+                localStorage.setItem(notesStorageKey, JSON.stringify(notesState));
+            }
+
+            let notesState = loadNotes();
+            let activeFolderId = notesState.folders[0] ? notesState.folders[0].id : '';
+            let activeNoteId = notesState.notes.find((note) => note.folderId === activeFolderId)?.id || '';
+
+            if (!localStorage.getItem(notesStorageKey)) {
+                persist();
+            }
+
+            function updateFolderMessage() {
+                folderEmpty.hidden = notesState.folders.length > 0;
+            }
+
+            function renderFolders() {
+                folderList.innerHTML = '';
+                notesState.folders.forEach((folder) => {
+                    const item = document.createElement('li');
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'notes-panel__button' + (folder.id === activeFolderId ? ' is-active' : '');
+                    button.textContent = folder.name;
+                    button.addEventListener('click', () => {
+                        activeFolderId = folder.id;
+                        activeNoteId = notesState.notes.find((note) => note.folderId === activeFolderId)?.id || '';
+                        render();
+                    });
+                    item.appendChild(button);
+                    folderList.appendChild(item);
+                });
+                updateFolderMessage();
+            }
+
+            function renderNotes() {
+                noteList.innerHTML = '';
+                const folderNotes = activeFolderId
+                    ? notesState.notes.filter((note) => note.folderId === activeFolderId)
+                    : [];
+
+                noteCount.textContent = `${folderNotes.length} ${folderNotes.length === 1 ? 'entry' : 'entries'}`;
+
+                if (!activeFolderId) {
+                    activeFolderLabel.textContent = 'Create a folder to view and store notes.';
+                } else {
+                    const activeFolder = notesState.folders.find((folder) => folder.id === activeFolderId);
+                    activeFolderLabel.textContent = activeFolder
+                        ? `Viewing notes in “${activeFolder.name}”`
+                        : 'Select a folder to see its notes.';
+                }
+
+                if (folderNotes.length === 0) {
+                    noteEmpty.hidden = false;
+                } else {
+                    noteEmpty.hidden = true;
+                }
+
+                folderNotes.forEach((note) => {
+                    const item = document.createElement('li');
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'notes-panel__button' + (note.id === activeNoteId ? ' is-active' : '');
+                    const titleSpan = document.createElement('span');
+                    titleSpan.textContent = note.title;
+                    const dateSpan = document.createElement('span');
+                    dateSpan.style.fontSize = '0.75rem';
+                    dateSpan.style.opacity = '0.75';
+                    dateSpan.textContent = new Date(note.createdAt).toLocaleDateString();
+                    button.appendChild(titleSpan);
+                    button.appendChild(dateSpan);
+                    button.addEventListener('click', () => {
+                        activeNoteId = note.id;
+                        renderViewer();
+                        renderNotes();
+                    });
+                    item.appendChild(button);
+                    noteList.appendChild(item);
+                });
+            }
+
+            function renderViewer() {
+                const activeNote = notesState.notes.find((note) => note.id === activeNoteId);
+                if (!activeNote) {
+                    viewer.hidden = true;
+                    viewerEmpty.hidden = false;
+                    return;
+                }
+                viewerTitle.textContent = activeNote.title;
+                viewerDate.textContent = new Date(activeNote.createdAt).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                viewerBody.textContent = activeNote.content;
+                viewer.hidden = false;
+                viewerEmpty.hidden = true;
+            }
+
+            function toggleNoteInputs() {
+                const disabled = !activeFolderId;
+                noteTitleInput.disabled = disabled;
+                noteContentInput.disabled = disabled;
+                noteSubmitButton.disabled = disabled;
+                if (disabled) {
+                    noteTitleInput.placeholder = 'Create or select a folder to begin.';
+                    noteContentInput.placeholder = 'Create a folder to capture your reflections.';
+                } else {
+                    noteTitleInput.placeholder = 'e.g. Dharma Reflections';
+                    noteContentInput.placeholder = 'Capture quotes, questions, and personal observations.';
+                }
+            }
+
+            function render() {
+                renderFolders();
+                renderNotes();
+                renderViewer();
+                toggleNoteInputs();
+            }
+
+            render();
+
+            folderForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const name = folderInput.value.trim();
+                if (!name) return;
+                const newFolder = { id: `folder-${Date.now()}`, name };
+                notesState = {
+                    folders: [...notesState.folders, newFolder],
+                    notes: notesState.notes
+                };
+                activeFolderId = newFolder.id;
+                activeNoteId = notesState.notes.find((note) => note.folderId === activeFolderId)?.id || '';
+                folderInput.value = '';
+                persist();
+                render();
+            });
+
+            noteForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                if (!activeFolderId) return;
+                const title = noteTitleInput.value.trim();
+                const content = noteContentInput.value.trim();
+                if (!title || !content) return;
+                const newNote = {
+                    id: `note-${Date.now()}`,
+                    folderId: activeFolderId,
+                    title,
+                    content,
+                    createdAt: new Date().toISOString()
+                };
+                notesState = {
+                    folders: notesState.folders,
+                    notes: [newNote, ...notesState.notes]
+                };
+                noteTitleInput.value = '';
+                noteContentInput.value = '';
+                activeNoteId = newNote.id;
+                persist();
+                render();
+            });
+
             const supportWarning = 'Speech synthesis is unavailable in this browser.';
             const containers = Array.from(document.querySelectorAll('[data-tts-target]'));
             if (!('speechSynthesis' in window)) {
@@ -437,6 +864,8 @@
             }
 
             const synthesis = window.speechSynthesis;
+            let currentUtterance = null;
+            let currentContainer = null;
 
             function resetButtons(container) {
                 container.querySelectorAll('[data-tts-action="pause"]').forEach((pauseButton) => {
@@ -458,6 +887,7 @@
                 if (!excerpt) {
                     return;
                 }
+
                 const text = excerpt.textContent.trim();
                 const lang = container.getAttribute('data-tts-lang') || 'en-US';
                 const playButton = container.querySelector('[data-tts-action="play"]');
@@ -480,16 +910,10 @@
                     currentUtterance.lang = lang;
                     currentUtterance.rate = 1;
                     currentUtterance.onend = currentUtterance.onerror = () => {
-                        if (currentTtsContainer === container) {
-                            resetButtons(container);
-                            announceState(container, 'idle');
-                            currentTtsContainer = null;
-                        if (currentContainer === container) {
-                            resetButtons(container);
-                            announceState(container, 'idle');
-                            currentContainer = null;
-                            currentUtterance = null;
-                        }
+                        resetButtons(container);
+                        announceState(container, 'idle');
+                        currentContainer = null;
+                        currentUtterance = null;
                     };
 
                     containers.forEach((otherContainer) => {
@@ -502,7 +926,7 @@
                     pauseButton.disabled = false;
                     playButton.textContent = '▶ Playing…';
                     announceState(container, 'playing');
-                    currentTtsContainer = container;
+                    currentContainer = container;
                     synthesis.speak(currentUtterance);
                 });
 
@@ -519,7 +943,6 @@
                     }
                 });
             });
-        }
         })();
     </script>
 </body>
