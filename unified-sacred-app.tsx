@@ -2386,6 +2386,11 @@ const SacredKnowledgeApp = () => {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
             <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
               <div className="flex items-center gap-2 mb-4 text-rose-900">
@@ -2404,6 +2409,62 @@ const SacredKnowledgeApp = () => {
 
             <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
               <div className="flex items-center gap-2 mb-4 text-rose-900">
+                <Gamepad className="w-5 h-5" />
+                <h2 className="text-2xl font-semibold">Cross-Pavilion Play Concepts</h2>
+              </div>
+              <p className="text-rose-700 mb-4">
+                Blend these playful elements across plugin controls, consent rituals, and learning journeys.
+              </p>
+              <div className="grid md:grid-cols-2 gap-3 text-sm">
+                {allGameMoments.map((moment, idx) => (
+                  <div key={idx} className="bg-rose-50 border border-rose-100 rounded-xl p-3">
+                    {moment}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
+              <div className="flex items-center gap-2 mb-4 text-rose-900">
+                <ClipboardList className="w-5 h-5" />
+                <h2 className="text-xl font-semibold">Initiative Backlog</h2>
+              </div>
+              <p className="text-sm text-rose-700 mb-4">
+                Choose a focus to adjust the plan. Each card highlights an upcoming concept sprint.
+              </p>
+              <div className="space-y-3">
+                {CONTENT_DATABASE.designInitiatives.map((initiative) => (
+                  <button
+                    key={initiative.id}
+                    onClick={() => selectDesignInitiative(initiative)}
+                    className={`w-full text-left border rounded-xl p-4 transition-all ${
+                      selectedDesign.id === initiative.id
+                        ? 'border-rose-400 bg-rose-50 shadow-md'
+                        : 'border-rose-100 bg-white hover:border-rose-200'
+                    }`}
+                  >
+                    <h3 className="text-sm font-semibold text-rose-900">{initiative.title}</h3>
+                    <p className="text-xs text-rose-600 mt-1">{initiative.focus}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white border-2 border-rose-100 rounded-2xl p-6 shadow-md">
+              <div className="flex items-center gap-2 mb-4 text-rose-900">
+                <Target className="w-5 h-5" />
+                <h2 className="text-xl font-semibold">Next Moves Checklist</h2>
+              </div>
+              <ul className="list-disc list-inside text-sm text-rose-700 space-y-2">
+                <li>Draft UI mockups that mirror pavilion geometry and glowing control surfaces.</li>
+                <li>Storyboard consent prompts with cooperative spirit guides and transparent disclosures.</li>
+                <li>Prototype gameful scoreboards for plugin health, featuring animated energy rings.</li>
+                <li>Collect feedback from stewards and adapt quests to reinforce trust signals.</li>
+              </ul>
+            </div>
+          </div>
                 <Gamepad className="w-5 h-5" />
                 <h2 className="text-2xl font-semibold">Cross-Pavilion Play Concepts</h2>
               </div>
