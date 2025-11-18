@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sand Pavilion - Game Build</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+        }
+        
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: #e0e0e0;
+            z-index: 10;
+            transition: opacity 0.5s;
+            backdrop-filter: blur(5px);
+        }
+
+        #hud {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            color: #ffd700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-size: 1.5rem;
+            display: none;
+            pointer-events: none;
+        }
+
+        #objective-text {
+            font-size: 1rem;
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #d4a017;
+            text-shadow: 0 0 20px rgba(212, 160, 23, 0.5);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.5;
+            color: #ccc;
+        }
+
+        .btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #d4a017, #b8860b);
+            border: 1px solid #ffd700;
+            cursor: pointer;
+            color: #1a0000;
+            font-weight: 900;
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(212, 160, 23, 0.4);
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(212, 160, 23, 0.8);
+        }
+        
+        #win-screen {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            padding: 40px;
+            border: 2px solid #ffd700;
+            text-align: center;
+            color: #ffd700;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- UI Layer -->
+    <div id="ui-layer">
+        <h1>Sand Pavilion</h1>
+        <p><strong>MISSION:</strong> Locate 5 Sun Crystals hidden in the valley.</p>
+        <p><strong>CONTROLS:</strong> WASD to Move | SPACE to Jump | MOUSE to Look</p>
+        <button id="start-btn" class="btn">Enter World</button>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+        <div id="score">CRYSTALS: 0 / 5</div>
+        <div id="objective-text">Search the ruins and forests</div>
+    </div>
+
+    <!-- Win Screen -->
+    <div id="win-screen">
+        <h2>VALLEY CONQUERED</h2>
+        <p>You have restored light to the pavilion.</p>
+        <button class="btn" onclick="location.reload()">Play Again</button>
+    </div>
+
+    <!-- Crosshair -->
+    <div id="crosshair"></div>
+
+    <!-- Three.js Dependencies -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+        // --- CONSTANTS ---
+        const WORLD_WIDTH = 2000;
+        const WORLD_DEPTH = 2000;
+        const FOG_COLOR = 0xffddaa;
+        const SKY_COLOR = 0x87CEEB;
+        const PLAYER_HEIGHT = 10;
+        const PLAYER_RADIUS = 2;
+        
+        // --- GLOBALS ---
+        let camera, scene, renderer, controls;
+        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, canJump = false;
+        let prevTime = performance.now();
+        const velocity = new THREE.Vector3();
+        const direction = new THREE.Vector3();
+
+        // Gameplay
+        let score = 0;
+        const maxScore = 5;
+        const crystals = [];
+        const buildingBoundingBoxes = []; // For Collision
+
+        // Water Animation
+        let waterMesh;
+        let waterUniforms;
+
+        init();
+        animate();
+
+        function init() {
+            // 1. SCENE SETUP
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(SKY_COLOR);
+            scene.fog = new THREE.FogExp2(FOG_COLOR, 0.0015);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+            camera.position.set(0, 30, 400);
+
+            // 2. LIGHTING
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const sunLight = new THREE.DirectionalLight(0xffaa00, 1.5);
+            sunLight.position.set(500, 1000, 500); 
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 2048;
+            sunLight.shadow.mapSize.height = 2048;
+            sunLight.shadow.camera.near = 0.5;
+            sunLight.shadow.camera.far = 2000;
+            sunLight.shadow.camera.left = -500;
+            sunLight.shadow.camera.right = 500;
+            sunLight.shadow.camera.top = 500;
+            sunLight.shadow.camera.bottom = -500;
+            scene.add(sunLight);
+
+            // 3. WORLD GENERATION
+            generateTerrain();
+            generateWater(); // Now with Shader
+            buildCastle();   // Now with Collision Boxes
+            generateTrees();
+            generateFoliage(); // New Grass & Flowers
+            spawnCrystals();   // New Gameplay
+
+            // 4. CONTROLS
+            controls = new PointerLockControls(camera, document.body);
+            const blocker = document.getElementById('ui-layer');
+            const startBtn = document.getElementById('start-btn');
+            const crosshair = document.getElementById('crosshair');
+            const hud = document.getElementById('hud');
+
+            startBtn.addEventListener('click', () => controls.lock());
+
+            controls.addEventListener('lock', () => {
+                blocker.style.display = 'none';
+                crosshair.style.display = 'block';
+                hud.style.display = 'block';
+            });
+
+            controls.addEventListener('unlock', () => {
+                if(score < maxScore) { // Don't show if won
+                    blocker.style.display = 'flex';
+                    crosshair.style.display = 'none';
+                    hud.style.display = 'none';
+                }
+            });
+
+            scene.add(controls.getObject());
+
+            document.addEventListener('keydown', (e) => {
+                switch (e.code) {
+                    case 'ArrowUp': case 'KeyW': moveForward = true; break;
+                    case 'ArrowLeft': case 'KeyA': moveLeft = true; break;
+                    case 'ArrowDown': case 'KeyS': moveBackward = true; break;
+                    case 'ArrowRight': case 'KeyD': moveRight = true; break;
+                    case 'Space': if (canJump) velocity.y += 200; canJump = false; break;
+                }
+            });
+
+            document.addEventListener('keyup', (e) => {
+                switch (e.code) {
+                    case 'ArrowUp': case 'KeyW': moveForward = false; break;
+                    case 'ArrowLeft': case 'KeyA': moveLeft = false; break;
+                    case 'ArrowDown': case 'KeyS': moveBackward = false; break;
+                    case 'ArrowRight': case 'KeyD': moveRight = false; break;
+                }
+            });
+
+            // 5. RENDERER
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.body.appendChild(renderer.domElement);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // --- WORLD GENERATION ---
+
+        function getTerrainHeight(x, z) {
+            const dist = Math.abs(x);
+            if (dist < 100) return 2; // Riverbed
+            
+            let h = (dist - 100) * 0.8;
+            h += Math.sin(z * 0.02) * 20;
+            h += Math.cos(x * 0.05) * 10;
+            return h;
+        }
+
+        function generateTerrain() {
+            const geometry = new THREE.PlaneGeometry(WORLD_WIDTH, WORLD_DEPTH, 128, 128);
+            geometry.rotateX(-Math.PI / 2);
+            const vertices = geometry.attributes.position.array;
+
+            for (let i = 0; i < vertices.length; i += 3) {
+                const x = vertices[i];
+                const z = vertices[i + 2];
+                
+                // Use the math function to set height so it matches physics check
+                // Add some noise for visual only (not physics) to make it look rougher
+                const baseH = getTerrainHeight(x, z);
+                const noise = (Math.random() * 4); 
+                vertices[i + 1] = baseH + noise;
+            }
+            
+            geometry.computeVertexNormals();
+            const material = new THREE.MeshStandardMaterial({ 
+                color: 0x3d2817, roughness: 0.9, flatShading: true 
+            });
+            const terrain = new THREE.Mesh(geometry, material);
+            terrain.receiveShadow = true;
+            scene.add(terrain);
+        }
+
+        function generateWater() {
+            const geometry = new THREE.PlaneGeometry(WORLD_WIDTH, 200, 64, 64);
+            geometry.rotateX(-Math.PI / 2);
+
+            // Custom Shader for simple wave animation
+            waterUniforms = {
+                uTime: { value: 0 },
+                uColor: { value: new THREE.Color(0x0077be) }
+            };
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: waterUniforms,
+                vertexShader: `
+                    uniform float uTime;
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        vec3 pos = position;
+                        // Simple sine wave displacement
+                        pos.y += sin(pos.x * 0.1 + uTime) * 0.5;
+                        pos.y += cos(pos.z * 0.1 + uTime * 0.5) * 0.5;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 uColor;
+                    varying vec2 vUv;
+                    void main() {
+                        // Simple color opacity
+                        gl_FragColor = vec4(uColor, 0.7); 
+                    }
+                `,
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+
+            waterMesh = new THREE.Mesh(geometry, material);
+            waterMesh.position.y = 5;
+            scene.add(waterMesh);
+        }
+
+        function buildCastle() {
+            const castleGroup = new THREE.Group();
+            const sandstoneMat = new THREE.MeshStandardMaterial({ color: 0xd4a017 });
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x2f4f4f });
+
+            // Box Helper that adds collision
+            function createBlock(x, z, w, h, d, yOffset=0) {
+                const geo = new THREE.BoxGeometry(w, h, d);
+                const mesh = new THREE.Mesh(geo, sandstoneMat);
+                mesh.position.set(x, (h/2) + yOffset, z);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                castleGroup.add(mesh);
+
+                // ADD COLLISION BOX
+                // We need world coordinates. Since castleGroup is at (0,10,-200), we offset.
+                const box = new THREE.Box3().setFromObject(mesh);
+                // Adjust box for group position manually since group isn't in scene update yet
+                box.min.x += 0; box.max.x += 0;
+                box.min.y += 10; box.max.y += 10;
+                box.min.z += -200; box.max.z += -200;
+                buildingBoundingBoxes.push(box);
+            }
+
+            function createTower(x, z, w, h) {
+                const geo = new THREE.CylinderGeometry(w, w, h, 12);
+                const mesh = new THREE.Mesh(geo, sandstoneMat);
+                mesh.position.set(x, h/2, z);
+                mesh.castShadow = true;
+                castleGroup.add(mesh);
+
+                const roofGeo = new THREE.ConeGeometry(w * 1.2, h * 0.4, 12);
+                const roof = new THREE.Mesh(roofGeo, roofMat);
+                roof.position.set(x, h + (h*0.2), z);
+                castleGroup.add(roof);
+
+                // Collision for cylinder (approximate with Box)
+                const box = new THREE.Box3();
+                box.setFromCenterAndSize(
+                    new THREE.Vector3(x, 10 + h/2, -200 + z), 
+                    new THREE.Vector3(w*2, h, w*2)
+                );
+                buildingBoundingBoxes.push(box);
+            }
+
+            // Main Keep
+            createBlock(0, -50, 60, 120, 60);
+            // Wings
+            createBlock(-50, -30, 40, 60, 40);
+            createBlock(50, -30, 40, 60, 40);
+            // Towers
+            createTower(-70, -30, 10, 80);
+            createTower(70, -30, 10, 80);
+            createTower(-30, 0, 8, 50);
+            createTower(30, 0, 8, 50);
+            // Bridge
+            for(let i=0; i<5; i++) {
+                createBlock(0, 20 + (i*15), 40, 5, 20, 0);
+            }
+            
+            // Dome
+            const domeGeo = new THREE.SphereGeometry(25, 16, 16, 0, Math.PI * 2, 0, Math.PI/2);
+            const dome = new THREE.Mesh(domeGeo, sandstoneMat);
+            dome.position.set(0, 120, -50);
+            castleGroup.add(dome);
+
+            castleGroup.position.set(0, 10, -200);
+            scene.add(castleGroup);
+        }
+
+        function generateTrees() {
+            const treeCount = 600; // More trees
+            const treeGeo = new THREE.ConeGeometry(5, 20, 8);
+            const trunkGeo = new THREE.CylinderGeometry(1, 1, 5, 8);
+            
+            // Merging geometries for better performance could be done here,
+            // but groups are okay for this amount.
+            
+            const leafMat = new THREE.MeshStandardMaterial({ color: 0x003300 });
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4d2926 });
+
+            for (let i = 0; i < treeCount; i++) {
+                const x = (Math.random() - 0.5) * WORLD_WIDTH;
+                const z = (Math.random() - 0.5) * WORLD_DEPTH;
+
+                if (Math.abs(x) > 120) { // Keep away from water
+                    const group = new THREE.Group();
+                    const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+                    trunk.position.y = 2.5;
+                    const leaves = new THREE.Mesh(treeGeo, leafMat);
+                    leaves.position.y = 12.5;
+                    group.add(trunk);
+                    group.add(leaves);
+
+                    const y = getTerrainHeight(x, z);
+                    group.position.set(x, y, z);
+                    
+                    // Random scale
+                    const s = 0.8 + Math.random() * 0.5;
+                    group.scale.set(s, s, s);
+
+                    scene.add(group);
+                }
+            }
+        }
+
+        function generateFoliage() {
+            // Instanced Mesh for Grass
+            const grassCount = 15000;
+            const grassGeo = new THREE.PlaneGeometry(2, 2);
+            const grassMat = new THREE.MeshBasicMaterial({ color: 0x228b22, side: THREE.DoubleSide });
+            const grassMesh = new THREE.InstancedMesh(grassGeo, grassMat, grassCount);
+
+            const dummy = new THREE.Object3D();
+            let index = 0;
+
+            for(let i=0; i<grassCount; i++) {
+                const x = (Math.random() - 0.5) * WORLD_WIDTH;
+                const z = (Math.random() - 0.5) * WORLD_DEPTH;
+                
+                const y = getTerrainHeight(x, z);
+
+                // Logic: Only grow on dirt, not too high up mountains, not in river
+                if (y > 8 && y < 100) {
+                    dummy.position.set(x, y + 1, z);
+                    dummy.rotation.y = Math.random() * Math.PI;
+                    // Randomize tilt slightly
+                    dummy.rotation.x = (Math.random() - 0.5) * 0.2;
+                    dummy.scale.setScalar(0.5 + Math.random());
+                    dummy.updateMatrix();
+                    grassMesh.setMatrixAt(index++, dummy.matrix);
+                }
+            }
+            grassMesh.count = index; // Update count to actual placed
+            scene.add(grassMesh);
+
+            // Flowers
+            const flowerCount = 2000;
+            const flowerGeo = new THREE.SphereGeometry(0.5, 4, 4);
+            const flowerMat = new THREE.MeshBasicMaterial({ color: 0xff69b4 }); // Pink
+            const flowerMesh = new THREE.InstancedMesh(flowerGeo, flowerMat, flowerCount);
+            
+            index = 0;
+            for(let i=0; i<flowerCount; i++) {
+                 const x = (Math.random() - 0.5) * WORLD_WIDTH;
+                const z = (Math.random() - 0.5) * WORLD_DEPTH;
+                const y = getTerrainHeight(x, z);
+                
+                if (y > 10 && y < 80) {
+                    dummy.position.set(x, y + 1.5, z);
+                    dummy.scale.setScalar(1);
+                    dummy.updateMatrix();
+                    flowerMesh.setMatrixAt(index++, dummy.matrix);
+                }
+            }
+            flowerMesh.count = index;
+            scene.add(flowerMesh);
+        }
+
+        function spawnCrystals() {
+            const crystalGeo = new THREE.OctahedronGeometry(2);
+            const crystalMat = new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true });
+            
+            // Positions: 
+            // 1. Front of castle
+            // 2. Behind Castle
+            // 3. Left Mountain
+            // 4. Right Mountain
+            // 5. Top of Castle (Hard)
+
+            const positions = [
+                new THREE.Vector3(0, 20, -100),
+                new THREE.Vector3(0, 20, -350),
+                new THREE.Vector3(-300, 150, 0),
+                new THREE.Vector3(300, 150, 0),
+                new THREE.Vector3(0, 130, -250) // Top of dome area
+            ];
+
+            positions.forEach(pos => {
+                const mesh = new THREE.Mesh(crystalGeo, crystalMat);
+                mesh.position.copy(pos);
+                
+                // Add a light to it
+                const light = new THREE.PointLight(0xffff00, 1, 50);
+                mesh.add(light);
+                
+                scene.add(mesh);
+                crystals.push(mesh);
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- COLLISION CHECKER ---
+        function checkCollision(position) {
+            // Create a box for the player at the new position
+            const playerBox = new THREE.Box3();
+            const min = new THREE.Vector3(position.x - PLAYER_RADIUS, position.y - 5, position.z - PLAYER_RADIUS);
+            const max = new THREE.Vector3(position.x + PLAYER_RADIUS, position.y + 5, position.z + PLAYER_RADIUS);
+            playerBox.set(min, max);
+
+            for (let box of buildingBoundingBoxes) {
+                if (playerBox.intersectsBox(box)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // --- ANIMATION LOOP ---
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = performance.now();
+            const delta = (time - prevTime) / 1000;
+
+            // Animate Water
+            if (waterUniforms) waterUniforms.uTime.value = time * 0.001;
+
+            // Animate Crystals (Spinning)
+            crystals.forEach(c => {
+                c.rotation.y += delta;
+                c.rotation.z += delta * 0.5;
+            });
+            
+            if (controls.isLocked === true) {
+                velocity.x -= velocity.x * 10.0 * delta;
+                velocity.z -= velocity.z * 10.0 * delta;
+                velocity.y -= 9.8 * 100.0 * delta; 
+
+                direction.z = Number(moveForward) - Number(moveBackward);
+                direction.x = Number(moveRight) - Number(moveLeft);
+                direction.normalize(); 
+
+                if (moveForward || moveBackward) velocity.z -= direction.z * 800.0 * delta;
+                if (moveLeft || moveRight) velocity.x -= direction.x * 800.0 * delta;
+
+                // 1. PREDICT NEXT X/Z Position
+                const nextX = camera.position.x - (velocity.x * delta); // Note: controls invert logic usually, simplistic approach
+                const nextZ = camera.position.z - (velocity.z * delta);
+                
+                // Actually, Controls.moveRight/Forward handle local transform. 
+                // Let's apply movement and revert if collision happens (easiest way with PointerLockControls)
+                
+                const oldPos = camera.position.clone();
+                
+                controls.moveRight(-velocity.x * delta);
+                controls.moveForward(-velocity.z * delta);
+                
+                // Check Collision with Buildings
+                if (checkCollision(camera.position)) {
+                    // Revert X/Z but keep Y
+                    const y = camera.position.y;
+                    camera.position.copy(oldPos);
+                    camera.position.y = y; // Allow falling/jumping still
+                    velocity.x = 0;
+                    velocity.z = 0;
+                }
+
+                // Terrain Height Check
+                const terrainH = getTerrainHeight(camera.position.x, camera.position.z);
+                
+                // Floor physics
+                if (camera.position.y < terrainH + PLAYER_HEIGHT) {
+                    velocity.y = 0;
+                    camera.position.y = terrainH + PLAYER_HEIGHT;
+                    canJump = true;
+                }
+                
+                camera.position.y += velocity.y * delta;
+
+                // Crystal Collection Logic
+                for (let i = crystals.length - 1; i >= 0; i--) {
+                    const dist = camera.position.distanceTo(crystals[i].position);
+                    if (dist < 10) {
+                        // Collect!
+                        scene.remove(crystals[i]);
+                        crystals.splice(i, 1);
+                        score++;
+                        document.getElementById('score').innerText = `CRYSTALS: ${score} / ${maxScore}`;
+                        
+                        if (score === maxScore) {
+                            document.getElementById('win-screen').style.display = 'block';
+                            document.getElementById('crosshair').style.display = 'none';
+                            document.getElementById('hud').style.display = 'none';
+                            controls.unlock();
+                        }
+                    }
+                }
+            }
+
+            prevTime = time;
+            renderer.render(scene, camera);
+        }
+
+    </script>
+</body>
+</html>
