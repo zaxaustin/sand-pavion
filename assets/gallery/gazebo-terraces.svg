@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="zTitle zDesc">
+  <title id="zTitle">Terraced Gazebo</title>
+  <desc id="zDesc">Circular terrace with a gazebo framed by mountain pines.</desc>
+  <defs>
+    <linearGradient id="dawn" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dbe8ff" />
+      <stop offset="100%" stop-color="#1e3c4a" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#dawn)" />
+  <path d="M0 420 Q200 320 400 380 T800 360 V600 H0Z" fill="#3d5f46" />
+  <path d="M0 360 Q200 260 400 320 T800 300 V600 H0Z" fill="#274233" />
+  <circle cx="400" cy="420" r="140" fill="#4e6c46" stroke="#b4cfa5" stroke-width="10" />
+  <circle cx="400" cy="420" r="90" fill="#5f7d53" />
+  <g fill="#cf9b5b" stroke="#784b24" stroke-width="4">
+    <polygon points="360,350 400,300 440,350" />
+    <rect x="340" y="350" width="120" height="70" rx="18" />
+    <line x1="360" y1="350" x2="360" y2="420" />
+    <line x1="440" y1="350" x2="440" y2="420" />
+  </g>
+  <g fill="none" stroke="#f6f2dc" stroke-width="6" stroke-linecap="round">
+    <path d="M200 440 q60 -40 120 0" />
+    <path d="M480 440 q60 -40 120 0" />
+  </g>
+  <g fill="#1f3829">
+    <polygon points="120,260 160,180 200,260" />
+    <polygon points="620,240 660,160 700,240" />
+    <polygon points="60,300 100,210 140,300" />
+    <polygon points="660,300 700,210 740,300" />
+  </g>
+</svg>

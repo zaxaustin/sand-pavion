@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sand Pavilion - Sacred Spaces</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #2c1810, #8b4513, #daa520);
+            min-height: 100vh;
+            color: #f5f5dc;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(218, 165, 32, 0.3);
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(45deg, #daa520, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .gamification-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .rooms-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .room-card {
+            background: rgba(139, 69, 19, 0.3);
+            border: 2px solid rgba(218, 165, 32, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.4);
+            border-color: rgba(218, 165, 32, 0.7);
+        }
+
+        .room-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .room-title {
+            font-size: 1.8rem;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .room-description {
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .enter-btn {
+            background: linear-gradient(45deg, #daa520, #b8860b);
+            color: #2c1810;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .enter-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(218, 165, 32, 0.5);
+        }
+
+        .room-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .room-view.active {
+            display: block;
+        }
+
+        .room-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(218, 165, 32, 0.3);
+            border: 2px solid #daa520;
+            color: #ffd700;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .close-btn:hover {
+            background: rgba(218, 165, 32, 0.6);
+            transform: rotate(90deg);
+        }
+
+        .session-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .session-title {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        .meditation-controls {
+            background: rgba(139, 69, 19, 0.3);
+            border: 2px solid rgba(218, 165, 32, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            text-align: center;
+            color: #ffd700;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #daa520, #b8860b);
+            color: #2c1810;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .guided-text {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid #daa520;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            border-radius: 5px;
+        }
+
+        .scripture-container {
+            background: rgba(139, 69, 19, 0.3);
+            border: 2px solid rgba(218, 165, 32, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .scripture-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .scripture-btn {
+            background: rgba(218, 165, 32, 0.2);
+            border: 2px solid rgba(218, 165, 32, 0.4);
+            color: #f5f5dc;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .scripture-btn:hover, .scripture-btn.active {
+            background: rgba(218, 165, 32, 0.4);
+            border-color: #daa520;
+            transform: scale(1.05);
+        }
+
+        .scripture-text {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            line-height: 2;
+            margin-bottom: 2rem;
+            min-height: 300px;
+        }
+
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .audio-btn {
+            background: linear-gradient(45deg, #daa520, #b8860b);
+            color: #2c1810;
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #daa520, #ffd700);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .complete-session-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: block;
+            margin: 2rem auto 0;
+        }
+
+        .complete-session-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.5);
+        }
+
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #daa520, #b8860b);
+            margin: 2rem auto;
+            animation: breathe 8s infinite;
+            box-shadow: 0 0 30px rgba(218, 165, 32, 0.5);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.8); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .meditation-type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .badge-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            z-index: 2000;
+            transition: transform 0.5s ease;
+        }
+
+        .badge-notification.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .badge-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 3rem;
+            }
+            
+            .session-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div style="position:fixed;top:10px;left:10px;z-index:2000"><a href="../" class="btn">← Back</a></div>
+
+    <div class="header">
+        <h1 class="logo">🏜️ The Sand Pavilion</h1>
+        <p class="tagline">Sacred Spaces for Mind, Body & Spirit</p>
+    </div>
+
+    <div class="gamification-bar">
+        <div class="stat">
+            <span class="stat-icon">✨</span>
+            <span>Points: <span class="stat-value" id="points">0</span></span>
+        </div>
+        <div class="stat">
+            <span class="stat-icon">🔥</span>
+            <span>Streak: <span class="stat-value" id="streak">0</span> days</span>
+        </div>
+        <div class="stat">
+            <span class="stat-icon">🏆</span>
+            <span>Badges: <span class="stat-value" id="badge-count">0</span></span>
+        </div>
+        <div class="stat">
+            <span class="stat-icon">🧘</span>
+            <span>Sessions: <span class="stat-value" id="session-count">0</span></span>
+        </div>
+    </div>
+
+    <div class="rooms-container">
+        <div class="room-card" onclick="enterRoom('meditation')">
+            <div class="room-icon">🧘‍♀️</div>
+            <h2 class="room-title">Meditation Room</h2>
+            <p class="room-description">Guided meditation sessions with breathing exercises and mindfulness practices</p>
+            <button class="enter-btn">Enter Sacred Space</button>
+        </div>
+
+        <div class="room-card" onclick="enterRoom('scripture')">
+            <div class="room-icon">📖</div>
+            <h2 class="room-title">Scripture Room</h2>
+            <p class="room-description">Listen to sacred texts with text-to-speech narration and contemplative reading</p>
+            <button class="enter-btn">Enter Sacred Space</button>
+        </div>
+    </div>
+
+    <!-- Meditation Room View -->
+    <div id="meditation-room" class="room-view">
+        <button class="close-btn" onclick="exitRoom()">✕</button>
+        <div class="room-content">
+            <div class="session-header">
+                <h2 class="session-title">Meditation Room</h2>
+                <p>Choose your practice and find your center</p>
+            </div>
+
+            <div class="meditation-type-selector">
+                <button class="scripture-btn active" onclick="selectMeditationType('breathing')">Breathing</button>
+                <button class="scripture-btn" onclick="selectMeditationType('body-scan')">Body Scan</button>
+                <button class="scripture-btn" onclick="selectMeditationType('mindfulness')">Mindfulness</button>
+                <button class="scripture-btn" onclick="selectMeditationType('loving-kindness')">Loving-Kindness</button>
+            </div>
+
+            <div class="meditation-controls">
+                <div class="breathing-circle" id="breathing-circle"></div>
+                <div class="timer-display" id="meditation-timer">10:00</div>
+                
+                <div class="control-buttons">
+                    <button class="control-btn" onclick="setMeditationTime(5)">5 min</button>
+                    <button class="control-btn" onclick="setMeditationTime(10)">10 min</button>
+                    <button class="control-btn" onclick="setMeditationTime(15)">15 min</button>
+                    <button class="control-btn" onclick="setMeditationTime(20)">20 min</button>
+                </div>
+
+                <div class="control-buttons">
+                    <button class="control-btn" id="start-meditation-btn" onclick="startMeditation()">▶️ Start</button>
+                    <button class="control-btn" id="pause-meditation-btn" onclick="pauseMeditation()" disabled>⏸️ Pause</button>
+                    <button class="control-btn" onclick="resetMeditation()">🔄 Reset</button>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="meditation-progress"></div>
+                </div>
+
+                <div class="guided-text" id="meditation-guidance">
+                    Select a meditation type and duration to begin your practice...
+                </div>
+            </div>
+
+            <button class="complete-session-btn" onclick="completeMeditationSession()">✓ Complete Session</button>
+        </div>
+    </div>
+
+    <!-- Scripture Room View -->
+    <div id="scripture-room" class="room-view">
+        <button class="close-btn" onclick="exitRoom()">✕</button>
+        <div class="room-content">
+            <div class="session-header">
+                <h2 class="session-title">Scripture Room</h2>
+                <p>Sacred texts from world traditions</p>
+            </div>
+
+            <div class="scripture-container">
+                <div class="scripture-selector">
+                    <button class="scripture-btn active" onclick="selectScripture('bhagavad-gita')">Bhagavad Gita</button>
+                    <button class="scripture-btn" onclick="selectScripture('dhammapada')">Dhammapada</button>
+                    <button class="scripture-btn" onclick="selectScripture('tao-te-ching')">Tao Te Ching</button>
+                    <button class="scripture-btn" onclick="selectScripture('upanishads')">Upanishads</button>
+                </div>
+
+                <div class="scripture-text" id="scripture-text">
+                    Select a sacred text to begin your contemplative reading...
+                </div>
+
+                <div class="audio-controls">
+                    <button class="audio-btn" id="play-scripture-btn" onclick="playScripture()">▶️</button>
+                    <button class="audio-btn" onclick="stopScripture()">⏹️</button>
+                    <button class="audio-btn" onclick="adjustSpeed(-0.25)">🐢</button>
+                    <button class="audio-btn" onclick="adjustSpeed(0.25)">🐰</button>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="scripture-progress"></div>
+                </div>
+            </div>
+
+            <button class="complete-session-btn" onclick="completeScriptureSession()">✓ Complete Session</button>
+        </div>
+    </div>
+
+    <!-- Badge Notification -->
+    <div class="badge-notification" id="badge-notification">
+        <div class="badge-icon">🏆</div>
+        <h2 style="color: #ffd700; margin-bottom: 1rem;">New Badge Earned!</h2>
+        <p id="badge-message" style="font-size: 1.2rem;"></p>
+    </div>
+
+    <script>
+        // User data management
+        let userData = JSON.parse(localStorage.getItem('sandPavilionData')) || {
+            points: 0,
+            streak: 0,
+            lastCompletion: null,
+            completedSessions: { meditation: 0, scripture: 0 },
+            badges: [],
+            totalTime: 0
+        };
+
+        // Meditation state
+        let meditationInterval = null;
+        let meditationTime = 600; // 10 minutes in seconds
+        let meditationTimeLeft = 600;
+        let meditationType = 'breathing';
+        let isPaused = false;
+
+        // Scripture state
+        let currentScripture = null;
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
+        let speechRate = 0.8;
+
+        // Scripture texts
+        const scriptures = {
+            'bhagavad-gita': {
+                title: 'Bhagavad Gita',
+                text: `Chapter 2, Verse 47: You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions. Never consider yourself to be the cause of the results of your activities, nor be attached to inaction.
+
+Chapter 2, Verse 48: Be steadfast in yoga, O Arjuna. Perform your duty and abandon all attachment to success or failure. Such evenness of mind is called yoga.
+
+Chapter 6, Verse 5: One must deliver himself with the help of his mind, and not degrade himself. The mind is the friend of the conditioned soul, and his enemy as well.`
+            },
+            'dhammapada': {
+                title: 'Dhammapada',
+                text: `Verse 1: All that we are is the result of what we have thought. The mind is everything. What we think, we become.
+
+Verse 2: With our thoughts we make the world. Speak or act with an impure mind and trouble will follow you as the wheel follows the ox that draws the cart.
+
+Verse 183: To avoid all evil, to cultivate good, and to purify one's mind - this is the teaching of the Buddhas.`
+            },
+            'tao-te-ching': {
+                title: 'Tao Te Ching',
+                text: `Chapter 1: The Tao that can be told is not the eternal Tao. The name that can be named is not the eternal name. The nameless is the beginning of heaven and earth.
+
+Chapter 16: Empty yourself of everything. Let the mind rest at peace. The ten thousand things rise and fall while the Self watches their return.
+
+Chapter 47: Without going outside, you may know the whole world. Without looking through the window, you may see the ways of heaven.`
+            },
+            'upanishads': {
+                title: 'Upanishads',
+                text: `From the Chandogya Upanishad: In the center of the castle of Brahman, our own body, there is a small shrine in the form of a lotus-flower, and within can be found a small space. That little space within the heart is as great as this vast universe.
+
+From the Isha Upanishad: The Self is one. Unmoving, it moves faster than the mind. The senses lag, but Self runs ahead. Unmoving, it outruns pursuit.`
+            }
+        };
+
+        // Meditation guidance texts
+        const meditationGuidance = {
+            breathing: [
+                "Find a comfortable seated position. Close your eyes gently.",
+                "Bring your awareness to your natural breath. Notice the sensation of air flowing in and out.",
+                "Breathe in slowly through your nose for a count of 4...",
+                "Hold the breath gently for a count of 4...",
+                "Exhale slowly through your mouth for a count of 4...",
+                "Hold the emptiness for a count of 4...",
+                "Continue this rhythm. When your mind wanders, gently return to the breath.",
+                "Notice how each breath nourishes your body and calms your mind.",
+                "With each exhale, release any tension you're holding.",
+                "You are present. You are peaceful. You are centered."
+            ],
+            'body-scan': [
+                "Lie down or sit comfortably. Close your eyes.",
+                "Bring your attention to the top of your head. Notice any sensations.",
+                "Slowly scan down to your forehead, releasing any tension.",
+                "Move to your eyes, jaw, and neck. Let everything soften.",
+                "Bring awareness to your shoulders. Let them drop and relax.",
+                "Scan through your arms, hands, and fingers.",
+                "Move to your chest and belly. Notice the rise and fall of your breath.",
+                "Scan through your back, hips, and legs.",
+                "Reach your feet and toes. Feel your whole body relaxed.",
+                "Rest in this state of complete relaxation and awareness."
+            ],
+            'mindfulness': [
+                "Settle into a comfortable position. Bring your attention to the present moment.",
+                "Notice the sounds around you without judgment.",
+                "Observe your thoughts like clouds passing in the sky.",
+                "Feel the sensations in your body - warmth, coolness, tingling.",
+                "When your mind wanders, simply notice and return to the present.",
+                "There is nowhere to go, nothing to do. Just be.",
+                "Observe your breath naturally flowing in and out.",
+                "Notice the space between thoughts.",
+                "Rest in pure awareness, observing without attachment.",
+                "You are the witness of all experience."
+            ],
+            'loving-kindness': [
+                "Sit comfortably and place your hand over your heart.",
+                "Begin by directing loving-kindness to yourself: May I be happy.",
+                "May I be healthy. May I be safe. May I live with ease.",
+                "Now bring to mind someone you love. Send them these wishes.",
+                "May you be happy. May you be healthy. May you be safe.",
+                "Expand your circle to include a neutral person.",
+                "Send loving-kindness to someone you find difficult.",
+                "Extend these wishes to all beings everywhere.",
+                "May all beings be happy. May all beings be free from suffering.",
+                "Feel the warmth of loving-kindness radiating from your heart."
+            ]
+        };
+
+        // Initialize
+        updateGamification();
+
+        function updateGamification() {
+            document.getElementById('points').textContent = userData.points;
+            document.getElementById('streak').textContent = userData.streak;
+            document.getElementById('badge-count').textContent = userData.badges.length;
+            document.getElementById('session-count').textContent = 
+                userData.completedSessions.meditation + userData.completedSessions.scripture;
+            localStorage.setItem('sandPavilionData', JSON.stringify(userData));
+        }
+
+        function updateStreak() {
+            const today = new Date().toDateString();
+            if (userData.lastCompletion === today) return;
+            
+            if (userData.lastCompletion) {
+                const lastDate = new Date(userData.lastCompletion);
+                const diff = (new Date() - lastDate) / (1000 * 60 * 60 * 24);
+                userData.streak = diff <= 1 ? userData.streak + 1 : 1;
+            } else {
+                userData.streak = 1;
+            }
+            userData.lastCompletion = today;
+        }
+
+        function checkBadges() {
+            const newBadges = [];
+            
+            if (userData.completedSessions.meditation >= 5 && !userData.badges.includes('Meditation Novice')) {
+                newBadges.push('Meditation Novice');
+                userData.badges.push('Meditation Novice');
+            }
+            
+            if (userData.completedSessions.scripture >= 3 && !userData.badges.includes('Scripture Scholar')) {
+                newBadges.push('Scripture Scholar');
+                userData.badges.push('Scripture Scholar');
+            }
+            
+            if (userData.streak >= 7 && !userData.badges.includes('Dedicated Practitioner')) {
+                newBadges.push('Dedicated Practitioner');
+                userData.badges.push('Dedicated Practitioner');
+            }
+            
+            if (userData.totalTime >= 600 && !userData.badges.includes('Time Keeper')) {
+                newBadges.push('Time Keeper');
+                userData.badges.push('Time Keeper');
+            }
+            
+            if (newBadges.length > 0) {
+                showBadgeNotification(newBadges[0]);
+            }
+        }
+
+        function showBadgeNotification(badge) {
+            const notification = document.getElementById('badge-notification');
+            document.getElementById('badge-message').textContent = badge;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function enterRoom(room) {
+            document.getElementById(room + '-room').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function exitRoom() {
+            document.querySelectorAll('.room-view').forEach(room => {
+                room.classList.remove('active');
+            });
+            document.body.style.overflow = 'auto';
+            resetMeditation();
+            stopScripture();
+        }
+
+        // Meditation functions
+        function selectMeditationType(type) {
+            meditationType = type;
+            document.querySelectorAll('.meditation-type-selector .scripture-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.getElementById('meditation-guidance').textContent = 
+                `Selected: ${type.charAt(0).toUpperCase() + type.slice(1)} meditation. Set your duration and press start.`;
+        }
+
+        function setMeditationTime(minutes) {
+            meditationTime = minutes * 60;
+            meditationTimeLeft = meditationTime;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(meditationTimeLeft / 60);
+            const seconds = meditationTimeLeft % 60;
+            document.getElementById('meditation-timer').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const progress = ((meditationTime - meditationTimeLeft) / meditationTime) * 100;
+            document.getElementById('meditation-progress').style.width = progress + '%';
+        }
+
+        function startMeditation() {
+            if (meditationInterval) return;
+            
+            isPaused = false;
+            document.getElementById('start-meditation-btn').disabled = true;
+            document.getElementById('pause-meditation-btn').disabled = false;
+            
+            let guidanceIndex = 0;
+            const guidance = meditationGuidance[meditationType];
+            document.getElementById('meditation-guidance').textContent = guidance[guidanceIndex];
+            
+            const guidanceInterval = setInterval(() => {
+                guidanceIndex = (guidanceIndex + 1) % guidance.length;
+                document.getElementById('meditation-guidance').textContent = guidance[guidanceIndex];
+            }, (meditationTime / guidance.length) * 1000);
+            
+            meditationInterval = setInterval(() => {
+                if (!isPaused) {
+                    meditationTimeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (meditationTimeLeft <= 0) {
+                        clearInterval(meditationInterval);
+                        clearInterval(guidanceInterval);
+                        meditationInterval = null;
+                        document.getElementById('meditation-guidance').textContent = 
+                            'Meditation complete. Take a moment to notice how you feel.';
+                        document.getElementById('start-meditation-btn').disabled = false;
+                        document.getElementById('pause-meditation-btn').disabled = true;
+                    }
+                }
+            }, 1000);
+        }
+
+        function pauseMeditation() {
+            isPaused = !isPaused;
+            document.getElementById('pause-meditation-btn').textContent = isP

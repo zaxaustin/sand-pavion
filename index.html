@@ -11,11 +11,20 @@
                 box-sizing: border-box;
             }
     
+            :root {
+                --sand: #f5e6c5;
+                --amber: #daa520;
+                --ember: #b86b25;
+                --ink: #160b08;
+                --stone: rgba(255, 255, 255, 0.08);
+            }
+
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #2c1810, #8b4513, #daa520);
+                background: radial-gradient(circle at top, rgba(255, 215, 128, 0.2), transparent 60%),
+                            linear-gradient(135deg, #1c0f0a, #5c2b16 45%, #a1652a);
                 min-height: 100vh;
-                color: #f5f5dc;
+                color: var(--sand);
                 overflow-x: hidden;
             }
     
@@ -26,9 +35,10 @@
     
             .header {
                 text-align: center;
-                padding: 2rem;
-                background: rgba(0, 0, 0, 0.3);
+                padding: 2rem 1rem 0;
+                background: rgba(0, 0, 0, 0.35);
                 backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(255, 215, 128, 0.2);
             }
     
             .logo {
@@ -51,13 +61,14 @@
 
             .blessing-ribbon {
                 margin: 1.6rem auto 0;
-                padding: 0.8rem 1.4rem;
-                max-width: 720px;
-                background: rgba(255, 255, 255, 0.06);
+                padding: 1rem 1.8rem;
+                max-width: 820px;
+                background: rgba(255, 255, 255, 0.04);
                 border: 1px solid rgba(255, 215, 128, 0.35);
                 border-radius: 18px;
                 display: grid;
-                gap: 0.6rem;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 0.8rem 1.2rem;
                 font-size: 0.95rem;
                 line-height: 1.5;
             }
@@ -262,8 +273,9 @@
                 display: flex;
                 justify-content: center;
                 gap: 1.5rem;
-                margin-top: 1.5rem;
+                margin: 1.5rem auto 0;
                 flex-wrap: wrap;
+                max-width: 960px;
             }
 
             .nav-link {
@@ -304,6 +316,172 @@
                 margin: 0 auto;
                 padding: 3rem 1rem 1rem;
                 max-width: 800px;
+            }
+
+            .hero {
+                max-width: 1100px;
+                margin: 2rem auto 0;
+                padding: 2rem;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 2rem;
+                background: rgba(0, 0, 0, 0.35);
+                border: 1px solid rgba(255, 215, 128, 0.3);
+                border-radius: 24px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            }
+
+            .hero h2 {
+                font-size: 2.3rem;
+                color: #ffd700;
+                margin-bottom: 1rem;
+            }
+
+            .hero p {
+                line-height: 1.7;
+                opacity: 0.9;
+            }
+
+            .hero-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.8rem;
+                margin-top: 1.5rem;
+            }
+
+            .hero-actions a {
+                text-decoration: none;
+                padding: 0.8rem 1.6rem;
+                border-radius: 999px;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+            }
+
+            .hero-primary {
+                background: linear-gradient(120deg, #ffd700, #d88c3d);
+                color: #2c1810;
+            }
+
+            .hero-secondary {
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                color: #ffe7bf;
+            }
+
+            .hero-media {
+                position: relative;
+                border-radius: 20px;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                background: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.2), transparent 60%);
+            }
+
+            .hero-media img {
+                width: 100%;
+                display: block;
+            }
+
+            .hero-media figcaption {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 1rem;
+                background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+                font-size: 0.9rem;
+            }
+
+            .gallery-section {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 3rem 1rem 1rem;
+            }
+
+            .gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .gallery-card {
+                border-radius: 18px;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                background: rgba(0, 0, 0, 0.25);
+                display: flex;
+                flex-direction: column;
+            }
+
+            .gallery-card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .gallery-card figcaption {
+                padding: 1rem 1.2rem 1.5rem;
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+
+            .prototype-section {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 3rem 1rem 1rem;
+            }
+
+            .prototype-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .prototype-card {
+                background: rgba(139, 69, 19, 0.25);
+                border: 1px solid rgba(218, 165, 32, 0.3);
+                border-radius: 20px;
+                padding: 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .prototype-card small {
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+            .prototype-card a {
+                margin-top: auto;
+                align-self: flex-start;
+                background: rgba(218, 165, 32, 0.25);
+                color: #ffd700;
+                padding: 0.5rem 1.2rem;
+                border-radius: 999px;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .recommendations {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 3rem 1rem 4rem;
+            }
+
+            .recommendations ul {
+                list-style: none;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 1rem;
+            }
+
+            .recommendations li {
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 18px;
+                padding: 1.2rem;
+                line-height: 1.6;
             }
 
             .section-title {
@@ -689,14 +867,70 @@
             </div>
             <nav>
                 <a class="nav-link" href="#path">Visitor Path</a>
+                <a class="nav-link" href="#gallery">Visual Archive</a>
                 <a class="nav-link" href="#realms">Guild Realms</a>
                 <a class="nav-link" href="#rooms">Library Rooms</a>
                 <a class="nav-link" href="#districts">Learning Districts</a>
                 <a class="nav-link" href="#membership">Member Work</a>
+                <a class="nav-link" href="#archive">Prototype Vault</a>
+                <a class="nav-link" href="#roadmap">Roadmap</a>
                 <a class="nav-link" href="office-hub.html">Steward Office</a>
                 <a class="nav-link" href="member-portal.html">Member Portal</a>
             </nav>
         </header>
+
+        <section class="hero" aria-labelledby="hero-title">
+            <div>
+                <h2 id="hero-title">Hold the Whole Monastery in View</h2>
+                <p>We refreshed the Gate of Orientation with imagery inspired by the newly supplied archive. The hero tableau now
+                    mirrors terraced sanctuaries, a thriving orchard commons, and the mountain abbey that crowns the Pavilion.
+                    Use these glimpses to set tone for future prototypes, and follow the action buttons to quickly enter the
+                    most-requested rooms.</p>
+                <div class="hero-actions">
+                    <a class="hero-primary" href="living-library.html">Enter the Archivum</a>
+                    <a class="hero-secondary" href="temple-palace-pages/index.html">View the Temple Palace Mock</a>
+                </div>
+            </div>
+            <figure class="hero-media">
+                <img src="assets/gallery/mountain-abbey.svg" alt="Illustration of a sandstone abbey among the mountains">
+                <figcaption>Concept sketch rendered from the uploaded mountain monastery reference.</figcaption>
+            </figure>
+        </section>
+
+        <section class="gallery-section" id="gallery" aria-labelledby="gallery-title">
+            <div class="section-heading">
+                <h2 class="section-title" id="gallery-title">Pavilion Vista Gallery</h2>
+                <p class="section-subtitle">Five story-panels distilled from the image set now live inside the repo so each guild can
+                    pull them into presentations, hero banners, or ritual explainers.</p>
+            </div>
+            <div class="gallery-grid">
+                <figure class="gallery-card">
+                    <img src="assets/gallery/mountain-abbey.svg" alt="Mountain abbey concept art">
+                    <figcaption><strong>Mountain Abbey</strong> · Serves as the canonical Outer Court backdrop; used across hero
+                        sections and Council reports.</figcaption>
+                </figure>
+                <figure class="gallery-card">
+                    <img src="assets/gallery/garden-abbey.svg" alt="Garden abbey plan">
+                    <figcaption><strong>Garden Quadrant</strong> · Ideal for Learning District diagrams, emphasizing ordered paths
+                        and mirrored courtyards.</figcaption>
+                </figure>
+                <figure class="gallery-card">
+                    <img src="assets/gallery/mountain-terraces.svg" alt="Terraced waterfall">
+                    <figcaption><strong>Terraced Falls</strong> · Suggested for describing pilgrim journeys and tiered rites of
+                        passage.</figcaption>
+                </figure>
+                <figure class="gallery-card">
+                    <img src="assets/gallery/community-orchard.svg" alt="Community orchard">
+                    <figcaption><strong>Community Orchard</strong> · Highlights intergenerational play and care; linked to the
+                        Steward Board and family rooms.</figcaption>
+                </figure>
+                <figure class="gallery-card">
+                    <img src="assets/gallery/gazebo-terraces.svg" alt="Terraced gazebo">
+                    <figcaption><strong>Mountain Gazebo</strong> · Set aside for meditation labs, reflective prompts, and the local
+                        AI companion cradle.</figcaption>
+                </figure>
+            </div>
+        </section>
 
         <section class="flow-section" id="path">
             <div class="section-heading">
@@ -819,6 +1053,45 @@
                     <div class="room-links">
                         <a class="room-link" href="office-hub.html">Open the Office</a>
                     </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="prototype-section" id="archive" aria-labelledby="archive-title">
+            <div class="section-heading">
+                <h2 class="section-title" id="archive-title">Temple Palace Prototype Vault</h2>
+                <p class="section-subtitle">The uploaded archive sits inside <code>temple-palace-pages/</code>. We linked its highlights below so every guild can reference the visual language while the dynamic stack matures.</p>
+            </div>
+            <div class="prototype-grid">
+                <article class="prototype-card">
+                    <small>Main Hall</small>
+                    <h3>Great Temple Landing</h3>
+                    <p>High-level overview that mirrors this Outer Court, useful for onboarding decks and GitHub Pages demos.</p>
+                    <a href="temple-palace-pages/index.html">Open Landing Page</a>
+                </article>
+                <article class="prototype-card">
+                    <small>Meditation</small>
+                    <h3>Breath &amp; Scripture Wing</h3>
+                    <p>Contains guided readings, timer mockups, and narrative cues to blend ritual audio with scripture study.</p>
+                    <a href="temple-palace-pages/meditation/index.html">Visit Meditation Mock</a>
+                </article>
+                <article class="prototype-card">
+                    <small>Wellness</small>
+                    <h3>Healing Pavilion</h3>
+                    <p>Summarizes practical care tips, triage language, and seasonal health prompts ready for localisation.</p>
+                    <a href="temple-palace-pages/wellness/index.html">Open Wellness Mock</a>
+                </article>
+                <article class="prototype-card">
+                    <small>Community</small>
+                    <h3>Agora &amp; Bulletin</h3>
+                    <p>Showcases bulletin layouts for jobs, mutual aid, and course postings—perfect for Steward Board concepts.</p>
+                    <a href="temple-palace-pages/community/index.html">Open Community Mock</a>
+                </article>
+                <article class="prototype-card">
+                    <small>AI Village</small>
+                    <h3>Companion Sandbox</h3>
+                    <p>Outlines agent rest cycles, research pods, and quick consent prompts for local AI deployments.</p>
+                    <a href="temple-palace-pages/ai/index.html">Visit AI Mock</a>
                 </article>
             </div>
         </section>
@@ -995,6 +1268,20 @@
             <div class="member-actions">
                 <a class="cta-button" href="member-portal.html">Enter the Member Portal</a>
             </div>
+        </section>
+
+        <section class="recommendations" id="roadmap" aria-labelledby="roadmap-title">
+            <div class="section-heading">
+                <h2 class="section-title" id="roadmap-title">Roadmap for a More Rounded Pavilion</h2>
+                <p class="section-subtitle">Design, data, and accessibility upgrades we can pursue next. Each item links to an owning guild so work can be distributed.</p>
+            </div>
+            <ul>
+                <li><strong>Adaptive Ritual Timers</strong> · Sacred Spaces Guild · Reuse the Temple Palace meditation mockups to build a responsive timer widget that syncs breath cues with scripture audio.</li>
+                <li><strong>Living Library Storybooks</strong> · Archivum Vitae · Convert gallery art into illustrated study guides with short captions and TTS-ready scripts.</li>
+                <li><strong>Journey Badging</strong> · Continuance Circle · Layer in lightweight progress chips inspired by the Temple Palace cards to celebrate each completed quest.</li>
+                <li><strong>Consent-forward AI Console</strong> · Companion Artificers · Bring the AI Village mock into <code>local-ai-companion.html</code> so every tool clearly states its data boundaries.</li>
+                <li><strong>Mutual Aid Bulletin</strong> · Steward Board · Use the Community prototype layout to host open missions, budget requests, and rotating leadership seats.</li>
+            </ul>
         </section>
 
         <section class="call-to-action">
