@@ -23,6 +23,9 @@ const NOTES_PATH = process.env.LIBRARY_NOTES_PATH
     ? path.resolve(process.env.LIBRARY_NOTES_PATH)
     : path.join(LIBRARY_ROOT, 'notes.json');
 
+const SHARED_SCOPE = 'shared';
+const PERSONAL_SCOPE = 'personal';
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -89,10 +92,10 @@ async function loadNotesLedger() {
         if (!parsed || !Array.isArray(parsed.notes)) {
             throw new Error('Malformed notes ledger');
         }
-        return parsed;
+        return ensureNotesLedger(parsed);
     } catch (err) {
         if (err.code === 'ENOENT') {
-            return { updatedAt: new Date().toISOString(), notes: [] };
+            return ensureNotesLedger({ updatedAt: new Date().toISOString(), notes: [], folders: [] });
         }
         throw err;
     }
@@ -102,6 +105,48 @@ async function saveNotesLedger(ledger) {
     await fs.mkdir(path.dirname(NOTES_PATH), { recursive: true });
     ledger.updatedAt = new Date().toISOString();
     await fs.writeFile(NOTES_PATH, `${JSON.stringify(ledger, null, 2)}\n`, 'utf8');
+}
+
+function ensureNotesLedger(ledger) {
+    const safeLedger = {
+        updatedAt: ledger.updatedAt || new Date().toISOString(),
+        folders: Array.isArray(ledger.folders) ? ledger.folders : [],
+        notes: Array.isArray(ledger.notes) ? ledger.notes : []
+    };
+
+    const hasSharedFolder = safeLedger.folders.some((folder) => folder.id === 'illumined-strategy');
+    if (!hasSharedFolder) {
+        safeLedger.folders.push(
+            buildFolderRecord({
+                id: 'illumined-strategy',
+                name: 'Illumined Strategy',
+                ownerId: 'guild-stewards',
+                ownerName: 'Guild Stewards',
+                scope: SHARED_SCOPE,
+                createdAt: '2024-01-01T00:00:00.000Z'
+            })
+        );
+    }
+
+    const hasSeedNote = safeLedger.notes.some((note) => note.id === 'business-quest-dashboard-inspiration');
+    if (!hasSeedNote) {
+        safeLedger.notes.push(
+            buildNoteRecord({
+                id: 'business-quest-dashboard-inspiration',
+                folderId: 'illumined-strategy',
+                title: 'Business Quest Dashboard Inspiration',
+                content:
+                    'Highlights gathered from the Business Quest Dashboard study:\n• Quest categories: Business Fundamentals, Finance & Accounting, Marketing & Sales, Operations, Leadership & People, Legal & Compliance.\n• Featured books: The Lean Startup, Zero to One, The E-Myth Revisited, Profit First, and Building a StoryBrand.\n• Guild channels to revisit: Y Combinator, The Futur, Valuetainment, Minority Mindset, Accounting Stuff, and The Swedish Investor.',
+                ownerId: 'guild-stewards',
+                ownerName: 'Guild Stewards',
+                visibility: 'public',
+                createdAt: '2024-01-01T00:00:00.000Z',
+                updatedAt: '2024-01-01T00:00:00.000Z'
+            })
+        );
+    }
+
+    return safeLedger;
 }
 
 function runCopyrightChecks(metadata) {
@@ -190,6 +235,42 @@ function buildNoteRecord(payload) {
         createdAt: payload.createdAt || now,
         updatedAt: now,
         publishedAt: visibility === 'public' ? now : payload.publishedAt || null
+    };
+}
+
+function folderIsAccessible(folder, ownerId) {
+    return folder.scope === SHARED_SCOPE || folder.ownerId === ownerId;
+}
+
+function getAccessibleFolders(ledger, ownerId) {
+    return ledger.folders.filter((folder) => folderIsAccessible(folder, ownerId));
+}
+
+function getAccessibleNotes(ledger, ownerId) {
+    const folderLookup = new Map(ledger.folders.map((folder) => [folder.id, folder]));
+    return ledger.notes
+        .filter((note) => {
+            const folder = folderLookup.get(note.folderId);
+            if (!folder) return false;
+            if (note.ownerId === ownerId) return true;
+            return folder.scope === SHARED_SCOPE;
+        })
+        .map((note) => ({
+            ...note,
+            canEdit: note.ownerId === ownerId,
+            folderScope: folderLookup.get(note.folderId)?.scope || PERSONAL_SCOPE
+        }));
+}
+
+function buildFolderRecord(payload = {}) {
+    const now = new Date().toISOString();
+    return {
+        id: payload.id || `folder-${randomUUID()}`,
+        name: payload.name || 'Untitled folder',
+        ownerId: payload.ownerId || 'guild-stewards',
+        ownerName: payload.ownerName || 'Guild Stewards',
+        scope: payload.scope || PERSONAL_SCOPE,
+        createdAt: payload.createdAt || now
     };
 }
 
@@ -348,6 +429,27 @@ app.get('/library/catalog', async (req, res) => {
     }
 });
 
+app.get('/library/notes', async (req, res) => {
+    try {
+        const ownerId = (req.query.ownerId || '').trim();
+        if (!ownerId) {
+            return res.status(400).json({ error: 'ownerId query parameter is required.' });
+        }
+
+        const ledger = await loadNotesLedger();
+        const folders = getAccessibleFolders(ledger, ownerId).map((folder) => ({
+            ...folder,
+            canEdit: folder.ownerId === ownerId
+        }));
+        const notes = getAccessibleNotes(ledger, ownerId);
+
+        res.json({ updatedAt: ledger.updatedAt, folders, notes });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Unable to load member notes.', details: err.message });
+    }
+});
+
 app.get('/library/notes/public', async (req, res) => {
     try {
         const ledger = await loadNotesLedger();
@@ -373,6 +475,25 @@ app.get('/library/notes/public', async (req, res) => {
     }
 });
 
+app.post('/library/note-folders', async (req, res) => {
+    try {
+        const { ownerId, ownerName, name } = req.body || {};
+        if (!ownerId || !name) {
+            return res.status(400).json({ error: 'Folders require ownerId and name.' });
+        }
+
+        const ledger = await loadNotesLedger();
+        const folder = buildFolderRecord({ ownerId, ownerName, name, scope: PERSONAL_SCOPE });
+        ledger.folders.push(folder);
+        await saveNotesLedger(ledger);
+
+        res.status(201).json({ folder });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Unable to save folder.', details: err.message });
+    }
+});
+
 app.post('/library/notes', async (req, res) => {
     try {
         const { id, ownerId, ownerName, title, content, visibility, folderId, createdAt } = req.body || {};
@@ -382,6 +503,14 @@ app.post('/library/notes', async (req, res) => {
         }
 
         const ledger = await loadNotesLedger();
+        const availableFolders = getAccessibleFolders(ledger, ownerId);
+        const resolvedFolderId = folderId || availableFolders[0]?.id;
+        const targetFolder = availableFolders.find((folder) => folder.id === resolvedFolderId);
+
+        if (!targetFolder) {
+            return res.status(400).json({ error: 'Folder not found or not accessible.' });
+        }
+
         const existingIndex = ledger.notes.findIndex((entry) => entry.id === id);
 
         if (existingIndex >= 0) {
@@ -396,7 +525,7 @@ app.post('/library/notes', async (req, res) => {
                 ...existing,
                 title,
                 content,
-                folderId: folderId || existing.folderId,
+                folderId: targetFolder.id,
                 visibility: nextVisibility,
                 ownerName,
                 updatedAt: now,
@@ -417,7 +546,7 @@ app.post('/library/notes', async (req, res) => {
             title,
             content,
             visibility,
-            folderId,
+            folderId: targetFolder.id,
             createdAt
         });
 
@@ -488,5 +617,8 @@ module.exports = {
     loadNotesLedger,
     saveNotesLedger,
     buildNoteRecord,
-    normalizeVisibility
+    buildFolderRecord,
+    normalizeVisibility,
+    getAccessibleFolders,
+    getAccessibleNotes
 };

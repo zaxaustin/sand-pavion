@@ -45,7 +45,16 @@ test('public notes lifecycle is isolated per owner', async (t) => {
   };
 
   const initial = await getJson(await fetch(`${base}/library/notes/public`));
-  assert.equal(initial.notes.length, 0);
+  const startingPublicCount = Array.isArray(initial.notes) ? initial.notes.length : 0;
+
+  const folderResponse = await fetch(`${base}/library/note-folders`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ownerId: 'member-1', ownerName: 'Member One', name: 'Wisdom Garden' })
+  });
+
+  assert.equal(folderResponse.status, 201);
+  const folderPayload = await getJson(folderResponse);
 
   const payload = {
     ownerId: 'member-1',
@@ -53,7 +62,7 @@ test('public notes lifecycle is isolated per owner', async (t) => {
     title: 'Shared wisdom',
     content: 'The light you seek is the light you keep.',
     visibility: 'private',
-    folderId: 'wisdom-garden'
+    folderId: folderPayload.folder.id
   };
 
   const createdResponse = await fetch(`${base}/library/notes`, {
@@ -68,7 +77,7 @@ test('public notes lifecycle is isolated per owner', async (t) => {
   assert.equal(created.note.visibility, 'private');
 
   const privateCatalog = await getJson(await fetch(`${base}/library/notes/public`));
-  assert.equal(privateCatalog.notes.length, 0);
+  assert.equal(privateCatalog.notes.length, startingPublicCount);
 
   const toggleResponse = await fetch(`${base}/library/notes/${created.note.id}/visibility`, {
     method: 'PATCH',
@@ -82,7 +91,8 @@ test('public notes lifecycle is isolated per owner', async (t) => {
   assert.ok(toggled.note.publishedAt);
 
   const publicCatalog = await getJson(await fetch(`${base}/library/notes/public`));
-  assert.equal(publicCatalog.notes.length, 1);
-  assert.equal(publicCatalog.notes[0].id, created.note.id);
-  assert.equal(publicCatalog.notes[0].ownerName, payload.ownerName);
+  assert.equal(publicCatalog.notes.length, startingPublicCount + 1);
+  const newestNote = publicCatalog.notes.at(-1);
+  assert.equal(newestNote.id, created.note.id);
+  assert.equal(newestNote.ownerName, payload.ownerName);
 });
