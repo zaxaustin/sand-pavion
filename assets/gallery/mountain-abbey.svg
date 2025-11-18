@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="title desc">
+  <title id="title">Mountain Abbey at Dawn</title>
+  <desc id="desc">Golden sandstone abbey beneath blue mountains and green terraces.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f6e9c3" />
+      <stop offset="60%" stop-color="#a4c4d4" />
+      <stop offset="100%" stop-color="#52708d" />
+    </linearGradient>
+    <linearGradient id="sun" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd27d" />
+      <stop offset="100%" stop-color="#ff9a62" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#sky)" />
+  <circle cx="620" cy="120" r="70" fill="url(#sun)" opacity="0.7" />
+  <path d="M0 360 Q160 240 320 320 T640 280 T800 340 V600 H0Z" fill="#6a8a5c" opacity="0.85" />
+  <path d="M0 430 Q180 350 360 410 T720 380 T800 420 V600 H0Z" fill="#3e5a4b" />
+  <g fill="#d9b37a" stroke="#916c3f" stroke-width="3" opacity="0.95">
+    <rect x="240" y="280" width="320" height="150" rx="12" />
+    <rect x="260" y="240" width="80" height="90" />
+    <rect x="460" y="240" width="80" height="90" />
+    <rect x="350" y="210" width="100" height="160" />
+    <circle cx="400" cy="190" r="55" fill="#cfa56b" stroke="#835c32" />
+  </g>
+  <path d="M200 450 Q260 420 320 440 T440 430 T600 460" fill="none" stroke="#e9c77f" stroke-width="10" stroke-linecap="round" />
+  <g fill="#f7f1dc" opacity="0.8">
+    <rect x="280" y="310" width="50" height="60" rx="4" />
+    <rect x="470" y="310" width="50" height="60" rx="4" />
+    <rect x="360" y="250" width="80" height="80" rx="4" />
+  </g>
+  <g fill="none" stroke="#8bb279" stroke-width="6" stroke-linecap="round">
+    <path d="M70 520 Q150 480 230 510" />
+    <path d="M540 520 Q620 500 720 540" />
+  </g>
+</svg>

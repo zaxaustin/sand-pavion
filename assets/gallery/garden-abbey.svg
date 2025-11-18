@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="gtitle gdesc">
+  <title id="gtitle">Abbey Garden Plan</title>
+  <desc id="gdesc">Aerial illustration of an abbey courtyard with symmetrical gardens.</desc>
+  <defs>
+    <linearGradient id="gardenSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d6f0b7" />
+      <stop offset="100%" stop-color="#96c47c" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#gardenSky)" />
+  <g fill="#c39b63" stroke="#7f5b2c" stroke-width="3" opacity="0.9">
+    <rect x="180" y="200" width="440" height="220" rx="28" />
+    <rect x="220" y="160" width="360" height="120" rx="20" />
+    <rect x="220" y="380" width="360" height="100" rx="20" />
+    <circle cx="400" cy="160" r="46" />
+    <rect x="380" y="100" width="40" height="90" />
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-width="6" opacity="0.8">
+    <rect x="210" y="230" width="120" height="160" rx="12" />
+    <rect x="470" y="230" width="120" height="160" rx="12" />
+    <rect x="340" y="250" width="120" height="120" rx="18" />
+  </g>
+  <g fill="#4d7c48" opacity="0.9">
+    <circle cx="270" cy="300" r="24" />
+    <circle cx="270" cy="360" r="24" />
+    <circle cx="530" cy="300" r="24" />
+    <circle cx="530" cy="360" r="24" />
+  </g>
+  <g stroke="#f6e4ba" stroke-width="4" stroke-linecap="round">
+    <path d="M120 260 H200" />
+    <path d="M600 260 H680" />
+    <path d="M120 360 H200" />
+    <path d="M600 360 H680" />
+  </g>
+</svg>

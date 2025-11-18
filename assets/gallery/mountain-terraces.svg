@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="tTitle tDesc">
+  <title id="tTitle">Terraced Mountain Stream</title>
+  <desc id="tDesc">Waterfall cascading down terraces with a small pavilion.</desc>
+  <defs>
+    <linearGradient id="evening" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3d4" />
+      <stop offset="100%" stop-color="#50727c" />
+    </linearGradient>
+    <linearGradient id="water" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b2e8ff" />
+      <stop offset="100%" stop-color="#3f8eb8" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#evening)" />
+  <path d="M80 480 Q200 360 320 420 T560 380 T800 420 V600 H0Z" fill="#c48f4a" opacity="0.9" />
+  <path d="M0 420 Q150 300 300 360 T520 320 T800 360 V600 H0Z" fill="#89733b" opacity="0.7" />
+  <path d="M380 120 Q420 80 520 120 T720 140" fill="none" stroke="#2d4a36" stroke-width="60" stroke-linecap="round" opacity="0.35" />
+  <g fill="url(#water)" opacity="0.9">
+    <path d="M520 120 q-30 40 -10 80 t20 80 q-40 30 -30 70 t30 80" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <rect x="360" y="340" width="70" height="40" rx="10" />
+    <rect x="420" y="400" width="90" height="50" rx="12" />
+    <rect x="500" y="460" width="110" height="60" rx="15" />
+  </g>
+  <g fill="#c3843d" stroke="#6d3f22" stroke-width="4">
+    <rect x="140" y="330" width="120" height="80" rx="16" />
+    <polygon points="140,330 200,280 260,330" fill="#8b5126" />
+    <line x1="180" y1="330" x2="180" y2="410" />
+    <line x1="220" y1="330" x2="220" y2="410" />
+  </g>
+  <g stroke="#fef3d4" stroke-width="5" stroke-linecap="round">
+    <path d="M100 500 H240" />
+    <path d="M260 480 H380" />
+    <path d="M420 520 H600" />
+  </g>
+</svg>
