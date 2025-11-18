@@ -1,0 +1,83 @@
+{
+  "updatedAt": "2024-02-01T00:00:00.000Z",
+  "rooms": [
+    {
+      "id": "living-library",
+      "title": "Living Library",
+      "status": "open",
+      "statusLabel": "Open beta",
+      "summary": "Browse the catalog, steward uploads, and test the speech-ready excerpt reader.",
+      "actions": [
+        { "label": "Explore the stacks", "href": "living-library.html", "type": "primary" },
+        { "label": "Steward console", "href": "library-steward.html", "type": "ghost" }
+      ],
+      "highlights": [
+        "Live connection to the steward upload server",
+        "Personal note folders synced by ID",
+        "Public notes stream for sharing research"
+      ]
+    },
+    {
+      "id": "reading-room",
+      "title": "Reading Atrium",
+      "status": "prototype",
+      "statusLabel": "Prototype tour",
+      "summary": "Walk through the atrium mock and rehearse how visitors settle in before study sessions.",
+      "actions": [
+        { "label": "Enter the atrium", "href": "library-reading-room.html", "type": "primary" },
+        { "label": "See blueprint", "href": "temple-palace-pages/index.html", "type": "ghost" }
+      ],
+      "highlights": [
+        "Follows the welcome ritual outlined in the Temple Palace kit",
+        "Pairs seats, altar, and reference desks with the new iconography",
+        "Great place to gather feedback on tone and copy"
+      ]
+    },
+    {
+      "id": "writing-studio",
+      "title": "Writing Studio",
+      "status": "open",
+      "statusLabel": "Daily use",
+      "summary": "Transform notes into essays, zines, and scripts. Includes prompts for steward broadcasts.",
+      "actions": [
+        { "label": "Visit the studio", "href": "writing-studio.html", "type": "primary" }
+      ],
+      "highlights": [
+        "Layout optimized for desktop + tablet",
+        "Prompt decks for essays and dispatches",
+        "Links directly to member portal quests"
+      ]
+    },
+    {
+      "id": "meditation-hall",
+      "title": "Meditation Hall",
+      "status": "open",
+      "statusLabel": "Guided session",
+      "summary": "Blend scripture study with breathwork timers, soundscapes, and restorative rituals.",
+      "actions": [
+        { "label": "Begin a session", "href": "sand-pavilion-enhanced-meditationroom.html", "type": "primary" }
+      ],
+      "highlights": [
+        "Timer mockups and mantra loops",
+        "Pairs with Sanctum of Stillness page",
+        "Ready for mobile walkthroughs"
+      ]
+    },
+    {
+      "id": "office-suite",
+      "title": "Office Suite",
+      "status": "building",
+      "statusLabel": "In active build",
+      "summary": "Track stewardship tasks, cross-link GitHub issues, and surface contributions.",
+      "actions": [
+        { "label": "Open the office", "href": "office-hub.html", "type": "primary" },
+        { "label": "Preview steward board", "href": "steward-board.html", "type": "ghost" }
+      ],
+      "highlights": [
+        "Needs database hooks for mission tracking",
+        "Prototype dashboard already wired to sample data",
+        "Ideal next milestone once catalog is steady"
+      ]
+    }
+  ]
+}

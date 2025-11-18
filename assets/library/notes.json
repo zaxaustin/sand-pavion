@@ -1,5 +1,15 @@
 {
   "updatedAt": "2024-01-01T00:00:00.000Z",
+  "folders": [
+    {
+      "id": "illumined-strategy",
+      "name": "Illumined Strategy",
+      "ownerId": "guild-stewards",
+      "ownerName": "Guild Stewards",
+      "scope": "shared",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
   "notes": [
     {
       "id": "business-quest-dashboard-inspiration",

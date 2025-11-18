@@ -562,59 +562,131 @@
 
             .rooms-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 1.5rem;
             }
 
             .room-card {
-                background: rgba(0, 0, 0, 0.25);
+                background: rgba(0, 0, 0, 0.3);
                 border: 1px solid rgba(218, 165, 32, 0.35);
-                border-radius: 18px;
-                padding: 1.6rem;
+                border-radius: 20px;
+                padding: 1.8rem;
                 display: flex;
                 flex-direction: column;
                 gap: 0.9rem;
-                transition: transform 0.3s ease, border-color 0.3s ease;
+                min-height: 320px;
+                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             }
 
             .room-card:hover {
                 transform: translateY(-6px);
                 border-color: rgba(218, 165, 32, 0.6);
+                box-shadow: 0 20px 35px rgba(0, 0, 0, 0.35);
             }
 
             .room-card h3 {
-                font-size: 1.3rem;
+                font-size: 1.35rem;
                 color: #ffd700;
             }
 
             .room-card p {
                 font-size: 0.95rem;
-                opacity: 0.78;
+                opacity: 0.82;
                 line-height: 1.6;
             }
 
-            .room-links {
-                margin-top: auto;
+            .room-card__status-row {
                 display: flex;
-                gap: 0.8rem;
-                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
             }
 
-            .room-link {
-                display: inline-block;
-                background: rgba(218, 165, 32, 0.22);
+            .room-status {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.2rem 0.7rem;
+                border-radius: 999px;
+                font-size: 0.78rem;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                border: 1px solid rgba(255, 215, 128, 0.4);
+            }
+
+            .room-status[data-state="open"] {
+                background: rgba(66, 180, 154, 0.2);
+                border-color: rgba(66, 180, 154, 0.5);
+            }
+
+            .room-status[data-state="prototype"] {
+                background: rgba(255, 193, 7, 0.18);
+                border-color: rgba(255, 193, 7, 0.55);
+            }
+
+            .room-status[data-state="building"] {
+                background: rgba(244, 114, 182, 0.18);
+                border-color: rgba(244, 114, 182, 0.5);
+            }
+
+            .room-highlights {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: grid;
+                gap: 0.45rem;
+            }
+
+            .room-highlights li {
+                font-size: 0.9rem;
+                color: rgba(255, 230, 167, 0.85);
+                display: flex;
+                gap: 0.4rem;
+            }
+
+            .room-highlights li::before {
+                content: '✶';
                 color: #ffd700;
-                padding: 0.45rem 1rem;
-                border-radius: 18px;
-                text-decoration: none;
+            }
+
+            .room-actions {
+                margin-top: auto;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.7rem;
+            }
+
+            .room-action {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.5rem 1rem;
+                border-radius: 999px;
                 font-weight: 600;
-                font-size: 0.85rem;
+                font-size: 0.9rem;
+                text-decoration: none;
+                border: 1px solid rgba(255, 215, 128, 0.5);
+                color: #ffd700;
                 transition: background 0.3s ease, color 0.3s ease;
             }
 
-            .room-link:hover {
+            .room-action[data-variant="ghost"] {
+                background: transparent;
+            }
+
+            .room-action[data-variant="primary"] {
+                background: rgba(218, 165, 32, 0.25);
+            }
+
+            .room-action:hover {
                 background: rgba(218, 165, 32, 0.45);
                 color: #2c1810;
+            }
+
+            .room-message {
+                margin-top: 1rem;
+                text-align: center;
+                font-size: 0.95rem;
+                color: rgba(255, 230, 167, 0.8);
             }
 
             .realms-grid {
@@ -1018,43 +1090,19 @@
                 <h2 class="section-title">In-House Reading Rooms &amp; Studios</h2>
                 <p class="section-subtitle">These are the chambers we steward directly—quiet spaces for studying open books, reflecting together, and coordinating the work that lives both inside the Pavilion and across GitHub.</p>
             </div>
-            <div class="rooms-grid">
+            <div class="rooms-grid" data-room-grid></div>
+            <p class="room-message" data-room-message>Loading room statuses…</p>
+            <template id="room-card-template">
                 <article class="room-card">
-                    <h3>Living Library</h3>
-                    <p>Browse curated shelves, review open-source book notes, and mark which public-domain editions we will mirror next.</p>
-                    <div class="room-links">
-                        <a class="room-link" href="living-library.html">Explore the Shelves</a>
+                    <div class="room-card__status-row">
+                        <span class="room-status" data-room-status></span>
                     </div>
+                    <h3 data-room-title></h3>
+                    <p data-room-summary></p>
+                    <ul class="room-highlights" data-room-highlights></ul>
+                    <div class="room-actions" data-room-actions></div>
                 </article>
-                <article class="room-card">
-                    <h3>Reading &amp; Analysis Atrium</h3>
-                    <p>Host communal read-throughs, coordinate annotations, and prepare pull requests that share mirrored editions with proper licensing.</p>
-                    <div class="room-links">
-                        <a class="room-link" href="library-reading-room.html">Enter the Atrium</a>
-                    </div>
-                </article>
-                <article class="room-card">
-                    <h3>Writing Studio</h3>
-                    <p>Transform study notes into essays, zines, and scripts that circulate through the Pavilion and acknowledge the commons we draw from.</p>
-                    <div class="room-links">
-                        <a class="room-link" href="writing-studio.html">Visit the Studio</a>
-                    </div>
-                </article>
-                <article class="room-card">
-                    <h3>Meditation Hall</h3>
-                    <p>Link breathwork, soundscapes, and reflective pauses to each reading cycle so scholarship stays rooted in care.</p>
-                    <div class="room-links">
-                        <a class="room-link" href="sand-pavilion-enhanced-meditationroom.html">Begin a Session</a>
-                    </div>
-                </article>
-                <article class="room-card">
-                    <h3>Office Suite</h3>
-                    <p>Track stewardship tasks, cross-link GitHub projects, and celebrate contributions happening beyond our walls.</p>
-                    <div class="room-links">
-                        <a class="room-link" href="office-hub.html">Open the Office</a>
-                    </div>
-                </article>
-            </div>
+            </template>
         </section>
 
         <section class="prototype-section" id="archive" aria-labelledby="archive-title">
@@ -1367,10 +1415,93 @@
             });
         }
 
+        function setRoomMessage(text, tone = 'info') {
+            const message = document.querySelector('[data-room-message]');
+            if (!message) return;
+            message.textContent = text;
+            message.hidden = !text;
+            message.dataset.tone = tone;
+        }
+
+        function createRoomAction(action) {
+            const link = document.createElement('a');
+            link.className = 'room-action';
+            link.dataset.variant = action.type || 'primary';
+            link.href = action.href;
+            link.textContent = action.label;
+            if (action.href.startsWith('http')) {
+                link.target = '_blank';
+                link.rel = 'noreferrer noopener';
+            }
+            return link;
+        }
+
+        function renderRoomCards(rooms) {
+            const grid = document.querySelector('[data-room-grid]');
+            const template = document.getElementById('room-card-template');
+            if (!grid || !template) return;
+            grid.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            rooms.forEach((room) => {
+                const clone = template.content.cloneNode(true);
+                const status = clone.querySelector('[data-room-status]');
+                const title = clone.querySelector('[data-room-title]');
+                const summary = clone.querySelector('[data-room-summary]');
+                const highlights = clone.querySelector('[data-room-highlights]');
+                const actions = clone.querySelector('[data-room-actions]');
+
+                if (status) {
+                    status.textContent = room.statusLabel || room.status;
+                    status.dataset.state = room.status || 'open';
+                }
+                if (title) title.textContent = room.title;
+                if (summary) summary.textContent = room.summary;
+                if (highlights && Array.isArray(room.highlights)) {
+                    highlights.innerHTML = '';
+                    room.highlights.forEach((entry) => {
+                        const li = document.createElement('li');
+                        li.textContent = entry;
+                        highlights.appendChild(li);
+                    });
+                }
+                if (actions && Array.isArray(room.actions)) {
+                    actions.innerHTML = '';
+                    room.actions.forEach((action) => {
+                        actions.appendChild(createRoomAction(action));
+                    });
+                }
+                fragment.appendChild(clone);
+            });
+            grid.appendChild(fragment);
+        }
+
+        async function hydrateRooms() {
+            const grid = document.querySelector('[data-room-grid]');
+            const template = document.getElementById('room-card-template');
+            if (!grid || !template) return;
+            setRoomMessage('Loading room statuses…');
+            try {
+                const response = await fetch('assets/data/rooms.json');
+                if (!response.ok) {
+                    throw new Error(`Status ${response.status}`);
+                }
+                const payload = await response.json();
+                if (!payload || !Array.isArray(payload.rooms)) {
+                    throw new Error('Malformed room data.');
+                }
+                renderRoomCards(payload.rooms);
+                setRoomMessage(payload.rooms.length ? '' : 'Rooms are being prepared.');
+            } catch (error) {
+                console.error('Unable to load room data', error);
+                setRoomMessage('Unable to load room data. Refresh once the steward server syncs.', 'warning');
+            }
+        }
+
         // Initialize everything
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             setupSearch();
+            hydrateRooms();
 
             document.querySelectorAll('.pavilion').forEach(pavilion => {
                 pavilion.addEventListener('mouseenter', () => {
