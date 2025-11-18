@@ -1,6 +1,25 @@
 # Order of the Sand Pavilion
 
-The Sand Pavilion is tended as an initiatory sect devoted to moneyless learning and mutual care. Each chamber is overseen by a guild that guards specific practices and ensures every traveler receives what they need to keep humanity’s ember bright.
+The Sand Pavilion is tended as an initiatory sect devoted to moneyless learning and mutual care. Each chamber is overseen by a guild that guards specific practices and ensures every traveler receives what they need to keep humanity’s ember bright. Our organizational DNA is now fully documented so contributors can map their work to the Dharmic operating system, the Worker Self-Directed Nonprofit (WSDNP) architecture, and the exit-focused IP strategy described in `blueprint.txt`.
+
+## Dharmic Operating System
+- **Four Noble Truths**: We treat professional skill gaps as Dukkha, trace their origin to craving without a path, define cessation as entrepreneurial self-sufficiency, and run every ritual as part of the Path (Magga). Each retro or onboarding step should answer: what suffering are we addressing, what caused it, what cessation milestone is next, and what practices guide us? See `docs/governance/structure.md` for the full mapping.
+- **Eightfold Path Code of Conduct**: Right View/Resolve appear in onboarding pledges, Right Speech/Action/Livelihood govern project selection and communication, and Right Effort/Mindfulness/Concentration inform our quality controls. Contributors reaffirm these policies before pushing code or publishing rituals.
+
+## Worker Self-Directed Nonprofit & Sociocracy
+- **Legal + Mission Lock**: We operate as a WSDNP where all revenue is reinvested into mission infrastructure (training, tooling, reserves). Governance artifacts (AGM notes, Form 990s, circle charters) live alongside the codebase for radical transparency.
+- **Circle map**: Gate & Rituals, Library Stewardship, Companion Artificers, Member Lifecycle, and the Steward Board run as sociocratic circles. They double-link to the Board, make consent-based decisions, and log objections/resolutions in their respective pages (`steward-board.html`, `sand-pavilion-board.tsx`, etc.).
+- **Financial rule of thirds**: Budgeting follows the Buddhist wealth framework—25% consumption, 50% mission investment, 25% conservation—so we can sustain long-term member development.
+
+## IP, CLA, and Exit Readiness
+- **MIT License**: The entire repository now uses a permissive MIT license (`LICENSE`) so alumni can commercialize derivatives without copyleft constraints.
+- **Contributor License Agreement**: Every contributor signs the template in `docs/legal/cla-template.md`, granting Sand Pavilion the rights needed to steward the commons while preserving each member’s exit path. Operational guidance lives in `docs/legal/IP-playbook.md`.
+- **Exit dossiers**: When a member reaches cessation, the Member Lifecycle circle assembles an IP packet, trademark guidelines, and an assignment letter per the playbook so the alumni venture can thrive independently.
+
+## Member Lifecycle Metrics
+- **Quantitative KPIs**: commits, pull-request latency, issue velocity, and monetized volunteer hours ($34.79/hr per Independent Sector 2024). These power the dashboards in `business_quest_dashboard.tsx` and future data hooks.
+- **Qualitative KPIs**: skill benchmarks, mindfulness practice logs, mentorship hours, and culture feedback tied to Samādhi disciplines.
+- **Reporting cadence**: circles update metrics weekly, the Steward Board publishes monthly summaries, and AGM packets roll up quarterly. Details live in `docs/membership/progression.md`.
 
 ## Realms of the Order
 - **Outer Court — Gate of Orientation (`index.html`)**: introduces the initiation arc, sets expectations for visitors, and threads every other realm together.
