@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sand Pavilion - Digital Sanctuary</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Georgia', serif; background-color: #000; }
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        #center-prompt {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; font-size: 24px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            opacity: 0; transition: opacity 0.3s; text-align: center;
+        }
+        #hud {
+            position: absolute; bottom: 20px; left: 20px; color: rgba(255,255,255,0.7);
+            font-size: 14px; line-height: 1.5;
+        }
+        #book-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #fdf6e3; color: #333; width: 600px; max-width: 90%;
+            height: 80vh; padding: 40px; box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border-radius: 8px; display: none; pointer-events: auto; overflow-y: auto;
+            border: 1px solid #d4af37;
+        }
+        .hidden { display: none !important; }
+        h1 { font-weight: normal; color: #8b4513; margin-top: 0; border-bottom: 1px solid #d4af37; padding-bottom: 10px;}
+        p { line-height: 1.6; margin-bottom: 1em; }
+        button {
+            background: #8b4513; color: white; border: none; padding: 10px 20px;
+            cursor: pointer; border-radius: 4px; font-family: inherit; font-size: 14px;
+        }
+        button:hover { background: #a0522d; }
+        #start-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; color: #ddd; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 999; pointer-events: auto;
+        }
+        #title { font-size: 48px; margin-bottom: 20px; color: #d4af37; }
+        #loading { margin-top: 20px; font-style: italic; color: #888; }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <div id="title">The Sand Pavilion</div>
+        <p>A digital monastery-library-laboratory.</p>
+        <p>WASD to Walk • Mouse to Look • E to Interact</p>
+        <button id="start-btn" style="margin-top: 30px; font-size: 18px; padding: 15px 30px;">Enter the Garden</button>
+    </div>
+
+    <div id="ui-layer">
+        <div id="center-prompt">[E] Interact</div>
+        <div id="hud">
+            Time: <span id="time-display">Day</span><br>
+            Press T to toggle time speed<br>
+            Press E to Sit / Read
+        </div>
+    </div>
+
+    <div id="book-modal">
+        <h1 id="book-title">Title</h1>
+        <div id="book-content">Content...</div>
+        <div style="margin-top: 30px; text-align: center;">
+            <button id="close-book-btn">Close Book</button>
+        </div>
+    </div>
+
+    <!-- Import Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // --- CONFIGURATION ---
+        const WORLD_SIZE = 200;
+        const TERRACE_STEPS = 8;
+        const TERRACE_HEIGHT = 3;
+
+        // --- STATE ---
+        let isPointerLocked = false;
+        let playerVelocity = new THREE.Vector3();
+        let moveDirection = new THREE.Vector3();
+        let canJump = false;
+        let timeOfDay = 0.3;
+        let timeSpeed = 0.0005;
+        let isSitting = false;
+        let sitTargetPos = new THREE.Vector3();
+        let sitTargetRot = new THREE.Quaternion();
+        let originalCamPos = new THREE.Vector3();
+        let interactableObjects = [];
+
+        // --- SETUP ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+        scene.fog = new THREE.FogExp2(0xdfefea, 0.0025);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 30, 60);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // --- LIGHTING ---
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+        hemiLight.position.set(0, 200, 0);
+        scene.add(hemiLight);
+
+        const dirLight = new THREE.PointLight(0xffd700, 1.5, 500);
+        dirLight.position.set(50, 100, 50);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+        scene.add(dirLight);
+
+        // --- TERRAIN ---
+        const geometry = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, 128, 128);
+        geometry.rotateX(-Math.PI / 2);
+
+        const vertices = geometry.attributes.position.array;
+
+        for (let i = 0; i < vertices.length; i += 3) {
+            const x = vertices[i];
+            const z = vertices[i + 2];
+            const dist = Math.sqrt(x * x + z * z);
+            let y = 0;
+            const angle = Math.atan2(z, x);
+            const spiralDist = (angle + Math.PI) * 5 + dist * 0.2;
+            const isChannel = Math.abs(dist - 40 - angle * 5) < 4;
+
+            if (dist < 15) {
+                y = -2;
+            } else {
+                const step = Math.floor((dist - 15) / 10);
+                y = step * TERRACE_HEIGHT;
+                y += Math.sin(x * 0.1) * Math.cos(z * 0.1) * 0.5;
+            }
+            if (isChannel && dist > 15 && dist < 80) y -= 2.5;
+            if (dist > 90) y -= (dist - 90);
+            vertices[i + 1] = y;
+        }
+        geometry.computeVertexNormals();
+
+        const terrainMat = new THREE.MeshStandardMaterial({ color: 0x558833, roughness: 0.8, flatShading: true });
+        const terrain = new THREE.Mesh(geometry, terrainMat);
+        terrain.receiveShadow = true;
+        scene.add(terrain);
+
+        // --- WATER ---
+        const waterGeo = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, 64, 64);
+        waterGeo.rotateX(-Math.PI / 2);
+        const waterMat = new THREE.MeshPhongMaterial({ color: 0x006994, transparent: true, opacity: 0.6, shininess: 100 });
+        const water = new THREE.Mesh(waterGeo, waterMat);
+        water.position.y = 1.5;
+        scene.add(water);
+
+        // --- OBJECTS ---
+        const libraryGroup = new THREE.Group();
+        const shelfGeo = new THREE.BoxGeometry(4, 3, 1);
+        const shelfMat = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+        const shelfPositions = [{x: 10, z: 10, r: 0}, {x: 15, z: 15, r: Math.PI/4}, {x: 20, z: 10, r: -Math.PI/4}];
+
+        const mockBooks = [
+            { title: "The Sand Pavilion", content: "Welcome to the digital monastery. Here, knowledge grows like moss on stone." },
+            { title: "Permaculture 101", content: "Observe and interact. Catch and store energy. Use and value renewable resources." },
+            { title: "The Way of the Water", content: "Water always finds the lowest point, yet it has the power to carve stone." }
+        ];
+
+        shelfPositions.forEach((pos, i) => {
+            const shelf = new THREE.Mesh(shelfGeo, shelfMat);
+            shelf.position.set(pos.x, getTerrainHeight(pos.x, pos.z) + 1.5, pos.z);
+            shelf.rotation.y = pos.r;
+            shelf.castShadow = true;
+            shelf.userData = { type: 'library', shelfIndex: i };
+            interactableObjects.push(shelf);
+            libraryGroup.add(shelf);
+
+            for(let b=0; b<5; b++) {
+                const book = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.8, 0.6), new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff }));
+                book.position.copy(shelf.position);
+                book.rotation.y = pos.r;
+                book.position.x += (Math.random() - 0.5) * 3;
+                book.position.y += (Math.random() - 0.5) * 1;
+                libraryGroup.add(book);
+            }
+        });
+        scene.add(libraryGroup);
+
+        const wheelGroup = new THREE.Group();
+        const wheelGeo = new THREE.CylinderGeometry(3, 3, 1, 16);
+        wheelGeo.rotateZ(Math.PI / 2);
+        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x654321 });
+        const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+        wheelGroup.add(wheel);
+        for(let i=0; i<8; i++) {
+            const paddle = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 1.2), wheelMat);
+            const angle = (i / 8) * Math.PI * 2;
+            paddle.position.set(Math.cos(angle)*3, Math.sin(angle)*3, 0);
+            paddle.rotation.z = angle;
+            wheelGroup.add(paddle);
+        }
+        wheelGroup.position.set(0, 2, -5);
+        scene.add(wheelGroup);
+
+        const ducks = [];
+        const duckGeo = new THREE.SphereGeometry(0.5, 8, 8);
+        const duckMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const beakMat = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+        for(let i=0; i<5; i++) {
+            const duck = new THREE.Group();
+            const body = new THREE.Mesh(duckGeo, duckMat);
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.3), duckMat);
+            head.position.set(0.4, 0.3, 0);
+            const beak = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.2, 4), beakMat);
+            beak.position.set(0.7, 0.3, 0);
+            beak.rotation.z = -Math.PI/2;
+            duck.add(body, head, beak);
+            duck.userData = { angle: i * (Math.PI * 2 / 5), speed: 0.5 + Math.random()*0.5 };
+            scene.add(duck);
+            ducks.push(duck);
+        }
+
+        const benchGeo = new THREE.BoxGeometry(2, 0.5, 1);
+        const benchMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+        const benches = [{ x: 5, z: -10, ry: 0 }, { x: -20, z: 20, ry: Math.PI/4 }];
+        benches.forEach(b => {
+            const bench = new THREE.Mesh(benchGeo, benchMat);
+            const y = getTerrainHeight(b.x, b.z);
+            bench.position.set(b.x, y + 0.25, b.z);
+            bench.rotation.y = b.ry;
+            bench.castShadow = true;
+            bench.userData = { type: 'seat', sitPos: new THREE.Vector3(b.x, y + 1.2, b.z), lookAt: new THREE.Vector3(0, 0, 0) };
+            interactableObjects.push(bench);
+            scene.add(bench);
+        });
+
+        const fireflyGeo = new THREE.BufferGeometry();
+        const fireflyCount = 100;
+        const fireflyPos = new Float32Array(fireflyCount * 3);
+        for(let i=0; i<fireflyCount*3; i++) fireflyPos[i] = (Math.random() - 0.5) * 100;
+        fireflyGeo.setAttribute('position', new THREE.BufferAttribute(fireflyPos, 3));
+        const fireflyMat = new THREE.PointsMaterial({ color: 0xffff00, size: 0.5, transparent: true, opacity: 0 });
+        const fireflies = new THREE.Points(fireflyGeo, fireflyMat);
+        scene.add(fireflies);
+
+        // --- VEGETATION (Trees) ---
+        const treeGroup = new THREE.Group();
+        const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 1.5, 6);
+        const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3e2723 });
+        const leavesGeo = new THREE.SphereGeometry(1.2, 8, 8);
+        const leavesMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32 });
+        const orangeGeo = new THREE.SphereGeometry(0.15, 6, 6);
+        const orangeMat = new THREE.MeshStandardMaterial({ color: 0xff9800 });
+
+        function createTree(x, z) {
+            const y = getTerrainHeight(x, z);
+            if (y < 0) return; // Don't plant in water
+
+            const tree = new THREE.Group();
+            tree.position.set(x, y + 0.75, z);
+
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+            tree.add(trunk);
+
+            const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+            leaves.position.y = 1.2;
+            tree.add(leaves);
+
+            // Add Oranges
+            for (let i = 0; i < 3; i++) {
+                const orange = new THREE.Mesh(orangeGeo, orangeMat);
+                orange.position.set(
+                    (Math.random() - 0.5) * 1.5,
+                    1.2 + (Math.random() - 0.5) * 1.0,
+                    (Math.random() - 0.5) * 1.5
+                );
+                tree.add(orange);
+            }
+            treeGroup.add(tree);
+        }
+
+        // Populate Trees
+        for (let i = 0; i < 40; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 20 + Math.random() * 60;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+
+            // Avoid spiral channel approx
+            const anglePos = Math.atan2(z, x);
+            const isChannel = Math.abs(Math.sqrt(x*x+z*z) - 40 - anglePos * 5) < 6;
+
+            if (!isChannel) createTree(x, z);
+        }
+        scene.add(treeGroup);
+
+        // --- CABIN ---
+        const cabinGroup = new THREE.Group();
+        const cabinBase = new THREE.Mesh(new THREE.BoxGeometry(6, 5, 6), new THREE.MeshStandardMaterial({ color: 0x5d4037 }));
+        cabinBase.position.y = 2.5;
+        const cabinRoof = new THREE.Mesh(new THREE.ConeGeometry(5, 3, 4), new THREE.MeshStandardMaterial({ color: 0x3e2723 }));
+        cabinRoof.position.y = 6.5;
+        cabinRoof.rotation.y = Math.PI / 4;
+
+        cabinGroup.add(cabinBase, cabinRoof);
+        const cabinY = getTerrainHeight(25, 35);
+        cabinGroup.position.set(25, cabinY, 35);
+        cabinGroup.userData = { type: 'seat', sitPos: new THREE.Vector3(25, cabinY + 1, 30), lookAt: new THREE.Vector3(0, 0, 0) }; // Cabin doubles as a viewing spot
+        interactableObjects.push(cabinGroup); // Make cabin clickable
+        scene.add(cabinGroup);
+
+        const keys = { w: false, a: false, s: false, d: false, space: false };
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'w') keys.w = true;
+            if (e.key.toLowerCase() === 'a') keys.a = true;
+            if (e.key.toLowerCase() === 's') keys.s = true;
+            if (e.key.toLowerCase() === 'd') keys.d = true;
+            if (e.code === 'Space') keys.space = true;
+            if (e.key.toLowerCase() === 't') timeSpeed = (timeSpeed === 0.0005) ? 0.02 : 0.0005;
+            if (e.key.toLowerCase() === 'e') interact();
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key.toLowerCase() === 'w') keys.w = false;
+            if (e.key.toLowerCase() === 'a') keys.a = false;
+            if (e.key.toLowerCase() === 's') keys.s = false;
+            if (e.key.toLowerCase() === 'd') keys.d = false;
+            if (e.code === 'Space') keys.space = false;
+        });
+
+        let euler = new THREE.Euler(0, 0, 0, 'YXZ');
+        document.addEventListener('mousemove', (e) => {
+            if (isPointerLocked && !isSitting) {
+                euler.setFromQuaternion(camera.quaternion);
+                euler.y -= e.movementX * 0.002;
+                euler.x -= e.movementY * 0.002;
+                euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
+                camera.quaternion.setFromEuler(euler);
+            }
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            document.body.requestPointerLock();
+            document.getElementById('start-screen').style.display = 'none';
+            fetch('/library/catalog').then(res => res.json()).then(data => {
+                if(data.books && data.books.length > 0) mockBooks.push(...data.books.map(b => ({ title: b.title, content: b.excerpt || "No excerpt." })));
+            }).catch(e => console.log("Offline mode."));
+        });
+
+        document.addEventListener('pointerlockchange', () => isPointerLocked = document.pointerLockElement === document.body);
+
+        function getTerrainHeight(x, z) {
+            const dist = Math.sqrt(x * x + z * z);
+            let y = 0;
+            const angle = Math.atan2(z, x);
+            const isChannel = Math.abs(dist - 40 - angle * 5) < 4;
+            if (dist < 15) y = -2;
+            else {
+                const step = Math.floor((dist - 15) / 10);
+                y = step * TERRACE_HEIGHT;
+                y += Math.sin(x * 0.1) * Math.cos(z * 0.1) * 0.5;
+            }
+            if (isChannel && dist > 15 && dist < 80) y -= 2.5;
+            if (dist > 90) y -= (dist - 90);
+            return y;
+        }
+
+        function interact() {
+            if (isSitting) { isSitting = false; camera.position.y += 2; return; }
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+            const intersects = raycaster.intersectObjects(interactableObjects);
+            if (intersects.length > 0 && intersects[0].distance < 5) {
+                const obj = intersects[0].object;
+                if (obj.userData.type === 'seat') {
+                    isSitting = true;
+                    originalCamPos.copy(camera.position);
+                    sitTargetPos.copy(obj.userData.sitPos);
+                    const dummyCam = camera.clone();
+                    dummyCam.position.copy(sitTargetPos);
+                    dummyCam.lookAt(obj.userData.lookAt);
+                    sitTargetRot.copy(dummyCam.quaternion);
+                } else if (obj.userData.type === 'library') {
+                    document.exitPointerLock();
+                    const book = mockBooks[Math.floor(Math.random() * mockBooks.length)];
+                    document.getElementById('book-title').innerText = book.title;
+                    document.getElementById('book-content').innerText = book.content;
+                    document.getElementById('book-modal').style.display = 'block';
+                }
+            }
+        }
+
+        document.getElementById('close-book-btn').addEventListener('click', () => {
+            document.getElementById('book-modal').style.display = 'none';
+            document.body.requestPointerLock();
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = clock.getDelta();
+            const now = Date.now() * 0.001;
+            timeOfDay += timeSpeed;
+            if (timeOfDay > 1) timeOfDay = 0;
+            const sunAngle = (timeOfDay - 0.25) * Math.PI * 2;
+            dirLight.position.set(Math.cos(sunAngle)*100, Math.sin(sunAngle)*100, 50);
+            const dayColor = new THREE.Color(0x87CEEB);
+            const nightColor = new THREE.Color(0x050510);
+            const sunsetColor = new THREE.Color(0xffd700);
+            let skyCol = dayColor.clone();
+            let lightIntensity = 1;
+            if (timeOfDay > 0.75 || timeOfDay < 0.2) { skyCol = nightColor; lightIntensity = 0.1; fireflyMat.opacity = Math.min(fireflyMat.opacity + 0.01, 1); }
+            else if (timeOfDay > 0.65) { skyCol.lerp(sunsetColor, (timeOfDay - 0.65) * 10); lightIntensity = 0.5; fireflyMat.opacity = Math.max(fireflyMat.opacity - 0.01, 0); }
+            else { fireflyMat.opacity = 0; }
+            scene.background = skyCol;
+            scene.fog.color = skyCol;
+            dirLight.intensity = lightIntensity;
+            document.getElementById('time-display').innerText = timeOfDay < 0.2 || timeOfDay > 0.75 ? "Night" : "Day";
+            const positions = fireflies.geometry.attributes.position.array;
+            for(let i=0; i<fireflyCount; i++) positions[i*3+1] += Math.sin(now + i) * 0.05;
+            fireflies.geometry.attributes.position.needsUpdate = true;
+            wheelGroup.rotation.x -= 1 * dt;
+            ducks.forEach(duck => {
+                duck.userData.angle += duck.userData.speed * 0.2 * dt;
+                const r = 8 + Math.sin(duck.userData.angle * 3) * 2;
+                duck.position.set(Math.cos(duck.userData.angle)*r, -1.8, Math.sin(duck.userData.angle)*r);
+                duck.lookAt(Math.cos(duck.userData.angle + 0.1)*r, -1.8, Math.sin(duck.userData.angle + 0.1)*r);
+            });
+            if (isPointerLocked && !isSitting) {
+                const speed = 10;
+                playerVelocity.x -= playerVelocity.x * 10.0 * dt;
+                playerVelocity.z -= playerVelocity.z * 10.0 * dt;
+                playerVelocity.y -= 9.8 * 2.0 * dt;
+                moveDirection.z = Number(keys.w) - Number(keys.s);
+                moveDirection.x = Number(keys.d) - Number(keys.a);
+                moveDirection.normalize();
+                if (keys.w || keys.s) playerVelocity.z -= moveDirection.z * speed * dt * 5;
+                if (keys.a || keys.d) playerVelocity.x -= moveDirection.x * speed * dt * 5;
+                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+                forward.y = 0; forward.normalize();
+                const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+                const moveVec = new THREE.Vector3();
+                moveVec.addScaledVector(forward, -playerVelocity.z * dt);
+                moveVec.addScaledVector(right, playerVelocity.x * dt);
+                camera.position.add(moveVec);
+                const groundH = getTerrainHeight(camera.position.x, camera.position.z);
+                if (camera.position.y < groundH + 2) { camera.position.y = groundH + 2; playerVelocity.y = 0; canJump = true; }
+                if (keys.space && canJump) { playerVelocity.y += 15; canJump = false; }
+                camera.position.y += playerVelocity.y * dt;
+            } else if (isSitting) { camera.position.lerp(sitTargetPos, 5 * dt); camera.quaternion.slerp(sitTargetRot, 5 * dt); }
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+            const intersects = raycaster.intersectObjects(interactableObjects);
+            const prompt = document.getElementById('center-prompt');
+            if (intersects.length > 0 && intersects[0].distance < 5) {
+                prompt.style.opacity = 1;
+                prompt.innerText = intersects[0].object.userData.type === 'seat' ? "[E] Sit" : "[E] Browse Library";
+            } else prompt.style.opacity = 0;
+            renderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
